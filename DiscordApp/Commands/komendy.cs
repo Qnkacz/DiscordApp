@@ -13,6 +13,7 @@ using DSharpPlus;
 using System.IO;
 using System.Threading;
 using System.Linq;
+using System.Collections.Immutable;
 
 namespace DiscordApp.Commands
 {
@@ -48,7 +49,7 @@ namespace DiscordApp.Commands
         {
             var interactivity = ctx.Client.GetInteractivity();
             var Up = DiscordEmoji.FromName(ctx.Client, ":+1:");
-            var inputStep = new StringStep("Dialog","Zareaguj" + DiscordEmoji.FromName(ctx.Client, ":+1:") + "dla warhammera", null);
+            var inputStep = new StringStep("Dialog", "Zareaguj" + DiscordEmoji.FromName(ctx.Client, ":+1:") + "dla warhammera", null);
 
             var userChannel = await ctx.Member.CreateDmChannelAsync();
             string input = string.Empty;
@@ -90,18 +91,34 @@ namespace DiscordApp.Commands
             await ctx.Channel.SendMessageAsync(chuj + " " + val.ToString());
         }
         [Command("open")]
-        public async Task CreateChannel(CommandContext ctx,  DiscordRole role, params string[] names)
+        public async Task CreateChannel(CommandContext ctx, DiscordRole role, params string[] names)
         {
             string name = string.Join(" ", names);
-            var category = await ctx.Guild.CreateChannelCategoryAsync("RPG");
-            var createdChannel = await ctx.Guild.CreateTextChannelAsync(name,category);
-            await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
-            await createdChannel.SendMessageAsync("Tutaj możecie grac w warhammera, sesja załozona przez: " + ctx.Member.Mention+" zapraszamy "+role.Mention +" na granko");
+            var blep = ctx.Guild.Channels;
+            bool hasRpgCategory = false;
+            foreach (var item in blep)
+            {
+                if (item.Value.Name.Contains("RPG"))
+                {
+                    hasRpgCategory = true;
+                    var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, item.Value, role.Name.Trim().ToLower());
+                    await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
+                    await createdChannel.SendMessageAsync("Tutaj możecie grac w " + role.Name.ToString() + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy " + role.Mention + " na granko");
+                    break;
+                }
+            }
+            if (hasRpgCategory == false)
+            {
+                var category = await ctx.Guild.CreateChannelCategoryAsync("RPG");
+                var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, category, role.Name.Trim().ToLower());
+                await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
+                await createdChannel.SendMessageAsync("Tutaj możecie grac w " + role.Name.ToString() + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy " + role.Mention + " na granko");
+            }
         }
         [Command("stop")]
         public async Task DeleteChannel(CommandContext ctx)
         {
-            if(ctx.Channel.Parent.Children.Count() == 0)
+            if (ctx.Channel.Parent.Children.Count() == 0)
             {
                 await ctx.Channel.Parent.DeleteAsync();
             }
@@ -112,7 +129,7 @@ namespace DiscordApp.Commands
         {
             var logs = await ctx.Channel.GetMessagesAsync(999999);
             string txt = string.Empty;
-            using (StreamWriter sw = File.CreateText(ctx.Channel.Name+".txt"))
+            using (StreamWriter sw = File.CreateText(ctx.Channel.Name + ".txt"))
             {
                 foreach (var item in logs)
                 {
@@ -148,7 +165,20 @@ namespace DiscordApp.Commands
         [Command("Kick")]
         public async Task Kick(CommandContext ctx, DiscordMember user)
         {
-            await ctx.Channel.AddOverwriteAsync(user, Permissions.None,Permissions.All);
+            await ctx.Channel.AddOverwriteAsync(user, Permissions.None, Permissions.All);
+        }
+        [Command("Cutie")]
+        public async Task Ola(CommandContext ctx)
+        {
+            var members = ctx.Guild.Members;
+            var role = ctx.Guild.GetRole(448516688779018240);
+            foreach (var item in members)
+            {
+                if (item.Value.Roles.Contains(role))
+                {
+                    await ctx.Channel.SendMessageAsync(item.Value.Mention + " is a cutie");
+                }
+            }
         }
     }
 }

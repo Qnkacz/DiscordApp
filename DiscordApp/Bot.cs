@@ -1,4 +1,5 @@
 ﻿using DiscordApp.Commands;
+using DiscordApp.RPGSystems.WarhammerFantasy;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
@@ -40,7 +41,7 @@ namespace DiscordApp
             Clinet.Ready += OnClientReady;
             Clinet.UseInteractivity(new InteractivityConfiguration
             {
-                Timeout = TimeSpan.FromMinutes(2)
+                Timeout = TimeSpan.FromMinutes(30)
             });
             var commandsConfig = new CommandsNextConfiguration
             {
@@ -53,6 +54,7 @@ namespace DiscordApp
             Commands = Clinet.UseCommandsNext(commandsConfig);
             Commands.RegisterCommands<komendy>();
             Commands.RegisterCommands<Roles>();
+            Commands.RegisterCommands<WHF_commands>();
             await Clinet.ConnectAsync();
             await Task.Delay(-1);
         }

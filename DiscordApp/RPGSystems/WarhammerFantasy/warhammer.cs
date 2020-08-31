@@ -29,15 +29,16 @@ namespace DiscordApp.RPGSystems
         public int age;
         public int heigth, weight;
         public string eye_color, hair_color;
-        List<string> umiejetnosci;
-        List<string> zdolnosci;
+        public List<string> umiejetnosci;
+        public List<string> zdolnosci;
         public string fluff;
         public bool plec; // false - kobieta, true - mezczyzna
         public string plec_string;
+        public List<KeyValuePair<string, int>> przedmioty;
 
         public warhammer(string _name,string _race,string plec,int _ww,int _strzelectwo, int _krzepa,int _odpowrnosc,int _zrecznosc,int _inteligencjal,int _sila_woli,
                          int _Oglada,int _ataki,int _zywotnosc,int _sila, int _wytrzymalosc, int _szybkosc, int _magia, int _obled,int _przeznaczenie,
-                         string _profesja, int _age, int _wysokosc, int _waga, string _oczy, string _wlosy, List<string> _umiejetnosci, List<string> _zdolnosci )
+                         string _profesja, int _age, int _wysokosc, int _waga, string _oczy, string _wlosy, List<string> _umiejetnosci, List<string> _zdolnosci, List<KeyValuePair<string, int>> _items )
         {
             CharName = _name;
             Rasa = _race;
@@ -62,11 +63,11 @@ namespace DiscordApp.RPGSystems
             heigth = _wysokosc;
             weight = _waga;
             eye_color = _oczy;
+            hair_color = _wlosy;
             umiejetnosci = _umiejetnosci;
             zdolnosci = _zdolnosci;
+            przedmioty=_items;
         }
         public warhammer() { }
-
-      
     }
 }
