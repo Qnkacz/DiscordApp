@@ -1,11 +1,13 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.Interactivity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,63 +17,139 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
     class WHF_commands : BaseCommandModule
     {
         [Command("DMG")]
-        public async Task Heal(CommandContext ctx, DiscordMember user, int amount, params string[] charName)
+        [Description("Zadaje obrazenia postaci gracza")]
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        public async Task Heal(CommandContext ctx, [Description("Gracz któremu zadajemy dmg")] DiscordMember user, [Description("ilość dmg")] int amount)
         {
-            string name = string.Join(" ", charName);
-            if (File.Exists(user.Id + "/" + ctx.Channel.Topic + "/" + name + ".json"))
+
+            string line = string.Empty;
+            string JsonFromFile = string.Empty;
+            warhammer character = new warhammer();
+            bool znaleziono = false;
+            if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
             {
-                string JsonFromFile;
-                using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + name + ".json"))
+                var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
+                Thread.Sleep(30000);
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Channel.DeleteMessageAsync(cosiek);
+            }
+            else
+            {
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
                 {
-                    JsonFromFile = reader.ReadToEnd();
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
                 }
-                warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
-                character.zywotnosc -= amount;
-                await ctx.Channel.SendMessageAsync("Zadano `" + name + "` " + amount + " obrażeń ");
-                if (character.zywotnosc <= 3) await ctx.Channel.SendMessageAsync("uwaga, Twoja postać: `" + name + "` ma tylko: " + character.zywotnosc + " życia!");
-                if (character.zywotnosc <= 0)
+                foreach (var item in embeds) //przechodzi prze liste embedów
                 {
-                    await ctx.Channel.SendMessageAsync("Twoja postać: `" + name + "` Umarła");
-                    File.Delete(user.Id + "/" + ctx.Channel.Topic + "/" + name + ".json");
-                }
-                else
-                {
-                    JsonFromFile = JsonConvert.SerializeObject(character);
-                    File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + name + ".json", JsonFromFile);
+
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        znaleziono = true;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
                 }
 
-            }
-            else
-            {
-                await ctx.Channel.SendMessageAsync("nie znalazłem postaci");
-            }
-            //await ctx.Channel.SendMessageAsync(user.Id + "/" + ctx.Channel.Topic + "/" + name + ".json");
-        }
-        [Command("Heal")]
-        public async Task heall(CommandContext ctx, DiscordMember user, int amount, params string[] charName)
-        {
-            string name = string.Join(" ", charName);
-            if (File.Exists(user.Id + "/" + ctx.Channel.Topic + "/" + name + ".json"))
-            {
-                string JsonFromFile;
-                using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + name + ".json"))
+                if (znaleziono == true)
                 {
-                    JsonFromFile = reader.ReadToEnd();
+                    if (character.zywotnosc - amount <= 0)
+                    {
+                        await ctx.Channel.SendMessageAsync("Twoja postać umarła");
+                        File.Delete(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json");
+                        await ctx.Channel.SendMessageAsync("Pamiętajcie, zeby odpiać postać z tablicy!");
+                    }
+                    else
+                    {
+                        character.zywotnosc -= amount;
+                        await ctx.Channel.SendMessageAsync("zadano " + line + " " + amount + " obrażeń");
+                        JsonFromFile = JsonConvert.SerializeObject(character);
+                        File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
+                    }
                 }
-                warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
-                character.zywotnosc += amount;
-                await ctx.Channel.SendMessageAsync("Wyleczono: `" + name + "` " + amount + " obrażeń ");
-                JsonFromFile = JsonConvert.SerializeObject(character);
-                File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + name + ".json", JsonFromFile);
+            }
+        }
+        
+        [Command("Heal")]
+        [Description("Leczymy postać gracza")]
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        public async Task heall(CommandContext ctx, [Description("Gracz któremu zadajemy dmg")]DiscordMember user, [Description("ilość heala")] int amount)
+        {
+            string line = string.Empty;
+            string JsonFromFile = string.Empty;
+            warhammer character = new warhammer();
+            bool znaleziono = false;
+            if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
+            {
+                var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
+                Thread.Sleep(30000);
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Channel.DeleteMessageAsync(cosiek);
             }
             else
             {
-                await ctx.Channel.SendMessageAsync("nie znalazłem postaci");
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        znaleziono = true;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+
+                if (znaleziono == true)
+                {
+                    character.zywotnosc += amount;
+                    await ctx.Channel.SendMessageAsync("wyleczone " + line + " " + amount + " obrażeń");
+                    JsonFromFile = JsonConvert.SerializeObject(character);
+                    File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
+
+                }
             }
-            //await ctx.Channel.SendMessageAsync(user.Id + "/" + ctx.Channel.Topic + "/" + name + ".json");
         }
+        
         [Command("Display")]
-        public async Task ShowChar(CommandContext ctx, params string[] input)
+        [Description("Pokazuje wymienioną swoną postać")]
+        public async Task ShowChar(CommandContext ctx, [Description("nazwa postaci")] params string[] input)
         {
             var template = new WHF_Infotables();
             string name = string.Join(" ", input);
@@ -92,8 +170,10 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 await ctx.Channel.SendMessageAsync("nie znalazłem postaci");
             }
         }
+        
         [Command("Join")]
-        public async Task JoinGame(CommandContext ctx, params string[] input)
+        [Description("Dołącza postać do sesji")]
+        public async Task JoinGame(CommandContext ctx, [Description("Nazwa postaci")] params string[] input)
         {
             var template = new WHF_Infotables();
             string name = string.Join(" ", input);
@@ -115,7 +195,9 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 await ctx.Channel.SendMessageAsync("nie znalazłem postaci");
             }
         }
+        
         [Command("CharList")]
+        [Description("Pokazuje listę twoich postaci do danego rmg")]
         public async Task CharList(CommandContext ctx)
         {
             string Description = string.Empty;
@@ -141,8 +223,11 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 await ctx.Channel.SendMessageAsync("Nie masz żadnych postaci do tego systemu");
             }
         }
+        
         [Command("AddItem")]
-        public async Task Additem(CommandContext ctx, DiscordMember user, int amount, params string[] input)
+        [Description("Daj przedmiot graczowi")]
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        public async Task Additem(CommandContext ctx, [Description("Gracz, któremu dajemy itemy")] DiscordMember user, [Description("ilosc przedmiotow")] int amount, [Description("nazwa przedmiotu")]params string[] input)
         {
             if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
             {
@@ -167,7 +252,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 {
                     if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
                     {
-                        await ctx.Channel.SendMessageAsync("znalazłem wiadomosc!");
                         string line = string.Empty;
                         using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
                         {
@@ -175,10 +259,10 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                         }
                         line = line.Remove(0, 8);
                         await ctx.Channel.SendMessageAsync(line);
-                        string JsonFromFile =string.Empty;
+                        string JsonFromFile = string.Empty;
                         using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
                         {
-                            JsonFromFile =await reader.ReadToEndAsync();
+                            JsonFromFile = await reader.ReadToEndAsync();
                         }
                         string itemname = string.Join(" ", input);
                         warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
@@ -186,7 +270,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                         JsonFromFile = JsonConvert.SerializeObject(character);
                         File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
 
-                        await ctx.Channel.SendMessageAsync("dodałem: `"+amount+" "+itemname+"` do ekwipunku: `"+line);
+                        await ctx.Channel.SendMessageAsync("dodałem: `" + amount + " " + itemname + "` do ekwipunku: `" + line);
                     }
                     else
                     {
@@ -195,7 +279,413 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 }
             }
         }
+       
+        [Command("Removeitem")]
+        [Description("zabieramy przedmiot")]
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        public async Task RemoveItem(CommandContext ctx, [Description("Gracz, któremu dajemy przedmioty")]DiscordMember user, [Description("ilosc przedmiotow")] int amount, [Description("nazwa przedmiotu")] params string[] input)
+        {
+            if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
+            {
+                var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
+                Thread.Sleep(30000);
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Channel.DeleteMessageAsync(cosiek);
+            }
+            else
+            {
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        string line = string.Empty;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        await ctx.Channel.SendMessageAsync(line);
+                        string JsonFromFile = string.Empty;
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        string itemname = string.Join(" ", input);
+                        warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                        //character.przedmioty.Add(new KeyValuePair<string, int>(itemname, amount));
+                        var playeritem = new KeyValuePair<string, int>(); //wyciagniecie itemka z listy
+                        foreach (var iten in character.przedmioty)
+                        {
+                            if (iten.Key == itemname)
+                            {
+                                playeritem = iten;
+                                break;
+                                ;
+                            }
+                        }
+                        int itemcount = playeritem.Value - amount; //zmniejszenie wartosci
+                        if (itemcount < 0)
+                        {
+                            character.przedmioty.Remove(playeritem);
+                        }
+                        else
+                        {
+                            var Replaceitem = new KeyValuePair<string, int>(playeritem.Key, itemcount);
+                            character.przedmioty.Add(Replaceitem);
+                        }
 
+                        JsonFromFile = JsonConvert.SerializeObject(character);
+                        File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
 
+                        await ctx.Channel.SendMessageAsync("dodałem: `" + amount + " " + itemname + "` do ekwipunku: `" + line);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+            }
+        }
+        
+        [Command("addAbility")]
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [Description("Daj umiejetnosc graczowi")]
+        public async Task AddAbi(CommandContext ctx, [Description("oznacz gracza")] DiscordMember user, [Description("nazwa umiejetnosci")]params string[] input)
+        {
+            if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
+            {
+                var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
+                Thread.Sleep(30000);
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Channel.DeleteMessageAsync(cosiek);
+            }
+            else
+            {
+
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        string line = string.Empty;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        await ctx.Channel.SendMessageAsync(line);
+                        string JsonFromFile = string.Empty;
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        string itemname = string.Join(" ", input);
+                        warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                        character.umiejetnosci.Add(itemname);
+                        JsonFromFile = JsonConvert.SerializeObject(character);
+                        File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
+
+                        await ctx.Channel.SendMessageAsync("dodałem: `" + line + "` umiejetnosc: `" + itemname + "`");
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+            }
+        }
+        
+        [Command("removeability")]
+        [Description("zabierz umiejetnosc graczowi")]
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        public async Task RemoveAbi(CommandContext ctx, [Description("oznacz gracza")] DiscordMember user, [Description("nazwa umiejetnosci")] params string[] input)
+        {
+            if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
+            {
+                var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
+                Thread.Sleep(30000);
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Channel.DeleteMessageAsync(cosiek);
+            }
+            else
+            {
+
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        string line = string.Empty;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        await ctx.Channel.SendMessageAsync(line);
+                        string JsonFromFile = string.Empty;
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        string itemname = string.Join(" ", input);
+                        warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                        character.umiejetnosci.Remove(itemname);
+                        JsonFromFile = JsonConvert.SerializeObject(character);
+                        File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
+
+                        await ctx.Channel.SendMessageAsync("usunałem: `" + line + "` umiejetnosc: `" + itemname + "`");
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+            }
+        }
+       
+        [Command("historyOf")]
+        [Description("pokaż historie postaci gracza")]
+        public async Task ReadFluff(CommandContext ctx, [Description("oznacz gracza")] DiscordMember user)
+        {
+            if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
+            {
+                var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
+                Thread.Sleep(30000);
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Channel.DeleteMessageAsync(cosiek);
+            }
+            else
+            {
+
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        string line = string.Empty;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        await ctx.Channel.SendMessageAsync(line);
+                        string JsonFromFile = string.Empty;
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                        var history = new DiscordEmbedBuilder
+                        {
+                            Title = "Historia: " + character.CharName,
+                            Description = character.fluff
+                        };
+                        await ctx.Channel.SendMessageAsync(embed: history);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+            }
+        }
+        
+        [Command("Insanity")]
+        [Description("Zadaj graczowi obłęd")]
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        public async Task DmgObled(CommandContext ctx, [Description("oznacz grada")] DiscordMember user, [Description("ilosc")] int amount)
+        {
+            var yes = DiscordEmoji.FromName(ctx.Client, ":+1:");
+            var no = DiscordEmoji.FromName(ctx.Client, ":-1:");
+
+            string line = string.Empty;
+            string JsonFromFile = string.Empty;
+            warhammer character = new warhammer();
+            bool znaleziono = false;
+            if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
+            {
+                var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
+                Thread.Sleep(30000);
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Channel.DeleteMessageAsync(cosiek);
+            }
+            else
+            {
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        znaleziono = true;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+
+                if (znaleziono == true)
+                {
+                    if (character.obled + amount >= 6)
+                    {
+                        await ctx.Channel.SendMessageAsync("Twoja postać dostała choroby psychicznej, wpisz jej nazwe");
+                        var choroba = await ctx.Channel.GetNextMessageAsync();
+                        if (character.choroby.Count == 0) //kys
+                        {
+                            var kysembed = new DiscordEmbedBuilder
+                            {
+                                Title = line + " chce się zabic",
+                                Description = "pozwolić?",
+                                Color = DiscordColor.Red
+                            };
+                            var kysMsg = await ctx.Channel.SendMessageAsync(embed: kysembed);
+                            await kysMsg.CreateReactionAsync(yes);
+                            await kysMsg.CreateReactionAsync(no);
+                            var interactivity = ctx.Client.GetInteractivity();
+                            Thread.Sleep(300);
+                            var sexResult = await interactivity.WaitForReactionAsync(x => x.Message == kysMsg
+                            &&
+                            (x.Emoji == yes || x.Emoji == no)).ConfigureAwait(false);
+                            if (sexResult.Result.Emoji == yes)
+                            {
+                                Random r = new Random();
+                                if (r.Next(1, 10) <= 2)
+                                {
+                                    await ctx.Channel.SendMessageAsync("Twoja postać jest bohatyrem");
+                                    File.Delete(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json");
+                                    return;
+                                }
+                                else
+                                {
+                                    await ctx.Channel.SendMessageAsync("twoja postać żyje");
+                                }
+                            }
+                            else if (sexResult.Result.Emoji == no)
+                            {
+                                await ctx.Channel.SendMessageAsync("twoja postać żyje");
+                            }
+                        }
+                        character.choroby.Add(choroba.Result.Content);
+                        character.obled =0;
+                    }
+                    else
+                    {
+                        character.obled += amount;
+                    }
+                    JsonFromFile = JsonConvert.SerializeObject(character);
+                    File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
+                }
+            }
+        }
+        
+        [Command("choroby")]
+        [Description("Wypisz choroby uzytkownika")]
+        public async Task ListaChorob(CommandContext ctx, [Description("oznacz grada")] DiscordMember user)
+        {
+            if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
+            {
+                var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
+                Thread.Sleep(30000);
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Channel.DeleteMessageAsync(cosiek);
+            }
+            else
+            {
+
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        string line = string.Empty;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        string JsonFromFile = string.Empty;
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                        string[] choroby = character.choroby.ToArray();
+                        string wiadomosc = string.Join(Environment.NewLine, choroby);
+                        var history = new DiscordEmbedBuilder
+                        {
+                            Title = "Choroby: " + character.CharName,
+                            Description = wiadomosc
+                        };
+                        await ctx.Channel.SendMessageAsync(embed: history);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+            }
+        }
     }
+
 }
+

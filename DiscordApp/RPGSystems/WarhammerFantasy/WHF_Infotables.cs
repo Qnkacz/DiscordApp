@@ -33,6 +33,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         public string plec_string;
         public List<string> umiejetnosci = new List<string>();
         public List<string> zdolnosci = new List<string>();
+        public List<string> choroby = new List<string>();
         public string Race;
         public string Profesja;
         public int Waga;
@@ -55,6 +56,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         public List<string> ProfesjeElf = new List<string>();
         public List<string> ProfesjeDwarf = new List<string>();
         public List<string> ProfesjeHalfling = new List<string>();
+
         private object user;
 
         public enum race { human, elf, krasnolud, nizlioek };
@@ -228,7 +230,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             zdolnosci.Add(losowa_umiejetnosc[randomNumber.Next(1, losowa_umiejetnosc.Length)]);
             Profesja = profesje[randomNumber.Next(0, profesje.Length)];
             warhammer postac = new warhammer(name, Race, plec_string, walka_wrecz, strzelectwo, krzepa, odpowrnosc, zrecznosc, inteligencjal, sila_woli, Oglada, ataki, zywotnosc, sila, wytrzymalosc, szybkosc,
-                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items);
+                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items,new List<string>());
             return postac;
         }
         public warhammer CreateElf(string name, bool _sex, string eyes, string hair)
@@ -280,7 +282,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             umiejetnosci.Add("wiedza(elfy)"); umiejetnosci.Add("znajomosc jezyka(eltharin"); umiejetnosci.Add("znajomosc jezyka(staroswiatowy)");
             zdolnosci.Add("bystry wzrok"); zdolnosci.Add("widzenie w ciemnosci");
             warhammer postac = new warhammer(name, Race, plec_string, walka_wrecz, strzelectwo, krzepa, odpowrnosc, zrecznosc, inteligencjal, sila_woli, Oglada, ataki, zywotnosc, sila, wytrzymalosc, szybkosc,
-                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci,items);
+                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci,items, new List<string>());
             return postac;
         }
 
@@ -337,7 +339,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             umiejetnosci.Add("wiedza(krasnoludy)"); umiejetnosci.Add("znajomosc jezyka(khazalid)"); umiejetnosci.Add("znajomosc jezyka(staroswiatowy)");
             zdolnosci.Add("krasnoludzki fach"); zdolnosci.Add("krzepki"); zdolnosci.Add("odpornosc na magie"); zdolnosci.Add("odwaga"); zdolnosci.Add("widzenie w ciemnosci"); zdolnosci.Add("zapiekła nienawiść");
             warhammer postac = new warhammer(name, Race, plec_string, walka_wrecz, strzelectwo, krzepa, odpowrnosc, zrecznosc, inteligencjal, sila_woli, Oglada, ataki, zywotnosc, sila, wytrzymalosc, szybkosc,
-                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci,items);
+                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci,items, new List<string>());
             return postac;
         }
 
@@ -390,7 +392,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             umiejetnosci.Add("nauka(genealogia/heraldyka"); umiejetnosci.Add("wiedza(niziołki"); umiejetnosci.Add("znajomosc jezyka(niziolki"); umiejetnosci.Add("znajomosc jezyka staroswiatowy)");
             zdolnosci.Add(losowa_umiejetnosc[randomNumber.Next(1, losowa_umiejetnosc.Length)]);
             warhammer postac = new warhammer(name, Race, plec_string, walka_wrecz, strzelectwo, krzepa, odpowrnosc, zrecznosc, inteligencjal, sila_woli, Oglada, ataki, zywotnosc, sila, wytrzymalosc, szybkosc,
-                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci,items);
+                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci,items, new List<string>());
             return postac;
         }
 

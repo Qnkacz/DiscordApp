@@ -45,7 +45,7 @@ namespace DiscordApp
             });
             var commandsConfig = new CommandsNextConfiguration
             {
-                StringPrefixes = new string[] { configJson.Prefix },
+                StringPrefixes = new string[] { configJson.Prefix, configJson.Prefix_wh},
                 EnableDms = true,
                 EnableMentionPrefix = true,
                 DmHelp = true,

@@ -746,6 +746,7 @@ namespace DiscordApp.Commands
             PlayerCharacter.ataki = 1;
             PlayerCharacter.szybkosc = template.PoczatkowaSzybkosz(PlayerCharacter.Rasa.ToLower());
             PlayerCharacter.przedmioty = new List<KeyValuePair<string, int>>();
+            PlayerCharacter.choroby = new List<string>();
             
             template.AddStartUmiejetnosci(PlayerCharacter);
             var ostatnia_wiadomosc = new DiscordEmbedBuilder
