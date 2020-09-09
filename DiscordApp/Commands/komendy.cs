@@ -14,18 +14,19 @@ using System.IO;
 using System.Threading;
 using System.Linq;
 using System.Collections.Immutable;
+using System.Security.Cryptography;
 
 namespace DiscordApp.Commands
 {
     class komendy : BaseCommandModule
     {
-        
+
         public async Task Ping(CommandContext ctx)
         {
             var chuj = ctx.Member.Mention;
             await ctx.Channel.SendMessageAsync(chuj + " nie budź mnie").ConfigureAwait(false);
         }
-        
+
         public async Task RespondMessage(CommandContext ctx)
         {
             var interactivity = ctx.Client.GetInteractivity();
@@ -35,7 +36,7 @@ namespace DiscordApp.Commands
             await ctx.Channel.SendMessageAsync(message.Result.Content);
         }
 
-        
+
         public async Task RespondReaction(CommandContext ctx)
         {
             var interactivity = ctx.Client.GetInteractivity();
@@ -44,7 +45,7 @@ namespace DiscordApp.Commands
 
             await ctx.Channel.SendMessageAsync(message.Result.Emoji);
         }
-       
+
         public async Task Dialogue(CommandContext ctx)
         {
             var interactivity = ctx.Client.GetInteractivity();
@@ -75,92 +76,114 @@ namespace DiscordApp.Commands
         }
 
         [Command("roll")]
-        [Description("rzuca kostką o danej wielkosci")]
-        public async Task Roll(CommandContext ctx, [Description("Wielkość kosci")] int value)
+        [Description("rolls a die of certain size")]
+        public async Task Roll(CommandContext ctx, [Description("Die size")] int value)
         {
             Random r = new Random();
             int val = r.Next(0, value);
             var chuj = ctx.Member.Mention;
             await ctx.Channel.SendMessageAsync(chuj + " " + val.ToString());
         }
-        
+
         [Command("rollMod")]
-        [Description("rzuca kostką o danej wielkosci i modyfikowatorem")]
-        public async Task Roll(CommandContext ctx, [Description("Wielkość kosci")] int value, [Description("modyfikator")] int mod)
+        [Description("roll a die of a certain size and gives a modificator")]
+        public async Task Roll(CommandContext ctx, [Description("Die size")] int value, [Description("modyfikator")] int mod)
         {
             Random r = new Random();
             int val = r.Next(0, value) + mod;
             var chuj = ctx.Member.Mention;
             await ctx.Channel.SendMessageAsync(chuj + " " + val.ToString());
         }
-        
+
         [Command("open")]
-        [RequireRoles(RoleCheckMode.Any,"GM")]
-        [Description("Otwiera pokój gier dla danego systemu rpg na podstawie podanej roli")]
-        public async Task CreateChannel(CommandContext ctx, [Description("Dla jakiego systemu jest rpg")] DiscordRole role, [Description("nazwa kanału")] params string[] names)
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [Description("GM ONLY! Creates a chatroom for an rpg system")]
+        public async Task CreateChannel(CommandContext ctx, [Description("channel name")] params string[] names)
         {
             string name = string.Join(" ", names);
             var blep = ctx.Guild.Channels;
             bool hasRpgCategory = false;
+            var prefix = ctx.Prefix;
+            string topic = string.Empty;
+            switch (prefix)
+            {
+                case "wh":
+                    topic = "warhammer";
+                    break;
+                case "DnD":
+                    topic = "DnD";
+                    break;
+                case "CoC":
+                    topic = "Call of Cthulhu";
+                    break;
+            }
             foreach (var item in blep)
             {
                 if (item.Value.Name.Contains("RPG"))
                 {
                     hasRpgCategory = true;
-                    var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, item.Value, role.Name.Trim().ToLower());
+                    var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, item.Value, topic);
                     await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
-                    await createdChannel.SendMessageAsync("Tutaj możecie grac w " + role.Name.ToString() + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy " + role.Mention + " na granko");
-                  
+                    await createdChannel.SendMessageAsync("Tutaj możecie grac w " + topic + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy na granko");
+
                     break;
                 }
             }
             if (hasRpgCategory == false)
             {
                 var category = await ctx.Guild.CreateChannelCategoryAsync("RPG");
-                var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, category, role.Name.Trim().ToLower());
+                var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, category, topic);
                 await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
-                await createdChannel.SendMessageAsync("Tutaj możecie grac w " + role.Name.ToString() + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy " + role.Mention + " na granko");
+                await createdChannel.SendMessageAsync("Tutaj możecie grac w " + topic + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy na granko");
             }
+
         }
-        
+
         [Command("stop")]
         [RequireRoles(RoleCheckMode.Any, "GM")]
-        [Description("Zamyka pokój gier")]
+        [Description("GM ONLY! Deletes an rpg text channel")]
         public async Task DeleteChannel(CommandContext ctx)
         {
-            if (ctx.Channel.Parent.Children.Count() == 0)
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
             {
-                await ctx.Channel.Parent.DeleteAsync();
+                if (ctx.Channel.Parent.Children.Count() == 0)
+                {
+                    await ctx.Channel.Parent.DeleteAsync();
+                }
+                await ctx.Channel.DeleteAsync();
             }
-            await ctx.Channel.DeleteAsync();
         }
-        
+
         [Command("StopLog")]
         [RequireRoles(RoleCheckMode.Any, "GM")]
-        [Description("Zamyka pokój gier i wysyła logi na priva")]
+        [Description("GM ONLY! Deletes an rpg text channel and PMs a log file")]
         public async Task DeleteChannelLog(CommandContext ctx)
         {
-            var logs = await ctx.Channel.GetMessagesAsync(999999);
-            string txt = string.Empty;
-            using (StreamWriter sw = File.CreateText(ctx.Channel.Name + ".txt"))
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
             {
-                foreach (var item in logs)
+                var logs = await ctx.Channel.GetMessagesAsync(999999);
+                string txt = string.Empty;
+                using (StreamWriter sw = File.CreateText(ctx.Channel.Name + ".txt"))
                 {
-                    await sw.WriteLineAsync(item.Author.Username + " >> " + item.Content);
+                    foreach (var item in logs)
+                    {
+                        await sw.WriteLineAsync(item.Author.Username + " >> " + item.Content);
+                    }
                 }
+                var privateMsg = await ctx.Member.CreateDmChannelAsync();
+                await privateMsg.SendFileAsync(ctx.Channel.Name + ".txt");
+                File.Delete(ctx.Channel.Name + ".txt");
+                if (ctx.Channel.Parent.Children.Count() == 0)
+                {
+                    await ctx.Channel.Parent.DeleteAsync();
+                }
+                await ctx.Channel.DeleteAsync();
             }
-            var privateMsg = await ctx.Member.CreateDmChannelAsync();
-            await privateMsg.SendFileAsync(ctx.Channel.Name + ".txt");
-            File.Delete(ctx.Channel.Name + ".txt");
-            if (ctx.Channel.Parent.Children.Count() == 0)
-            {
-                await ctx.Channel.Parent.DeleteAsync();
-            }
-            await ctx.Channel.DeleteAsync();
+
         }
-        
+
         [Command("log")]
-        [Description("Wysyła logi")]
+        [Description("PMs log file for a channel ")]
         public async Task LogChannel(CommandContext ctx)
         {
             var logs = await ctx.Channel.GetMessagesAsync(999999);
@@ -177,13 +200,30 @@ namespace DiscordApp.Commands
             File.Delete(ctx.Channel.Name + ".txt");
             await ctx.Message.DeleteAsync();
         }
-        
+
         [Command("Kick")]
-        [Description("kickuje gracza z kanału")]
+        [Description("GM ONLY! Kicks player from an rpg text channel")]
         [RequireRoles(RoleCheckMode.Any, "GM")]
-        public async Task Kick(CommandContext ctx, [Description("kickowany użytkownik")] DiscordMember user)
+        public async Task Kick(CommandContext ctx, [Description("@mention the player")] DiscordMember user)
         {
-            await ctx.Channel.AddOverwriteAsync(user, Permissions.None, Permissions.All);
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+                await ctx.Channel.AddOverwriteAsync(user, Permissions.None, Permissions.All);
+            }
+
+        }
+        [Command("README")]
+        [Description("A better help PM")]
+        public async Task help(CommandContext ctx)
+        {
+            var userchannel = await ctx.Member.CreateDmChannelAsync();
+            string desc = File.ReadAllText("README.TXT");
+            var emb = new DiscordEmbedBuilder
+            {
+                Title = "H E L P",
+                Description = desc
+            };
+            await userchannel.SendMessageAsync(embed: emb);
         }
     }
 }

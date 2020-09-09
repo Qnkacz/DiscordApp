@@ -39,7 +39,7 @@ namespace DiscordApp.RPGSystems
 
         public warhammer(string _name,string _race,string plec,int _ww,int _strzelectwo, int _krzepa,int _odpowrnosc,int _zrecznosc,int _inteligencjal,int _sila_woli,
                          int _Oglada,int _ataki,int _zywotnosc,int _sila, int _wytrzymalosc, int _szybkosc, int _magia, int _obled,int _przeznaczenie,
-                         string _profesja, int _age, int _wysokosc, int _waga, string _oczy, string _wlosy, List<string> _umiejetnosci, List<string> _zdolnosci, List<KeyValuePair<string, int>> _items,List<string>_choroby )
+                         string _profesja, int _age, int _wysokosc, int _waga, string _oczy, string _wlosy, List<string> _umiejetnosci, List<string> _zdolnosci, List<KeyValuePair<string, int>> _items,List<string>_choroby,bool _plec )
         {
             CharName = _name;
             Rasa = _race;
