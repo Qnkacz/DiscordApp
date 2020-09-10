@@ -313,15 +313,33 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                                 }
                                 string itemname = string.Join(" ", input);
                                 warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
-                                character.przedmioty.Add(new KeyValuePair<string, int>(itemname, amount));
+                                var noweprzedmioty = character.przedmioty;
+                                KeyValuePair<string, int> itemek = new KeyValuePair<string, int>("chuj",0);
+                                for (int i = 0; i < noweprzedmioty.Count; i++)
+                                {
+                                    if(noweprzedmioty[i].Key==itemname)//znaleziono przedmiiot
+                                    {
+                                        itemek = new KeyValuePair<string, int>(noweprzedmioty[i].Key, noweprzedmioty[i].Value + 1);
+                                        noweprzedmioty.RemoveAt(i);
+                                    }
+                                }
+                                if(itemek.Key=="chuj")
+                                {
+                                    character.przedmioty.Add(new KeyValuePair<string, int>(itemname, amount));
+                                }
+                                else
+                                {
+                                    character.przedmioty.Add(itemek);
+                                }
+                                
                                 JsonFromFile = JsonConvert.SerializeObject(character);
                                 File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
 
-                                await ctx.Channel.SendMessageAsync("dodałem: `" + amount + " " + itemname + "` do ekwipunku: `" + line);
+                                await ctx.Channel.SendMessageAsync("Added: `" + amount + " " + itemname + "` To eq of: `" + line+"`");
                             }
                             else
                             {
-                                await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                                await ctx.Channel.SendMessageAsync("Coudln't find the playr in this session");
                             }
                         }
                     }
@@ -330,7 +348,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
                     break;
             }
-
         }
 
         [Command("Removeitem")]
@@ -369,46 +386,37 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                                 }
                                 string itemname = string.Join(" ", input);
                                 warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
-                                //character.przedmioty.Add(new KeyValuePair<string, int>(itemname, amount));
-                                var playeritem = new KeyValuePair<string, int>(); //wyciagniecie itemka z listy
-                                foreach (var iten in character.przedmioty)
+                                var noweprzedmioty = character.przedmioty;
+                                KeyValuePair<string, int> itemek = new KeyValuePair<string, int>("chuj",0);
+                                for (int i = 0; i < noweprzedmioty.Count; i++)
                                 {
-                                    if (iten.Key == itemname)
+                                    if(noweprzedmioty[i].Key==itemname)//znaleziono przedmiiot
                                     {
-                                        playeritem = iten;
-                                        break;
-                                        ;
+                                        itemek = new KeyValuePair<string, int>(noweprzedmioty[i].Key, noweprzedmioty[i].Value - 1);
+                                        noweprzedmioty.RemoveAt(i);
                                     }
                                 }
-                                int itemcount = playeritem.Value - amount; //zmniejszenie wartosci
-                                if (itemcount < 0)
+                                if(itemek.Value>0)
                                 {
-                                    character.przedmioty.Remove(playeritem);
+                                    noweprzedmioty.Add(itemek); 
                                 }
-                                else
-                                {
-                                    var Replaceitem = new KeyValuePair<string, int>(playeritem.Key, itemcount);
-                                    character.przedmioty.Add(Replaceitem);
-                                }
-
+                                character.przedmioty = noweprzedmioty;
                                 JsonFromFile = JsonConvert.SerializeObject(character);
                                 File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
 
-                                await ctx.Channel.SendMessageAsync("usunąłem: `" + amount + " " + itemname + "` z ekwipunku: `" + line);
+                                await ctx.Channel.SendMessageAsync("Removed: `" + amount + " " + itemname + "` From inventory of: `" + line+"`");
                             }
                             else
                             {
-                                await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                                await ctx.Channel.SendMessageAsync("Coudn't find player in session");
                             }
                         }
-
                     }
                     break;
                 case ">>":
                     await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
                     break;
             }
-
         }
 
         [Command("addAbility")]
@@ -675,7 +683,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                                 }
                                 character.choroby.Add(choroba.Result.Content);
                                 character.obled = 0;
-                                
+
                             }
                             else
                             {
@@ -753,6 +761,64 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 }
 
             }
+        }
+        [Command("showEQ")]
+        [Description("gives a list of items in inventory")]
+        public async Task Listaitemkw(CommandContext ctx, [Description("mention the player")] DiscordMember user)
+        {
+            switch (ctx.Prefix)
+            {
+                case "wh":
+                    if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+                    {
+
+                        var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                        List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                        List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                        foreach (var item in playerChars) //zapisuje embedy do listy
+                        {
+                            embed = item.Embeds.ToList();
+                            embeds.Add(embed[0]);
+                            embed.Clear();
+                        }
+                        foreach (var item in embeds) //przechodzi prze liste embedów
+                        {
+                            if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                            {
+                                string line = string.Empty;
+                                using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                                {
+                                    line = await reader.ReadLineAsync();
+                                }
+                                line = line.Remove(0, 8);
+                                string JsonFromFile = string.Empty;
+                                using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                                {
+                                    JsonFromFile = await reader.ReadToEndAsync();
+                                }
+                                warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                                var choroby = character.przedmioty.ToList();
+                                string wiadomosc = string.Join(Environment.NewLine, choroby);
+                                var history = new DiscordEmbedBuilder
+                                {
+                                    Title = "Items: " + character.CharName,
+                                    Description = wiadomosc
+                                };
+                                await ctx.Channel.SendMessageAsync(embed: history);
+                            }
+                            else
+                            {
+                                await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                            }
+                        }
+
+                    }
+                    break;
+                case ">>":
+                    await ctx.Channel.SendMessageAsync("Use the proper rpg prefix");
+                    break;
+            }
+
         }
     }
 
