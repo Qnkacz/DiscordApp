@@ -57,7 +57,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         public List<string> ProfesjeDwarf = new List<string>();
         public List<string> ProfesjeHalfling = new List<string>();
 
-        private object user;
+
 
         public enum race { human, elf, krasnolud, nizlioek };
         public WHF_Infotables()

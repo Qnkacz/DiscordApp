@@ -15,6 +15,8 @@ using DiscordApp.RPGSystems;
 using System.IO;
 using Newtonsoft.Json;
 using DiscordApp.RPGSystems.WarhammerFantasy;
+using System.Runtime.InteropServices.ComTypes;
+using DiscordApp.Handlers;
 /// <TODO>
 /// 
 /// ZAPIS W JSON JEST NA SZTYWNO USTAWIONY MALE
@@ -87,6 +89,7 @@ namespace DiscordApp.Commands
         {
             var userChannel = await ctx.Member.CreateDmChannelAsync();
             var prefix = ctx.Prefix;
+            var emojis = new EmojiBase(ctx);
             switch (prefix)
             {
                 case "wh":
@@ -96,13 +99,7 @@ namespace DiscordApp.Commands
 
                     string input = string.Empty;
 
-                    var human = DiscordEmoji.FromName(ctx.Client, ":thinking:");
-                    var elf = DiscordEmoji.FromName(ctx.Client, ":leaves:");
-                    var krasnoludy = DiscordEmoji.FromName(ctx.Client, ":poop:");
-                    var niziolki = DiscordEmoji.FromName(ctx.Client, ":baby:");
 
-                    var kobieta = DiscordEmoji.FromName(ctx.Client, ":female_sign:");
-                    var mezczyzna = DiscordEmoji.FromName(ctx.Client, ":male_sign:");
                     bool plec = new bool(); // false - kobieta, true - mezczyzna
                     string plec_string = string.Empty;
                     List<string> umiejetnosci = new List<string>();
@@ -123,24 +120,24 @@ namespace DiscordApp.Commands
                     var SexEmbed = new DiscordEmbedBuilder
                     {
                         Title = "Jesteś kobietą, czy mężczyzną?",
-                        Description = kobieta + " - dla kobiety" + System.Environment.NewLine + mezczyzna + "- dla męzczyzny",
+                        Description = emojis.kobieta + " - dla kobiety" + System.Environment.NewLine + emojis.mezczyzna + "- dla męzczyzny",
                         Color = DiscordColor.Gold
                     };
                     var sexMsg = await userChannel.SendMessageAsync(embed: SexEmbed);
-                    await sexMsg.CreateReactionAsync(kobieta);
-                    await sexMsg.CreateReactionAsync(mezczyzna);
+                    await sexMsg.CreateReactionAsync(emojis.kobieta);
+                    await sexMsg.CreateReactionAsync(emojis.mezczyzna);
                     var interactivity = ctx.Client.GetInteractivity();
                     Thread.Sleep(300);
                     var sexResult = await interactivity.WaitForReactionAsync(x => x.Message == sexMsg
                     &&
-                    (x.Emoji == kobieta || x.Emoji == mezczyzna)).ConfigureAwait(false);
-                    if (sexResult.Result.Emoji == kobieta)
+                    (x.Emoji == emojis.kobieta || x.Emoji == emojis.mezczyzna)).ConfigureAwait(false);
+                    if (sexResult.Result.Emoji == emojis.kobieta)
                     {
                         plec = false;
                         plec_string = "kobieta";
                         await userChannel.SendMessageAsync(plec.ToString() + plec_string);
                     }
-                    else if (sexResult.Result.Emoji == mezczyzna)
+                    else if (sexResult.Result.Emoji == emojis.mezczyzna)
                     {
                         plec = true;
                         plec_string = "mężczyzna";
@@ -150,18 +147,18 @@ namespace DiscordApp.Commands
                     var RaseEmbed = new DiscordEmbedBuilder
                     {
                         Title = "What Race are you?",
-                        Description = human + " -for human race" + System.Environment.NewLine + elf + " -for elf race" + System.Environment.NewLine + krasnoludy + " -for dwarfs" + System.Environment.NewLine + niziolki + "- for halfling",
+                        Description = emojis.human + " -for human race" + System.Environment.NewLine + emojis.elf + " -for elf race" + System.Environment.NewLine + emojis.krasnoludy + " -for dwarfs" + System.Environment.NewLine + emojis.niziolki + "- for halfling",
                         Color = DiscordColor.Red
                     };
                     var raceMsg = await userChannel.SendMessageAsync(embed: RaseEmbed);
-                    await raceMsg.CreateReactionAsync(human);
-                    await raceMsg.CreateReactionAsync(elf);
-                    await raceMsg.CreateReactionAsync(krasnoludy);
-                    await raceMsg.CreateReactionAsync(niziolki);
+                    await raceMsg.CreateReactionAsync(emojis.human);
+                    await raceMsg.CreateReactionAsync(emojis.elf);
+                    await raceMsg.CreateReactionAsync(emojis.krasnoludy);
+                    await raceMsg.CreateReactionAsync(emojis.niziolki);
                     Thread.Sleep(300);
                     var raceResult = await interactivity.WaitForReactionAsync(x => x.Message == raceMsg
                     &&
-                    (x.Emoji == human || x.Emoji == elf || x.Emoji == krasnoludy || x.Emoji == niziolki)).ConfigureAwait(false);
+                    (x.Emoji == emojis.human || x.Emoji == emojis.elf || x.Emoji == emojis.krasnoludy || x.Emoji == emojis.niziolki)).ConfigureAwait(false);
                     Thread.Sleep(10);
                     ////////////////////////////////////////////////////////////////////
 
@@ -191,17 +188,17 @@ namespace DiscordApp.Commands
 
 
                     ////////////////////////////////////////////////////////////////////
-                    if (raceResult.Result.Emoji == human)
+                    if (raceResult.Result.Emoji == emojis.human)
                     {
                         PlayerCharacter = template.CreateHuman(Charactername, plec, kolor_oczu, kolor_wlosow);
                         Thread.Sleep(300);
                     }
-                    else if (raceResult.Result.Emoji == elf)
+                    else if (raceResult.Result.Emoji == emojis.elf)
                     {
                         PlayerCharacter = template.CreateElf(Charactername, plec, kolor_oczu, kolor_wlosow);
                         Thread.Sleep(300);
                     }
-                    else if (raceResult.Result.Emoji == krasnoludy)
+                    else if (raceResult.Result.Emoji == emojis.krasnoludy)
                     {
                         PlayerCharacter = template.CreateDwarf(Charactername, plec, kolor_oczu, kolor_wlosow);
                         Thread.Sleep(300);
@@ -290,6 +287,7 @@ namespace DiscordApp.Commands
         {
             var prefix = ctx.Prefix;
             var userChannel = await ctx.Member.CreateDmChannelAsync();
+            var emojis = new EmojiBase(ctx);
             switch (prefix)
             {
                 case "wh":
@@ -300,35 +298,11 @@ namespace DiscordApp.Commands
                     var inputStep = new StringStep("bottom text", "Witaj w kreatorze postaci do Warhammera" + System.Environment.NewLine + "Jak sie nazywasz?", null);
 
                     string input = string.Empty;
-
-                    var human = DiscordEmoji.FromName(ctx.Client, ":thinking:");
-                    var elf = DiscordEmoji.FromName(ctx.Client, ":leaves:");
-                    var krasnoludy = DiscordEmoji.FromName(ctx.Client, ":poop:");
-                    var niziolki = DiscordEmoji.FromName(ctx.Client, ":baby:");
-
-                    var kobieta = DiscordEmoji.FromName(ctx.Client, ":female_sign:");
-                    var mezczyzna = DiscordEmoji.FromName(ctx.Client, ":male_sign:");
-
-                    var one = DiscordEmoji.FromName(ctx.Client, ":one:");
-                    var two = DiscordEmoji.FromName(ctx.Client, ":two:");
-                    var three = DiscordEmoji.FromName(ctx.Client, ":three:");
-                    var four = DiscordEmoji.FromName(ctx.Client, ":four:");
-                    var five = DiscordEmoji.FromName(ctx.Client, ":five:");
-                    var six = DiscordEmoji.FromName(ctx.Client, ":six:");
-                    var seven = DiscordEmoji.FromName(ctx.Client, ":seven:");
-                    var eight = DiscordEmoji.FromName(ctx.Client, ":eight:");
-                    var nine = DiscordEmoji.FromName(ctx.Client, ":nine:");
-                    var ten = DiscordEmoji.FromName(ctx.Client, ":zero:");
-
-
-
                     bool plec = new bool(); // false - kobieta, true - mezczyzna
                     string plec_string = string.Empty;
                     List<string> umiejetnosci = new List<string>();
                     List<string> zdolnosci = new List<string>();
                     List<int> PulaLiczb = new List<int>();
-
-
                     string Charactername = string.Empty;
 
                     inputStep.OnValidResult += (result) => input = result;
@@ -344,24 +318,24 @@ namespace DiscordApp.Commands
                     var SexEmbed = new DiscordEmbedBuilder
                     {
                         Title = "Jesteś kobietą, czy mężczyzną?",
-                        Description = kobieta + " - dla kobiety" + System.Environment.NewLine + mezczyzna + "- dla męzczyzny",
+                        Description = emojis.kobieta + " - dla kobiety" + System.Environment.NewLine + emojis.mezczyzna + "- dla męzczyzny",
                         Color = DiscordColor.Gold
                     };
                     var sexMsg = await userChannel.SendMessageAsync(embed: SexEmbed);
-                    await sexMsg.CreateReactionAsync(kobieta);
-                    await sexMsg.CreateReactionAsync(mezczyzna);
+                    await sexMsg.CreateReactionAsync(emojis.kobieta);
+                    await sexMsg.CreateReactionAsync(emojis.mezczyzna);
                     var interactivity = ctx.Client.GetInteractivity();
                     Thread.Sleep(300);
                     var sexResult = await interactivity.WaitForReactionAsync(x => x.Message == sexMsg
                     &&
-                    (x.Emoji == kobieta || x.Emoji == mezczyzna)).ConfigureAwait(false);
-                    if (sexResult.Result.Emoji == kobieta)
+                    (x.Emoji == emojis.kobieta || x.Emoji == emojis.mezczyzna)).ConfigureAwait(false);
+                    if (sexResult.Result.Emoji == emojis.kobieta)
                     {
                         PlayerCharacter.plec = plec = false;
                         PlayerCharacter.plec_string = plec_string = "kobieta";
 
                     }
-                    else if (sexResult.Result.Emoji == mezczyzna)
+                    else if (sexResult.Result.Emoji == emojis.mezczyzna)
                     {
                         PlayerCharacter.plec = plec = true;
                         PlayerCharacter.plec_string = plec_string = "mężczyzna";
@@ -370,19 +344,19 @@ namespace DiscordApp.Commands
                     var RaseEmbed = new DiscordEmbedBuilder
                     {
                         Title = "What Race are you?",
-                        Description = human + " -for human race" + System.Environment.NewLine + elf + " -for elf race" + System.Environment.NewLine + krasnoludy + " -for dwarfs" + System.Environment.NewLine + niziolki + "- for halfling",
+                        Description = emojis.human + " -for human race" + System.Environment.NewLine + emojis.elf + " -for elf race" + System.Environment.NewLine + emojis.krasnoludy + " -for dwarfs" + System.Environment.NewLine + emojis.niziolki + "- for halfling",
                         Color = DiscordColor.Red
 
                     };
                     var raceMsg = await userChannel.SendMessageAsync(embed: RaseEmbed);
-                    await raceMsg.CreateReactionAsync(human);
-                    await raceMsg.CreateReactionAsync(elf);
-                    await raceMsg.CreateReactionAsync(krasnoludy);
-                    await raceMsg.CreateReactionAsync(niziolki);
+                    await raceMsg.CreateReactionAsync(emojis.human);
+                    await raceMsg.CreateReactionAsync(emojis.elf);
+                    await raceMsg.CreateReactionAsync(emojis.krasnoludy);
+                    await raceMsg.CreateReactionAsync(emojis.niziolki);
                     Thread.Sleep(300);
                     var raceResult = await interactivity.WaitForReactionAsync(x => x.Message == raceMsg
                     &&
-                    (x.Emoji == human || x.Emoji == elf || x.Emoji == krasnoludy || x.Emoji == niziolki)).ConfigureAwait(false);
+                    (x.Emoji == emojis.human || x.Emoji == emojis.elf || x.Emoji == emojis.krasnoludy || x.Emoji == emojis.niziolki)).ConfigureAwait(false);
                     Thread.Sleep(300);
                     ////////////////////////////////////////////////////////////////////
 
@@ -435,22 +409,22 @@ namespace DiscordApp.Commands
                     PlayerCharacter.age = Int32.Parse(input);
                     ////////////////////////////////////////////////////////////////////
                     string profesje = string.Empty;
-                    if (raceResult.Result.Emoji == human)
+                    if (raceResult.Result.Emoji == emojis.human)
                     {
                         PlayerCharacter.Rasa = "Człowiek";
                         profesje = string.Join("` : `", template.ProfesjeHuman);
                     }
-                    else if (raceResult.Result.Emoji == elf)
+                    else if (raceResult.Result.Emoji == emojis.elf)
                     {
                         PlayerCharacter.Rasa = "Elf";
                         profesje = string.Join("` : `", template.ProfesjeElf);
                     }
-                    else if (raceResult.Result.Emoji == krasnoludy)
+                    else if (raceResult.Result.Emoji == emojis.krasnoludy)
                     {
                         PlayerCharacter.Rasa = "Krasnolud";
                         profesje = string.Join("` : `", template.ProfesjeDwarf);
                     }
-                    else if (raceResult.Result.Emoji == niziolki)
+                    else if (raceResult.Result.Emoji == emojis.niziolki)
                     {
                         PlayerCharacter.Rasa = "Niziołek";
                         profesje = string.Join("` : `", template.ProfesjeHalfling);
@@ -498,257 +472,87 @@ namespace DiscordApp.Commands
                     var PoolEmbed = new DiscordEmbedBuilder
                     {
                         Title = "Które rzuty wybierasz?",
-                        Description = one + " - dla 1 puli" + System.Environment.NewLine + two + "- dla 2 puli",
+                        Description = emojis.one + " - dla 1 puli" + System.Environment.NewLine + emojis.two + "- dla 2 puli",
                         Color = DiscordColor.Gold
                     };
                     var PoolChoice = await userChannel.SendMessageAsync(embed: PoolEmbed);
-                    await PoolChoice.CreateReactionAsync(one);
-                    await PoolChoice.CreateReactionAsync(two);
+                    await PoolChoice.CreateReactionAsync(emojis.one);
+                    await PoolChoice.CreateReactionAsync(emojis.two);
                     Thread.Sleep(300);
                     var PoolResult = await interactivity.WaitForReactionAsync(x => x.Message == PoolChoice
                     &&
-                    (x.Emoji == one || x.Emoji == two)).ConfigureAwait(false);
-                    if (PoolResult.Result.Emoji == one)
+                    (x.Emoji == emojis.one || x.Emoji == emojis.two)).ConfigureAwait(false);
+                    if (PoolResult.Result.Emoji == emojis.one)
                     {
                         PulaLiczb = rollPolOne;
                     }
-                    if (PoolResult.Result.Emoji == two)
+                    if (PoolResult.Result.Emoji == emojis.two)
                     {
                         PulaLiczb = rollPollTwo;
                     }
 
                     ///////// 7 cech
                     string WszystkieCechyString = string.Join("` : `", PulaLiczb);
-                    List<DiscordEmoji> LiczbaWyborow = new List<DiscordEmoji>
-            {
-                one,two,three,four,five,six,seven,eight,nine,ten
-            };
-
-                    var CechaEmbed = new DiscordEmbedBuilder
+                    string[] tytuly = new string[]
                     {
-                        Title = "Wybierz która z liczb będzie Twoją Walka wręcz",
-                        Description = WszystkieCechyString
+                       "Wybierz która z liczb będzie Twoją Walka wręcz","Wybierz która z liczb będzie Twoją Umiejętnością Strzelecką","Wybierz która z liczb będzie Twoją Krzepą",
+                       "Wybierz która z liczb będzie Twoją Odpornością","Wybierz która z liczb będzie Twoją Zręcznością?","Wybierz która z liczb będzie Twoją Siłą Woli?",
+
                     };
-                    var cechaMsg = await userChannel.SendMessageAsync(embed: CechaEmbed);
-                    for (int i = 0; i < PulaLiczb.Count; i++)
+                    int[] liczby = new int[7];
+                    for (int i = 0; i < PulaLiczb.Count; i++) //loop przez wszystkie cechy
                     {
-                        await cechaMsg.CreateReactionAsync(LiczbaWyborow[i]);
+                        var CechaEmbed = new DiscordEmbedBuilder
+                        {
+                            Title = tytuly[i],
+                            Description = WszystkieCechyString
+                        };
+                        var cechaMsg = await userChannel.SendMessageAsync(embed: CechaEmbed);
+                        for (int j = 0; i < PulaLiczb.Count; j++)
+                        {
+                            await cechaMsg.CreateReactionAsync(emojis.onetototen[j]);
+                        }
+                        Thread.Sleep(300);
+                        var WWResult = await interactivity.WaitForReactionAsync(x => x.Message == cechaMsg
+                        &&
+                        (x.Emoji == emojis.one || x.Emoji == emojis.two || x.Emoji == emojis.three || x.Emoji == emojis.four || x.Emoji == emojis.five || x.Emoji == emojis.six || x.Emoji == emojis.seven)).ConfigureAwait(false);
+                        if (WWResult.Result.Emoji == emojis.one)
+                        {
+                            liczby[i] = PulaLiczb[0];
+                            PulaLiczb.RemoveAt(0);
+                        }
+                        if (WWResult.Result.Emoji == emojis.two)
+                        {
+                            liczby[i] = PulaLiczb[1];
+                            PulaLiczb.RemoveAt(1);
+                        }
+                        if (WWResult.Result.Emoji == emojis.three)
+                        {
+                            liczby[i] = PulaLiczb[2];
+                            PulaLiczb.RemoveAt(2);
+                        }
+                        if (WWResult.Result.Emoji == emojis.four)
+                        {
+                            liczby[i] = PulaLiczb[3];
+                            PulaLiczb.RemoveAt(3);
+                        }
+                        if (WWResult.Result.Emoji == emojis.five)
+                        {
+                            liczby[i] = PulaLiczb[5];
+                            PulaLiczb.RemoveAt(5);
+                        }
+                        if (WWResult.Result.Emoji == emojis.six)
+                        {
+                            liczby[i] = PulaLiczb[5];
+                            PulaLiczb.RemoveAt(5);
+                        }
+                        if (WWResult.Result.Emoji == emojis.seven)
+                        {
+                            liczby[i] = PulaLiczb[6];
+                            PulaLiczb.RemoveAt(6);
+                        }
+                        await userChannel.DeleteMessageAsync(cechaMsg);
                     }
-                    Thread.Sleep(300);
-                    var WWResult = await interactivity.WaitForReactionAsync(x => x.Message == cechaMsg
-                    &&
-                    (x.Emoji == one || x.Emoji == two || x.Emoji == three || x.Emoji == four || x.Emoji == five || x.Emoji == six || x.Emoji == seven)).ConfigureAwait(false);
-                    if (WWResult.Result.Emoji == one)
-                    {
-                        PlayerCharacter.walka_wrecz = PulaLiczb[0];
-                        PulaLiczb.RemoveAt(0);
-                    }
-                    if (WWResult.Result.Emoji == two)
-                    {
-                        PlayerCharacter.walka_wrecz = PulaLiczb[1];
-                        PulaLiczb.RemoveAt(1);
-                    }
-                    if (WWResult.Result.Emoji == three)
-                    {
-                        PlayerCharacter.walka_wrecz = PulaLiczb[2];
-                        PulaLiczb.RemoveAt(2);
-                    }
-                    if (WWResult.Result.Emoji == four)
-                    {
-                        PlayerCharacter.walka_wrecz = PulaLiczb[3];
-                        PulaLiczb.RemoveAt(3);
-                    }
-                    if (WWResult.Result.Emoji == five)
-                    {
-                        PlayerCharacter.walka_wrecz = PulaLiczb[5];
-                        PulaLiczb.RemoveAt(5);
-                    }
-                    if (WWResult.Result.Emoji == six)
-                    {
-                        PlayerCharacter.walka_wrecz = PulaLiczb[5];
-                        PulaLiczb.RemoveAt(5);
-                    }
-                    if (WWResult.Result.Emoji == seven)
-
-                    {
-                        PlayerCharacter.walka_wrecz = PulaLiczb[6];
-                        PulaLiczb.RemoveAt(6);
-                    }
-                    await userChannel.DeleteMessageAsync(cechaMsg);
-                    //nowa wiadomosc
-                    WszystkieCechyString = string.Join("` : `", PulaLiczb);
-                    CechaEmbed.Title = "Wybierz która z liczb będzie Twoją Umiejętnością Strzelecką";
-                    CechaEmbed.Description = WszystkieCechyString;
-                    cechaMsg = await userChannel.SendMessageAsync(embed: CechaEmbed);
-                    for (int i = 0; i < PulaLiczb.Count; i++)
-                    {
-                        await cechaMsg.CreateReactionAsync(LiczbaWyborow[i]);
-                    }
-                    Thread.Sleep(300);
-                    var USResult = await interactivity.WaitForReactionAsync(x => x.Message == cechaMsg
-                    &&
-                    (x.Emoji == one || x.Emoji == two || x.Emoji == three || x.Emoji == four || x.Emoji == five || x.Emoji == six || x.Emoji == seven)).ConfigureAwait(false);
-                    if (USResult.Result.Emoji == one)
-                    {
-                        PlayerCharacter.strzelectwo = PulaLiczb[0];
-                        PulaLiczb.RemoveAt(0);
-                    }
-                    if (USResult.Result.Emoji == two)
-                    {
-                        PlayerCharacter.strzelectwo = PulaLiczb[1];
-                        PulaLiczb.RemoveAt(1);
-                    }
-                    if (USResult.Result.Emoji == three)
-                    {
-                        PlayerCharacter.strzelectwo = PulaLiczb[2];
-                        PulaLiczb.RemoveAt(2);
-                    }
-                    if (USResult.Result.Emoji == four)
-                    {
-                        PlayerCharacter.strzelectwo = PulaLiczb[3];
-                        PulaLiczb.RemoveAt(3);
-                    }
-                    if (USResult.Result.Emoji == five)
-                    {
-                        PlayerCharacter.strzelectwo = PulaLiczb[5];
-                        PulaLiczb.RemoveAt(5);
-                    }
-                    if (USResult.Result.Emoji == six)
-                    {
-                        PlayerCharacter.strzelectwo = PulaLiczb[5];
-                        PulaLiczb.RemoveAt(5);
-                    }
-                    await userChannel.DeleteMessageAsync(cechaMsg);
-                    //nowa wiadomosc
-                    WszystkieCechyString = string.Join("` : `", PulaLiczb);
-                    CechaEmbed.Title = "Wybierz która z liczb będzie Twoją Krzepą";
-                    CechaEmbed.Description = WszystkieCechyString;
-                    cechaMsg = await userChannel.SendMessageAsync(embed: CechaEmbed);
-                    for (int i = 0; i < PulaLiczb.Count; i++)
-                    {
-                        await cechaMsg.CreateReactionAsync(LiczbaWyborow[i]);
-                    }
-                    Thread.Sleep(300);
-                    var KrzepaResult = await interactivity.WaitForReactionAsync(x => x.Message == cechaMsg
-                    &&
-                    (x.Emoji == one || x.Emoji == two || x.Emoji == three || x.Emoji == four || x.Emoji == five || x.Emoji == six || x.Emoji == seven)).ConfigureAwait(false);
-                    if (KrzepaResult.Result.Emoji == one)
-                    {
-                        PlayerCharacter.krzepa = PulaLiczb[0];
-                        PulaLiczb.RemoveAt(0);
-                    }
-                    if (KrzepaResult.Result.Emoji == two)
-                    {
-                        PlayerCharacter.krzepa = PulaLiczb[1];
-                        PulaLiczb.RemoveAt(1);
-                    }
-                    if (KrzepaResult.Result.Emoji == three)
-                    {
-                        PlayerCharacter.krzepa = PulaLiczb[2];
-                        PulaLiczb.RemoveAt(2);
-                    }
-                    if (KrzepaResult.Result.Emoji == four)
-                    {
-                        PlayerCharacter.krzepa = PulaLiczb[3];
-                        PulaLiczb.RemoveAt(3);
-                    }
-                    if (KrzepaResult.Result.Emoji == five)
-                    {
-                        PlayerCharacter.krzepa = PulaLiczb[5];
-                        PulaLiczb.RemoveAt(5);
-                    }
-                    await userChannel.DeleteMessageAsync(cechaMsg);
-
-                    //nowa wiadomosc
-                    WszystkieCechyString = string.Join("` : `", PulaLiczb);
-                    CechaEmbed.Title = "Wybierz która z liczb będzie Twoją Odpornością";
-                    CechaEmbed.Description = WszystkieCechyString;
-                    cechaMsg = await userChannel.SendMessageAsync(embed: CechaEmbed);
-                    for (int i = 0; i < PulaLiczb.Count; i++)
-                    {
-                        await cechaMsg.CreateReactionAsync(LiczbaWyborow[i]);
-                    }
-                    Thread.Sleep(300);
-                    var OdpornoscResult = await interactivity.WaitForReactionAsync(x => x.Message == cechaMsg
-                    &&
-                    (x.Emoji == one || x.Emoji == two || x.Emoji == three || x.Emoji == four || x.Emoji == five || x.Emoji == six || x.Emoji == seven)).ConfigureAwait(false);
-                    if (OdpornoscResult.Result.Emoji == one)
-                    {
-                        PlayerCharacter.odpowrnosc = PulaLiczb[0];
-                        PulaLiczb.RemoveAt(0);
-                    }
-                    if (OdpornoscResult.Result.Emoji == two)
-                    {
-                        PlayerCharacter.odpowrnosc = PulaLiczb[1];
-                        PulaLiczb.RemoveAt(1);
-                    }
-                    if (OdpornoscResult.Result.Emoji == three)
-                    {
-                        PlayerCharacter.odpowrnosc = PulaLiczb[2];
-                        PulaLiczb.RemoveAt(2);
-                    }
-                    if (OdpornoscResult.Result.Emoji == four)
-                    {
-                        PlayerCharacter.odpowrnosc = PulaLiczb[3];
-                        PulaLiczb.RemoveAt(3);
-                    }
-                    await userChannel.DeleteMessageAsync(cechaMsg);
-
-                    //nowa wiadomosc
-                    WszystkieCechyString = string.Join("` : `", PulaLiczb);
-                    CechaEmbed.Title = "Wybierz która z liczb będzie Twoją Zręcznością?";
-                    CechaEmbed.Description = WszystkieCechyString;
-                    cechaMsg = await userChannel.SendMessageAsync(embed: CechaEmbed);
-                    for (int i = 0; i < PulaLiczb.Count; i++)
-                    {
-                        await cechaMsg.CreateReactionAsync(LiczbaWyborow[i]);
-                    }
-                    Thread.Sleep(300);
-                    var ZrecznoscResult = await interactivity.WaitForReactionAsync(x => x.Message == cechaMsg
-                    &&
-                    (x.Emoji == one || x.Emoji == two || x.Emoji == three || x.Emoji == four || x.Emoji == five || x.Emoji == six || x.Emoji == seven)).ConfigureAwait(false);
-                    if (ZrecznoscResult.Result.Emoji == one)
-                    {
-                        PlayerCharacter.zrecznosc = PulaLiczb[0];
-                        PulaLiczb.RemoveAt(0);
-                    }
-                    if (ZrecznoscResult.Result.Emoji == two)
-                    {
-                        PlayerCharacter.zrecznosc = PulaLiczb[1];
-                        PulaLiczb.RemoveAt(1);
-                    }
-                    if (ZrecznoscResult.Result.Emoji == three)
-                    {
-                        PlayerCharacter.zrecznosc = PulaLiczb[2];
-                        PulaLiczb.RemoveAt(2);
-                    }
-                    await userChannel.DeleteMessageAsync(cechaMsg);
-                    //nowa wiadomosc
-                    WszystkieCechyString = string.Join("` : `", PulaLiczb);
-                    CechaEmbed.Title = "Wybierz która z liczb będzie Twoją Siłą Woli?";
-                    CechaEmbed.Description = WszystkieCechyString;
-                    cechaMsg = await userChannel.SendMessageAsync(embed: CechaEmbed);
-                    for (int i = 0; i < PulaLiczb.Count; i++)
-                    {
-                        await cechaMsg.CreateReactionAsync(LiczbaWyborow[i]);
-                    }
-                    Thread.Sleep(300);
-                    var SWResult = await interactivity.WaitForReactionAsync(x => x.Message == cechaMsg
-                    &&
-                    (x.Emoji == one || x.Emoji == two || x.Emoji == three || x.Emoji == four || x.Emoji == five || x.Emoji == six || x.Emoji == seven)).ConfigureAwait(false);
-                    if (SWResult.Result.Emoji == one)
-                    {
-                        PlayerCharacter.sila_woli = PulaLiczb[0];
-                        PlayerCharacter.inteligencjal = PulaLiczb[1];
-                        PulaLiczb.RemoveAt(0);
-                    }
-                    if (SWResult.Result.Emoji == two)
-                    {
-                        PlayerCharacter.sila_woli = PulaLiczb[1];
-                        PlayerCharacter.inteligencjal = PulaLiczb[0];
-                        PulaLiczb.RemoveAt(1);
-                    }
-
 
                     ///dodanie bazowych rzeczh
                     template.AddDefaultValues(PlayerCharacter);
