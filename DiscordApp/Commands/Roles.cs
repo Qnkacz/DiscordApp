@@ -565,6 +565,13 @@ namespace DiscordApp.Commands
                     template.AddDefaultValues(PlayerCharacter);
                     PlayerCharacter.umiejetnosci = new List<string>();
                     PlayerCharacter.zdolnosci = new List<string>();
+                    PlayerCharacter.walka_wrecz += liczby[0];
+                    PlayerCharacter.strzelectwo += liczby[1];
+                    PlayerCharacter.krzepa += liczby[2];
+                    PlayerCharacter.odpowrnosc += liczby[3];
+                    PlayerCharacter.zrecznosc += liczby[4];
+                    PlayerCharacter.inteligencjal += liczby[5];
+                    PlayerCharacter.sila_woli += liczby[6];
                     PlayerCharacter.Oglada += liczby.Last();
                     PlayerCharacter.sila = (int)(PlayerCharacter.krzepa.ToString()[0]) - 48;
                     PlayerCharacter.wytrzymalosc = (int)(PlayerCharacter.odpowrnosc.ToString()[0]) - 48;
