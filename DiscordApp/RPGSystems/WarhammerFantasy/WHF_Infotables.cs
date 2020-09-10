@@ -2139,4 +2139,3 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         }
     }
 }
-
