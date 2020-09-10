@@ -32,8 +32,8 @@ namespace DiscordApp.Handlers
         public EmojiBase(CommandContext ctx)
         {
             human = DiscordEmoji.FromName(ctx.Client, ":thinking:");
-            elf = DiscordEmoji.FromName(ctx.Client, ":leaves:");
-            krasnoludy = DiscordEmoji.FromName(ctx.Client, ":poop:");
+            elf = DiscordEmoji.FromName(ctx.Client, ":elf:");
+            krasnoludy = DiscordEmoji.FromName(ctx.Client, ":tools:");
             niziolki = DiscordEmoji.FromName(ctx.Client, ":baby:");
 
             kobieta = DiscordEmoji.FromName(ctx.Client, ":female_sign:");
