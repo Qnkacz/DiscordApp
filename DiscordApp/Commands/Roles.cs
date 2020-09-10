@@ -298,7 +298,6 @@ namespace DiscordApp.Commands
                     var inputStep = new StringStep("bottom text", "Witaj w kreatorze postaci do Warhammera" + System.Environment.NewLine + "Jak sie nazywasz?", null);
 
                     string input = string.Empty;
-                    bool plec = new bool(); // false - kobieta, true - mezczyzna
                     string plec_string = string.Empty;
                     List<string> umiejetnosci = new List<string>();
                     List<string> zdolnosci = new List<string>();
@@ -317,8 +316,8 @@ namespace DiscordApp.Commands
                     PlayerCharacter.CharName = Charactername;
                     var SexEmbed = new DiscordEmbedBuilder
                     {
-                        Title = "Jesteś kobietą, czy mężczyzną?",
-                        Description = emojis.kobieta + " - dla kobiety" + System.Environment.NewLine + emojis.mezczyzna + "- dla męzczyzny",
+                        Title = "What `gender` are you?",
+                        Description = emojis.kobieta + " - For Female" + System.Environment.NewLine + emojis.mezczyzna + "- For Male",
                         Color = DiscordColor.Gold
                     };
                     var sexMsg = await userChannel.SendMessageAsync(embed: SexEmbed);
@@ -331,19 +330,19 @@ namespace DiscordApp.Commands
                     (x.Emoji == emojis.kobieta || x.Emoji == emojis.mezczyzna)).ConfigureAwait(false);
                     if (sexResult.Result.Emoji == emojis.kobieta)
                     {
-                        PlayerCharacter.plec = plec = false;
-                        PlayerCharacter.plec_string = plec_string = "kobieta";
+                        PlayerCharacter.plec = false;
+                        PlayerCharacter.plec_string = plec_string = "Female";
 
                     }
                     else if (sexResult.Result.Emoji == emojis.mezczyzna)
                     {
-                        PlayerCharacter.plec = plec = true;
-                        PlayerCharacter.plec_string = plec_string = "mężczyzna";
+                        PlayerCharacter.plec = true;
+                        PlayerCharacter.plec_string = plec_string = "Male";
                     }
 
                     var RaseEmbed = new DiscordEmbedBuilder
                     {
-                        Title = "What Race are you?",
+                        Title = "What `Race` are you?",
                         Description = emojis.human + " -for human race" + System.Environment.NewLine + emojis.elf + " -for elf race" + System.Environment.NewLine + emojis.krasnoludy + " -for dwarfs" + System.Environment.NewLine + emojis.niziolki + "- for halfling",
                         Color = DiscordColor.Red
 
@@ -362,7 +361,7 @@ namespace DiscordApp.Commands
 
 
                     ////////////////////////////////////////////////////////////////////
-                    inputStep = new StringStep("bottom text", "jaki kolor oczu?", null);
+                    inputStep = new StringStep("bottom text", "What is your `Eye Color`?", null);
                     inputStep.OnValidResult += (result) => input = result;
                     inputDialogueHandler = new DialogueHandler(
                        ctx.Client,
@@ -374,7 +373,7 @@ namespace DiscordApp.Commands
                     string kolor_oczu = input;
                     PlayerCharacter.eye_color = input;
 
-                    inputStep = new StringStep("bottom text", "jaki kolor wlosów?", null);
+                    inputStep = new StringStep("bottom text", "What is your `Hair Colour`", null);
                     inputStep.OnValidResult += (result) => input = result;
                     inputDialogueHandler = new DialogueHandler(
                        ctx.Client,
@@ -386,7 +385,7 @@ namespace DiscordApp.Commands
                     await inputDialogueHandler.ProcessDialogue();
                     string kolor_wlosow = input;
                     PlayerCharacter.hair_color = input;
-                    inputStep = new StringStep(",", "Opowiedz coś o sobie?", null);
+                    inputStep = new StringStep(",", "Whant to write something about yourself", null);
                     inputStep.OnValidResult += (result) => input = result;
                     inputDialogueHandler = new DialogueHandler(
                        ctx.Client,
@@ -397,7 +396,7 @@ namespace DiscordApp.Commands
                     await inputDialogueHandler.ProcessDialogue();
                     PlayerCharacter.fluff = input;
 
-                    inputStep = new StringStep(",", "Ile masz lat?", null);
+                    inputStep = new StringStep(",", "How `Old` are you?", null);
                     inputStep.OnValidResult += (result) => input = result;
                     inputDialogueHandler = new DialogueHandler(
                        ctx.Client,
@@ -429,12 +428,12 @@ namespace DiscordApp.Commands
                         PlayerCharacter.Rasa = "Niziołek";
                         profesje = string.Join("` : `", template.ProfesjeHalfling);
                     }
-                    await userChannel.SendMessageAsync("Wybierz jedną z ponizszych profesji:");
+                    await userChannel.SendMessageAsync("Choose `one` from below:");
                     await userChannel.SendMessageAsync(profesje);
                     string wybranaProfesja = string.Empty;
                     do
                     {
-                        inputStep = new StringStep("bottom text", "Wybór Dokonujesz wpisując dokładną nazwę Profesji", null);
+                        inputStep = new StringStep("bottom text", "You pick by writing `one` of the `proffesions` above", null);
                         inputStep.OnValidResult += (result) => input = result;
                         inputDialogueHandler = new DialogueHandler(
                            ctx.Client,
@@ -454,25 +453,25 @@ namespace DiscordApp.Commands
                         rollPolOne.Add(randomNumber.Next(1, 10) + randomNumber.Next(1, 10));
                         rollPollTwo.Add(randomNumber.Next(1, 10) + randomNumber.Next(1, 10));
                     }
-                    await userChannel.SendMessageAsync("Oto twoje dwie pule rzutów do losowania cech");
+                    await userChannel.SendMessageAsync("Here are your two sets of die rolls");
                     string pierwszaPulaString = string.Join("` : `", rollPolOne);
                     string drugaPulaString = string.Join("` : `", rollPollTwo);
                     var poolOneEmbed = new DiscordEmbedBuilder
                     {
-                        Title = "Pierwsza pula rzutów",
+                        Title = "First set",
                         Description = pierwszaPulaString
                     };
                     var pool2ncEmbed = new DiscordEmbedBuilder
                     {
-                        Title = "Druga pula rzutów",
+                        Title = "Second set",
                         Description = drugaPulaString
                     };
                     await userChannel.SendMessageAsync(embed: poolOneEmbed);
                     await userChannel.SendMessageAsync(embed: pool2ncEmbed);
                     var PoolEmbed = new DiscordEmbedBuilder
                     {
-                        Title = "Które rzuty wybierasz?",
-                        Description = emojis.one + " - dla 1 puli" + System.Environment.NewLine + emojis.two + "- dla 2 puli",
+                        Title = "What set do `you` choose?",
+                        Description = emojis.one + " - for 1st set" + System.Environment.NewLine + emojis.two + "- for 2nd set",
                         Color = DiscordColor.Gold
                     };
                     var PoolChoice = await userChannel.SendMessageAsync(embed: PoolEmbed);
@@ -504,7 +503,6 @@ namespace DiscordApp.Commands
                     for (int i = 0; i <= siurek; i++) //loop przez wszystkie cechy
                     {
                         if (PulaLiczb.Count <= 0) break;
-                        await userChannel.SendMessageAsync("masz: " + PulaLiczb.Count + "liczb");
                         string WszystkieCechyString = string.Join("` : `", PulaLiczb);
                         var CechaEmbed = new DiscordEmbedBuilder
                         {
@@ -582,37 +580,37 @@ namespace DiscordApp.Commands
                     template.AddStartUmiejetnosci(PlayerCharacter);
                     var ostatnia_wiadomosc = new DiscordEmbedBuilder
                     {
-                        Title = "Twoja postać: " + ctx.Member.DisplayName,
-                        Description = "`Imie:` " + Charactername + System.Environment.NewLine +
-                                   "`Rasa:` " + PlayerCharacter.Rasa + System.Environment.NewLine +
-                                   "`Płeć:` " + PlayerCharacter.plec_string + System.Environment.NewLine +
-                                   "`Kolor Włosów:` " + PlayerCharacter.hair_color + System.Environment.NewLine +
-                                   "`Kolor Oczu:` " + PlayerCharacter.eye_color + System.Environment.NewLine +
+                        Title = "Your character: " + ctx.Member.DisplayName,
+                        Description = "`Name:` " + Charactername + System.Environment.NewLine +
+                                   "`Race:` " + PlayerCharacter.Rasa + System.Environment.NewLine +
+                                   "`Gender:` " + PlayerCharacter.plec_string + System.Environment.NewLine +
+                                   "`Hair Colour:` " + PlayerCharacter.hair_color + System.Environment.NewLine +
+                                   "`Hair Colour:` " + PlayerCharacter.eye_color + System.Environment.NewLine +
                                    "`walka w ręcz:` " + PlayerCharacter.walka_wrecz.ToString() + System.Environment.NewLine +
                                    "`Strzelectwo:` " + PlayerCharacter.strzelectwo.ToString() + System.Environment.NewLine +
                                    "`Krzepa:` " + PlayerCharacter.krzepa + System.Environment.NewLine +
                                    "`odporność:` " + PlayerCharacter.odpowrnosc + System.Environment.NewLine +
-                                   "`Zreczność:` " + PlayerCharacter.zrecznosc + System.Environment.NewLine +
-                                   "`Inteligencja:` " + PlayerCharacter.inteligencjal + System.Environment.NewLine +
-                                   "`Sila woli:` " + PlayerCharacter.sila_woli + System.Environment.NewLine +
+                                   "`Dexterity:` " + PlayerCharacter.zrecznosc + System.Environment.NewLine +
+                                   "`Inteligence:` " + PlayerCharacter.inteligencjal + System.Environment.NewLine +
+                                   "`Will power:` " + PlayerCharacter.sila_woli + System.Environment.NewLine +
                                    "`Ogłada:` " + PlayerCharacter.Oglada + System.Environment.NewLine +
                                    "`Ataki:` " + PlayerCharacter.ataki + System.Environment.NewLine +
                                    "`żywotność:` " + PlayerCharacter.zywotnosc + System.Environment.NewLine +
-                                   "`Siła:` " + PlayerCharacter.sila + System.Environment.NewLine +
+                                   "`Strength:` " + PlayerCharacter.sila + System.Environment.NewLine +
                                    "`Wytrzymałość:` " + PlayerCharacter.wytrzymalosc + System.Environment.NewLine +
                                    "`Szybkość:` " + PlayerCharacter.szybkosc + System.Environment.NewLine +
-                                   "`Magia:` " + PlayerCharacter.magia + System.Environment.NewLine +
-                                   "`Obłęd:` " + PlayerCharacter.obled + System.Environment.NewLine +
+                                   "`Magic:` " + PlayerCharacter.magia + System.Environment.NewLine +
+                                   "`Insanity:` " + PlayerCharacter.obled + System.Environment.NewLine +
                                    "`Przeznaczenie:` " + PlayerCharacter.przeznaczenie + System.Environment.NewLine +
-                                   "`Profesja:` " + PlayerCharacter.proffesion + System.Environment.NewLine +
-                                   "`Wiek:` " + PlayerCharacter.age + System.Environment.NewLine +
-                                   "`Wysokość:` " + PlayerCharacter.heigth + System.Environment.NewLine +
-                                   "`Waga:` " + PlayerCharacter.weight,
+                                   "`Profession:` " + PlayerCharacter.proffesion + System.Environment.NewLine +
+                                   "`Age:` " + PlayerCharacter.age + System.Environment.NewLine +
+                                   "`Height:` " + PlayerCharacter.heigth + System.Environment.NewLine +
+                                   "`Weight:` " + PlayerCharacter.weight,
                         Color = DiscordColor.IndianRed
                     };
                     var fluffEmbed = new DiscordEmbedBuilder
                     {
-                        Title = "Historia twojej postaci: " + Charactername,
+                        Title = "Your Background Story: " + Charactername,
                         Description = PlayerCharacter.fluff
                     };
                     DirectoryInfo di = Directory.CreateDirectory(ctx.Member.Id.ToString() + "/warhammer/");
