@@ -449,7 +449,7 @@ namespace DiscordApp.Commands
 
                     List<int> rollPolOne = new List<int>();
                     List<int> rollPollTwo = new List<int>();
-                    for (int i = 0; i < 7; i++)
+                    for (int i = 0; i < 8; i++)
                     {
                         rollPolOne.Add(randomNumber.Next(1, 10) + randomNumber.Next(1, 10));
                         rollPollTwo.Add(randomNumber.Next(1, 10) + randomNumber.Next(1, 10));
@@ -492,27 +492,31 @@ namespace DiscordApp.Commands
                     }
 
                     ///////// 7 cech
-                    string WszystkieCechyString = string.Join("` : `", PulaLiczb);
+
                     string[] tytuly = new string[]
                     {
                        "Wybierz która z liczb będzie Twoją Walka wręcz","Wybierz która z liczb będzie Twoją Umiejętnością Strzelecką","Wybierz która z liczb będzie Twoją Krzepą",
-                       "Wybierz która z liczb będzie Twoją Odpornością","Wybierz która z liczb będzie Twoją Zręcznością?","Wybierz która z liczb będzie Twoją Siłą Woli?",
+                       "Wybierz która z liczb będzie Twoją Odpornością","Wybierz która z liczb będzie Twoją Zręcznością?","Wybierz która z liczb będzie Twoją Inteligencją?","Wybierz która z liczb będzie Twoją Siłą Woli?","Wybierz która z liczb będzie Twoją Oglada?"
 
                     };
-                    int[] liczby = new int[7];
-                    for (int i = 0; i < PulaLiczb.Count; i++) //loop przez wszystkie cechy
+                    int[] liczby = new int[8];
+                    int siurek = PulaLiczb.Count;
+                    for (int i = 0; i <= siurek; i++) //loop przez wszystkie cechy
                     {
+                        if (PulaLiczb.Count <= 0) break;
+                        await userChannel.SendMessageAsync("masz: " + PulaLiczb.Count + "liczb");
+                        string WszystkieCechyString = string.Join("` : `", PulaLiczb);
                         var CechaEmbed = new DiscordEmbedBuilder
                         {
                             Title = tytuly[i],
                             Description = WszystkieCechyString
                         };
                         var cechaMsg = await userChannel.SendMessageAsync(embed: CechaEmbed);
-                        for (int j = 0; i < PulaLiczb.Count; j++)
+                        for (int j = 0; j < PulaLiczb.Count; j++)
                         {
                             await cechaMsg.CreateReactionAsync(emojis.onetototen[j]);
                         }
-                        Thread.Sleep(300);
+                        Thread.Sleep(100);
                         var WWResult = await interactivity.WaitForReactionAsync(x => x.Message == cechaMsg
                         &&
                         (x.Emoji == emojis.one || x.Emoji == emojis.two || x.Emoji == emojis.three || x.Emoji == emojis.four || x.Emoji == emojis.five || x.Emoji == emojis.six || x.Emoji == emojis.seven)).ConfigureAwait(false);
@@ -538,8 +542,8 @@ namespace DiscordApp.Commands
                         }
                         if (WWResult.Result.Emoji == emojis.five)
                         {
-                            liczby[i] = PulaLiczb[5];
-                            PulaLiczb.RemoveAt(5);
+                            liczby[i] = PulaLiczb[4];
+                            PulaLiczb.RemoveAt(4);
                         }
                         if (WWResult.Result.Emoji == emojis.six)
                         {
@@ -551,14 +555,19 @@ namespace DiscordApp.Commands
                             liczby[i] = PulaLiczb[6];
                             PulaLiczb.RemoveAt(6);
                         }
+                        if (WWResult.Result.Emoji == emojis.eight)
+                        {
+                            liczby[i] = PulaLiczb[7];
+                            PulaLiczb.RemoveAt(7);
+                        }
                         await userChannel.DeleteMessageAsync(cechaMsg);
                     }
-
+                    //wychodzi z loopa (sprawdzone, rzecvzywiście wychodzi)
                     ///dodanie bazowych rzeczh
                     template.AddDefaultValues(PlayerCharacter);
                     PlayerCharacter.umiejetnosci = new List<string>();
                     PlayerCharacter.zdolnosci = new List<string>();
-                    PlayerCharacter.Oglada = PulaLiczb[0];
+                    PlayerCharacter.Oglada += liczby.Last();
                     PlayerCharacter.sila = (int)(PlayerCharacter.krzepa.ToString()[0]) - 48;
                     PlayerCharacter.wytrzymalosc = (int)(PlayerCharacter.odpowrnosc.ToString()[0]) - 48;
                     PlayerCharacter.zywotnosc = template.PoczatkowaZywotnosc(PlayerCharacter.Rasa);
