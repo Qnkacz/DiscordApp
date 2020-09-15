@@ -47,7 +47,8 @@ namespace DiscordApp.RPGSystems.DnD
         public int speed;
         #endregion
         public List<attacksNSpells> atackList;
-        public List<string> equipment;
+        public List<KeyValuePair<string, int>> equipment;
+        public List<DnDSpells> spells;
         #region personality stuff
         public List<string> Traits;
         public List<string> ideals;

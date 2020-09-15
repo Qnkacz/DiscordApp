@@ -13,6 +13,8 @@ namespace DiscordApp
         public string Prefix { get; private set; }
         [JsonProperty("prefix_wh")]
         public string Prefix_wh { get; private set; }
+        [JsonProperty("prefix_dnd")]
+        public string Prefix_dnd { get; private set; }
     }
 
 }

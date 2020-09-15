@@ -1,4 +1,5 @@
-﻿using DSharpPlus.CommandsNext;
+﻿using DiscordApp.Handlers;
+using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
@@ -241,6 +242,49 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     break;
                 case ">>":
                     await ctx.Channel.SendMessageAsync("Use the proper rpg prefix");
+                    break;
+            }
+        }
+        [Command("journal")]
+        [Description("write your own journal")]
+        public async Task WriteJournal(CommandContext ctx,[Description("read or write?")] params string[] input)
+        {
+            switch(ctx.Prefix)
+            {
+                case "wh":
+                    await static_objects.WHF_template.Journal(ctx, "warhammer", input);
+                    break;
+                case ">>":
+                    await ctx.Channel.SendMessageAsync("use the dedicated rpg system prefix");
+                    break;
+            }
+        }
+        [Command("mutate")]
+        [Description("GM ONLY! Give player a mutation")]
+        [RequireRoles(RoleCheckMode.Any, "GM")]
+        public async Task GiveMutation(CommandContext ctx, DiscordMember user,params string[] input)
+        {
+            switch(ctx.Prefix)
+            {
+                case "wh":
+                    await static_objects.WHF_template.Mutate(ctx, user, input);
+                    break;
+                case ">>":
+                    await ctx.Channel.SendMessageAsync("use the dedicated rpg system prefix");
+                    break;
+            }
+        }
+        [Command("mutations")]
+        [Description("Show players mutations")]
+        public async Task showmutations (CommandContext ctx, DiscordMember user)
+        {
+            switch (ctx.Prefix)
+            {
+                case "wh":
+                    await static_objects.WHF_template.Mutations(ctx, user);
+                    break;
+                case ">>":
+                    await ctx.Channel.SendMessageAsync("use the dedicated rpg system prefix");
                     break;
             }
         }

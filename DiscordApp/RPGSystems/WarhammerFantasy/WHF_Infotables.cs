@@ -19,6 +19,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 {
     public class WHF_Infotables
     {
+        Random r = new Random();
         public int walka_wrecz;
         public int strzelectwo;
         public int krzepa;
@@ -237,7 +238,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             zdolnosci.Add(losowa_umiejetnosc[randomNumber.Next(1, losowa_umiejetnosc.Length)]);
             Profesja = profesje[randomNumber.Next(0, profesje.Length)];
             warhammer postac = new warhammer(name, Race, plec_string, walka_wrecz, strzelectwo, krzepa, odpowrnosc, zrecznosc, inteligencjal, sila_woli, Oglada, ataki, zywotnosc, sila, wytrzymalosc, szybkosc,
-                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items, new List<string>(), _sex);
+                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items, new List<string>(), _sex, new List<string>());
             return postac;
         }
         public warhammer CreateElf(string name, bool _sex, string eyes, string hair)
@@ -289,7 +290,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             umiejetnosci.Add("wiedza(elfy)"); umiejetnosci.Add("znajomosc jezyka(eltharin"); umiejetnosci.Add("znajomosc jezyka(staroswiatowy)");
             zdolnosci.Add("bystry wzrok"); zdolnosci.Add("widzenie w ciemnosci");
             warhammer postac = new warhammer(name, Race, plec_string, walka_wrecz, strzelectwo, krzepa, odpowrnosc, zrecznosc, inteligencjal, sila_woli, Oglada, ataki, zywotnosc, sila, wytrzymalosc, szybkosc,
-                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items, new List<string>(), _sex);
+                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items, new List<string>(), _sex, new List<string>());
             return postac;
         }
 
@@ -346,7 +347,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             umiejetnosci.Add("wiedza(krasnoludy)"); umiejetnosci.Add("znajomosc jezyka(khazalid)"); umiejetnosci.Add("znajomosc jezyka(staroswiatowy)");
             zdolnosci.Add("krasnoludzki fach"); zdolnosci.Add("krzepki"); zdolnosci.Add("odpornosc na magie"); zdolnosci.Add("odwaga"); zdolnosci.Add("widzenie w ciemnosci"); zdolnosci.Add("zapiekła nienawiść");
             warhammer postac = new warhammer(name, Race, plec_string, walka_wrecz, strzelectwo, krzepa, odpowrnosc, zrecznosc, inteligencjal, sila_woli, Oglada, ataki, zywotnosc, sila, wytrzymalosc, szybkosc,
-                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items, new List<string>(), _sex);
+                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items, new List<string>(), _sex, new List<string>());
             return postac;
         }
 
@@ -399,7 +400,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             umiejetnosci.Add("nauka(genealogia/heraldyka"); umiejetnosci.Add("wiedza(niziołki"); umiejetnosci.Add("znajomosc jezyka(niziolki"); umiejetnosci.Add("znajomosc jezyka staroswiatowy)");
             zdolnosci.Add(losowa_umiejetnosc[randomNumber.Next(1, losowa_umiejetnosc.Length)]);
             warhammer postac = new warhammer(name, Race, plec_string, walka_wrecz, strzelectwo, krzepa, odpowrnosc, zrecznosc, inteligencjal, sila_woli, Oglada, ataki, zywotnosc, sila, wytrzymalosc, szybkosc,
-                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items, new List<string>(), _sex);
+                                            magia, obled, przeznaczenie, Profesja, 25, wysokosc, Waga, eyes, hair, umiejetnosci, zdolnosci, items, new List<string>(), _sex, new List<string>());
             return postac;
         }
 
@@ -1075,7 +1076,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 }
             }
         }
-       public async Task Join(CommandContext ctx, params string[] input)
+        public async Task Join(CommandContext ctx, params string[] input)
         {
             if (ctx.Channel.Parent.Name.ToLower() == "rpg")
             {
@@ -1129,7 +1130,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 }
             }
         }
-        public async Task addItem (CommandContext ctx,DiscordMember user,  int amount, params string[] input)
+        public async Task addItem(CommandContext ctx, DiscordMember user, int amount, params string[] input)
         {
             if (ctx.Channel.Parent.Name.ToLower() == "rpg")
             {
@@ -1190,7 +1191,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 }
             }
         }
-        public async Task RemoveItem(CommandContext ctx, DiscordMember user,  int amount,  params string[] input)
+        public async Task RemoveItem(CommandContext ctx, DiscordMember user, int amount, params string[] input)
         {
             if (ctx.Channel.Parent.Name.ToLower() == "rpg")
             {
@@ -1469,7 +1470,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                             }
                             JsonFromFile = JsonConvert.SerializeObject(character);
                             File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
-                           // await ListaChorob(ctx, user);
+                            // await ListaChorob(ctx, user);
                         }
                         else
                         {
@@ -1479,7 +1480,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 }
             }
         }
-        public async Task Choroby(CommandContext ctx,DiscordMember user)
+        public async Task Choroby(CommandContext ctx, DiscordMember user)
         {
             if (ctx.Channel.Parent.Name.ToLower() == "rpg")
             {
@@ -1618,7 +1619,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                         await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
                     }
                 }
-
             }
         }
         public async Task SlowCharacter(CommandContext ctx, DiscordChannel userChannel, EmojiBase emojis)
@@ -1648,7 +1648,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             var SexEmbed = new DiscordEmbedBuilder
             {
                 Title = "What `gender` are you?",
-                Description =emojis.kobieta + " - For Female" + System.Environment.NewLine + emojis.mezczyzna + "- For Male",
+                Description = emojis.kobieta + " - For Female" + System.Environment.NewLine + emojis.mezczyzna + "- For Male",
                 Color = DiscordColor.Gold
             };
             var sexMsg = await userChannel.SendMessageAsync(embed: SexEmbed);
@@ -2136,6 +2136,160 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             };
             await userChannel.SendMessageAsync(embed: ostatnia_wiadomosc);
             await userChannel.SendMessageAsync(embed: fluffEmbed);
+        }
+        public async Task Journal(CommandContext ctx, string rpgSystem, params string[] input)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+                var userChannel = await ctx.Member.CreateDmChannelAsync();
+                var userID = ctx.Member.Id;
+                string say = string.Join(" ", input).Trim().ToLower();
+                if (say[0] == 'r')
+                {
+
+                    if (File.Exists(ctx.Member.Id.ToString() + "/" + rpgSystem + "/" + "journal.txt"))
+                    {
+                        string output = File.ReadAllText(ctx.Member.Id.ToString() + "/" + rpgSystem + "/" + "journal.txt");
+                        var emb = new DiscordEmbedBuilder
+                        {
+                            Title = "Your Journal",
+                            Description = output
+                        };
+                        await userChannel.SendMessageAsync(embed: emb);
+                    }
+                    else
+                    {
+                        await userChannel.SendMessageAsync("you have no journal yet");
+                    }
+                }
+                if (say[0] == 'w')
+                {
+                    string output = string.Empty;
+                    if (File.Exists(ctx.Member.Id.ToString() + "/" + rpgSystem + "/" + "journal.txt"))
+                    {
+                        output = File.ReadAllText(ctx.Member.Id.ToString() + "/" + rpgSystem + "/" + "journal.txt");
+                        var emb = new DiscordEmbedBuilder
+                        {
+                            Title = "Your Journal",
+                            Description = output
+                        };
+                        await userChannel.SendMessageAsync(embed: emb);
+                    }
+                    else
+                    {
+                        await userChannel.SendMessageAsync("you have no journal yet");
+                    }
+                    await userChannel.SendMessageAsync("What do you want to write?");
+                    var addition = await userChannel.GetNextMessageAsync();
+                    var additionstring = addition.Result.Content;
+                    output += additionstring;
+                    File.WriteAllText(ctx.Member.Id.ToString() + "/" + rpgSystem + "/" + "journal.txt", output);
+                }
+            }
+        }
+        public async Task Mutate(CommandContext ctx, DiscordMember user, params string[] input)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        string line = string.Empty;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        string JsonFromFile = string.Empty;
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                        if (character.mutacje == null)
+                        {
+                            character.mutacje = new List<string>();
+                        }
+                        var mutacja = string.Join(" ", input);
+                        var mutacje = character.mutacje.ToList();
+                        mutacje.Add(mutacja);
+                        string wiadomosc = string.Join(Environment.NewLine, mutacje);
+                        var history = new DiscordEmbedBuilder
+                        {
+                            Title = "Mutations of: " + character.CharName,
+                            Description = wiadomosc
+                        };
+                        await ctx.Channel.SendMessageAsync(embed: history);
+                        JsonFromFile = JsonConvert.SerializeObject(character);
+                        File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+            }
+        }
+        public async Task Mutations(CommandContext ctx, DiscordMember user)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        string line = string.Empty;
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 8);
+                        string JsonFromFile = string.Empty;
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                        if (character.mutacje == null)
+                        {
+                            character.mutacje = new List<string>();
+                        }
+                        var mutacje = character.mutacje.ToList();
+                        string wiadomosc = string.Join(Environment.NewLine, mutacje);
+                        var history = new DiscordEmbedBuilder
+                        {
+                            Title = "Mutations of: " + character.CharName,
+                            Description = wiadomosc
+                        };
+                        await ctx.Channel.SendMessageAsync(embed: history);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
+                }
+            }
         }
     }
 }

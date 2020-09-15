@@ -115,6 +115,9 @@ namespace DiscordApp.Commands
                 case "wh":
                     await static_objects.WHF_template.SlowCharacter(ctx, userChannel, emojis);
                     break;
+                case "dnd":
+                        await static_objects.dnd_template.CreateCharacter(ctx, userChannel, emojis);
+                    break;
                 case ">>":
                     await userChannel.SendMessageAsync("use prefixes `wh` `dnd` `coc` or `ner` to create characters for that system");
                     break;

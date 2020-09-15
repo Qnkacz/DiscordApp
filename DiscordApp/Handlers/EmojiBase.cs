@@ -10,9 +10,13 @@ namespace DiscordApp.Handlers
     {
 
         public DiscordEmoji human;
-        public DiscordEmoji elf;
+        public DiscordEmoji elf; //DnD woodElf
         public DiscordEmoji krasnoludy;
         public DiscordEmoji niziolki;
+        public DiscordEmoji Helf;//DnD highElf
+        public DiscordEmoji half_elf;
+        public DiscordEmoji half_orc;
+        public DiscordEmoji gnome;
 
         public DiscordEmoji kobieta;
         public DiscordEmoji mezczyzna;
@@ -28,6 +32,7 @@ namespace DiscordApp.Handlers
         public DiscordEmoji nine;
         public DiscordEmoji ten;
         public DiscordEmoji[] onetototen = new DiscordEmoji[10];
+        public DiscordEmoji[] DnDRaceEmojiArr = new DiscordEmoji[8];
 
         public EmojiBase(CommandContext ctx)
         {
@@ -35,6 +40,12 @@ namespace DiscordApp.Handlers
             elf = DiscordEmoji.FromName(ctx.Client, ":elf:");
             krasnoludy = DiscordEmoji.FromName(ctx.Client, ":tools:");
             niziolki = DiscordEmoji.FromName(ctx.Client, ":baby:");
+            Helf = DiscordEmoji.FromName(ctx.Client, ":woman_elf:");
+            half_elf = DiscordEmoji.FromName(ctx.Client, ":detective:");
+            half_orc = DiscordEmoji.FromName(ctx.Client, ":fist:");
+            gnome = DiscordEmoji.FromName(ctx.Client, ":alien:");
+            
+            
 
             kobieta = DiscordEmoji.FromName(ctx.Client, ":female_sign:");
             mezczyzna = DiscordEmoji.FromName(ctx.Client, ":male_sign:");
@@ -59,6 +70,14 @@ namespace DiscordApp.Handlers
             onetototen[7] = eight;
             onetototen[8] = nine;
             onetototen[9] = ten;
+            DnDRaceEmojiArr[0] = human;
+            DnDRaceEmojiArr[1] = elf;
+            DnDRaceEmojiArr[2] = krasnoludy;
+            DnDRaceEmojiArr[3] = niziolki;
+            DnDRaceEmojiArr[4] = Helf;
+            DnDRaceEmojiArr[5] = half_elf;
+            DnDRaceEmojiArr[6] = half_orc;
+            DnDRaceEmojiArr[7] = gnome;
         }
     }
 }

@@ -6,8 +6,6 @@ namespace DiscordApp.RPGSystems.DnD
 {
     public class attacksNSpells
     {
-        string name;
-        int atackBonus;
-        string damage_type;
+        
     }
 }
