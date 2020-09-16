@@ -8,6 +8,8 @@ namespace DiscordApp.Handlers
 {
     public class EmojiBase
     {
+        public DiscordEmoji yes;
+        public DiscordEmoji no;
 
         public DiscordEmoji human;
         public DiscordEmoji elf; //DnD woodElf
@@ -36,6 +38,9 @@ namespace DiscordApp.Handlers
 
         public EmojiBase(CommandContext ctx)
         {
+            yes = DiscordEmoji.FromName(ctx.Client, ":+1:");
+            no = DiscordEmoji.FromName(ctx.Client, ":-1:");
+
             human = DiscordEmoji.FromName(ctx.Client, ":thinking:");
             elf = DiscordEmoji.FromName(ctx.Client, ":elf:");
             krasnoludy = DiscordEmoji.FromName(ctx.Client, ":tools:");

@@ -50,11 +50,11 @@ namespace DiscordApp.RPGSystems.DnD
         public List<KeyValuePair<string, int>> equipment;
         public List<DnDSpells> spells;
         #region personality stuff
-        public List<string> Traits;
-        public List<string> ideals;
-        public List<string> bonds;
-        public List<string> flaws;
-        public List<string> features;
+        public List<string> Traits = new List<string>();
+        public List<string> ideals = new List<string>();
+        public List<string> bonds = new List<string>();
+        public List<string> flaws = new List<string>();
+        public List<string> features = new List<string>();
         #endregion
         #region body
         public int age;
