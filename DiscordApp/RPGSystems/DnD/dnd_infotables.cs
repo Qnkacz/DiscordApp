@@ -197,10 +197,10 @@ namespace DiscordApp.RPGSystems.DnD
 
                 character.intelligence += 1;
                 QuestionEmbed.Title = "Cantrip";
-                QuestionEmbed.Title = "Write one cantrip of your choice from wizard spell list";
+                QuestionEmbed.Description = "Write one cantrip of your choice from wizard spell list";
                 await userChannel.SendMessageAsync(embed: QuestionEmbed);
-                response = await userChannel.GetNextMessageAsync();
-                var spellname = response.Result.Content;
+                var magic = await userChannel.GetNextMessageAsync();
+                var spellname = magic.Result.Content;
                 QuestionEmbed.Title = spellname;
                 QuestionEmbed.Description = "write the spell description";
                 response = await userChannel.GetNextMessageAsync();
@@ -455,7 +455,7 @@ namespace DiscordApp.RPGSystems.DnD
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
             character.height = Int32.Parse(response.Result.Content);
-            Thread.Sleep(110);
+            Thread.Sleep(230);
             QuestionEmbed.Title = "How old are you";
             QuestionEmbed.Description = "`lore friendly` propositions:" + System.Environment.NewLine +
                 "`dwarf` -> 5 - 350 Years" + System.Environment.NewLine +
@@ -468,17 +468,19 @@ namespace DiscordApp.RPGSystems.DnD
                 "** Write only the number below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(110);
+            Thread.Sleep(230);
 
             QuestionEmbed.Title = "What is your Aligment?";
-            QuestionEmbed.Description = "Lawful good |.| Neutral Good |.| Chaotic Good" + System.Environment.NewLine +
-             "Lawful Neutral |.| True Neutral |.| Chaotic Neutral" + System.Environment.NewLine +
-             "Lawful evil |.|  Neutral evil |.| Chaotic evil";
+            QuestionEmbed.Description = 
+             "Lawful good    |.|  Neutral Good  |.| Chaotic Good" + System.Environment.NewLine +
+             "Lawful Neutral |.|  True Neutral  |.| Chaotic Neutral" + System.Environment.NewLine +
+             "Lawful evil    |.|  Neutral evil  |.| Chaotic evil";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             for (int i = 0; i < 6; i++)
             {
                 await msg.CreateReactionAsync(emojis.onetototen[i]);
             }
+            Thread.Sleep(110);
             emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
            &&
            (emojis.onetototen.Contains(x.Emoji)));
@@ -521,20 +523,20 @@ namespace DiscordApp.RPGSystems.DnD
             await userChannel.SendMessageAsync("You chose: **" + character.aligment + "**");
             string[] avaibleClasses = new string[]
             {
-                "barbarian" +
-                "bard" +
-                "cleric" +
-                "druid" +
-                "fighter" +
-                "monk" +
-                "paladin" +
-                "ranger" +
-                "rogue" +
-                "sorcerer" +
-                "warlock" +
+                "barbarian",
+                "bard" ,
+                "cleric" ,
+                "druid" ,
+                "fighter" ,
+                "monk" ,
+                "paladin" ,
+                "ranger" ,
+                "rogue" ,
+                "sorcerer" ,
+                "warlock" ,
                 "wizard"
             };
-            string description = string.Join("`:`", avaibleClasses) + Environment.NewLine + "Write down the class you want to be";
+            string description = string.Join(" ", avaibleClasses) + Environment.NewLine + "Write down the class you want to be";
             string input = string.Empty;
             do
             {
