@@ -185,14 +185,16 @@ namespace DiscordApp.RPGSystems.DnD
             if (character.race == "wood elf" || character.race == "high elf")
             {
                 character.speed = 30;
-                character.Traits.Add("Keen Senses");
-                character.Traits.Add("Fey Encestry");
-                character.Traits.Add("Trance");
-                character.Traits.Add("Leanguage: elvish");
-                character.Traits.Add("Elf weapon Training");
+                character.Traits.Add(new DnDTrait("Darkvision", "Accustom ed to twilit forests and the night sky, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if itw ere bright light, and in darkness as if it were dim light.You can’t discern color in darkness, only shades of gray."));
+                character.Traits.Add(new DnDTrait("Keen Senses.", "You have proficiency in the Perception skill."));
+                character.Traits.Add(new DnDTrait("Fey Encestry", "You have advantage on saving throws against being charm ed, and m agic can’t put you to sleep."));
+                character.Traits.Add(new DnDTrait("Trance", "Elves don’t need to sleep. Instead, they meditate deeply, remaining sem iconscious, for 4 hours a day. (The Com m on w ord for such meditation is “trance.”) W hile meditating, you can dream after a fashion; such dream s are actually mental exercises that have becom e reflexive through years of practice. After resting in this way, you gain the sam e benefit that a human does from 8 hours of sleep."));
+                character.Traits.Add(new DnDTrait("Leanguage","elfish"));
+                character.Traits.Add(new DnDTrait("Elf Weapon Training.", "You have proficiency with the longsword, shortsword, shortbow, and longbow."));
             }
             if (character.race == "high elf")
             {
+                
                 character.intelligence += 1;
                 QuestionEmbed.Title = "Cantrip";
                 QuestionEmbed.Title = "Write one cantrip of your choice from wizard spell list";
@@ -212,16 +214,16 @@ namespace DiscordApp.RPGSystems.DnD
             {
                 character.wisdom += 1;
                 character.speed = 35;
-                character.Traits.Add("Mask of the wild");
+                character.Traits.Add(new DnDTrait("Mask of the wild", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena."));
             }
             if (character.race == "halfling")
             {
                 character.dexterity += 2;
                 character.speed = 25;
-                character.Traits.Add("Lucky");
-                character.Traits.Add("Brave");
-                character.Traits.Add("Halfling Nimbleness.");
-                character.Traits.Add("leanguage: halfling");
+                character.Traits.Add(new DnDTrait("Lucky", "W hen you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."));
+                character.Traits.Add(new DnDTrait("Brave", "You have advantage on saving throws against being frightened."));
+                character.Traits.Add(new DnDTrait("Halfling Nimbleness.", "You can move through the space of any creature that is of a size larger than yours."));
+                character.Traits.Add(new DnDTrait("leanguage", "halfling"));
                 QuestionEmbed.Title = "Are you a lightfoot or a stout?";
                 QuestionEmbed.Description = emojis.yes + "- for lightfoot" + System.Environment.NewLine + emojis.no + " - for stout";
                 msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -232,13 +234,13 @@ namespace DiscordApp.RPGSystems.DnD
                 if (emojiResult.Result.Emoji == emojis.yes)
                 {
                     character.charisma += 1;
-                    character.Traits.Add("Naturally Stealthy");
+                    character.Traits.Add(new DnDTrait("Naturally Stealthy", "You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."));
                     character.race += "- L i g h t f o o t";
                 }
                 if (emojiResult.Result.Emoji == emojis.no)
                 {
                     character.constitution += 1;
-                    character.Traits.Add("Stout Resilience");
+                    character.Traits.Add(new DnDTrait("Stout Resilience", "You have advantage on saving throws against poison, and you have resistance against poison damage."));
                     character.race += "- S t o u t";
                 }
             }
@@ -251,20 +253,20 @@ namespace DiscordApp.RPGSystems.DnD
                 character.wisdom += 1;
                 character.charisma += 1;
                 character.speed = 30;
-                character.Traits.Add("Leanguage: human");
+                character.Traits.Add(new DnDTrait("Leanguage: ", "human"));
                 QuestionEmbed.Title = "Choose nother leanguage you know";
                 QuestionEmbed.Description = "write the leanguage below";
                 msg = msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
                 response = await userChannel.GetNextMessageAsync();
-                character.Traits.Add("Leanguage: " + response.Result);
+                character.Traits.Add(new DnDTrait("Leanguage: ", response.Result.Content));
             }
             if (character.race == "gnome")
             {
                 character.intelligence += 2;
                 character.speed = 25;
-                character.Traits.Add("Darkvision");
-                character.Traits.Add("Gnome Cunning");
-                character.Traits.Add("Leanguage: Gnomish");
+                character.Traits.Add(new DnDTrait("Darkvision", "Accustom ed to life underground, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if it w ere bright light, and in darkness as if it were dim light.You can't discern color in darkness, only shades of gray."));
+                character.Traits.Add(new DnDTrait("Gnome Cunning", "You have advantage on all Intelligence, W isdom, and Charisma saving throws against magic."));
+                character.Traits.Add(new DnDTrait("Leanguage: ", "Gnomish"));
 
                 QuestionEmbed.Title = "Are you a Forest or a Rock gnome?";
                 QuestionEmbed.Description = emojis.yes + "- for Forest" + System.Environment.NewLine + emojis.no + " - for Rtout";
@@ -276,15 +278,15 @@ namespace DiscordApp.RPGSystems.DnD
                 if (emojiResult.Result.Emoji == emojis.yes)
                 {
                     character.dexterity += 1;
-                    character.Traits.Add("Natural ilusionist");
-                    character.Traits.Add(" Speak with Small Beasts");
+                    character.Traits.Add(new DnDTrait("Natural ilusionist", "You know the minor illusion cantrip.Intelligence is your spellcasting ability for it."));
+                    character.Traits.Add(new DnDTrait(" Speak with Small Beasts", "Through sounds and gestures, you can com m unicate simple ideas with Small or sm aller beasts.Forest gnom es love animals and often keep squirrels, badgers, rabbits, m oles, w oodpeckers, and other creatures as beloved pets."));
                     character.race += "- F o r e s t";
                 }
                 if (emojiResult.Result.Emoji == emojis.no)
                 {
                     character.constitution += 1;
-                    character.Traits.Add("Artificer’s Lore");
-                    character.Traits.Add("Tinker");
+                    character.Traits.Add(new DnDTrait("Artificer’s Lore", "W henever you make an Intelligence (History) check related to m agic items, alchemical objects, or technological devices, you can add tw ice your proficiency bonus, instead of any proficiency bonus you normally apply."));
+                    character.Traits.Add(new DnDTrait("Tinker", "You have proficiency with artisan’s tools (tinker’s tools).Using those tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockw ork device(AC 5, 1 hp).The device ceases to function after 24 hours(unless you spend 1 hour repairing it to keep the device functioning), or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it.You can have up to three such devices active at a time."));
                     character.race += "- R o c k";
                 }
             }
@@ -365,39 +367,37 @@ namespace DiscordApp.RPGSystems.DnD
                 }
                 await userChannel.DeleteMessageAsync(msg);
                 character.speed = 30;
-                character.Traits.Add("Darkvision");
-                character.Traits.Add("Fey Ancestry");
-                character.Traits.Add("Fey Ancestry");
+                character.Traits.Add(new DnDTrait("Darkvision", "Thanks to your elf blood, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if it w ere bright light, and in darkness as if it were dim light.You can’t discern color in darkness, only shades of gray."));
+                character.Traits.Add(new DnDTrait("Fey Ancestry", "You have advantage on saving throws against being charm ed, and m agic can’t put you to sleep."));
                 QuestionEmbed.Title = "Choose nother leanguage you know";
                 QuestionEmbed.Description = "write the leanguage below";
                 msg = msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
                 response = await userChannel.GetNextMessageAsync();
-                character.Traits.Add("Leanguage: " + response.Result);
+                character.Traits.Add(new DnDTrait("Leanguage: " , response.Result.Content));
             }
             if (character.race == "half orc")
             {
-                character.strength =+ 2;
+                character.strength = +2;
                 character.constitution += 1;
                 character.speed = 30;
-                character.Traits.Add("Darkvision");
-                character.Traits.Add("Menacing");
-                character.Traits.Add("Relentless Endurance");
-                character.Traits.Add("Savage Attacks");
-                character.Traits.Add("Leanguage: Common");
-                character.Traits.Add("Leanguage: Orcish");
+                character.Traits.Add(new DnDTrait("Darkvision", "Thanks to your orc blood, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if it w ere bright light, and in darkness as if it w ere dim light. You can't discern color in darkness, only shades o f gray."));
+                character.Traits.Add(new DnDTrait("Menacing", "You gain proficiency in the Intimidation skill."));
+                character.Traits.Add(new DnDTrait("Relentless Endurance", "W hen you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead.You can’t use this feature again until you finish a long rest."));
+                character.Traits.Add(new DnDTrait("Savage Attacks", "W hen you score a critical hit with a melee weapon attack, you can roll one of the w eapon’s damage dice one additional time and add it to the extra damage of the critical hit."));
+                character.Traits.Add(new DnDTrait("Leanguage","Common"));
+                character.Traits.Add(new DnDTrait("Leanguage","Orcish"));
                 character.Intimidation += 1;
 
             }
-            if(character.race=="dwarf")
+            if (character.race == "dwarf")
             {
                 character.constitution += 2;
                 character.speed = 25;
-                character.Traits.Add("Darkvision");
-                character.Traits.Add("Dwarven Resilience");
-                character.Traits.Add("Dwarven Combat Training");
-                character.Traits.Add("Dwarven Combat Training");
+                character.Traits.Add(new DnDTrait("Darkvision", "A ccustom ed to life underground, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it w ere dim light. You can’t discern color in darkness, only shades of gray."));
+                character.Traits.Add(new DnDTrait("Dwarven Resilience", "You have advantage on saving throws against poison, and you have resistance against poison damage"));
+                character.Traits.Add(new DnDTrait("Dwarven Combat Training", "You have proficiency with the battleaxe, handaxe, throwing hammer, and warhammer."));
                 QuestionEmbed.Title = "Choose tool proficiency"; ;
-                QuestionEmbed.Description = emojis.one+" - for Smith's tools"+System.Environment.NewLine+
+                QuestionEmbed.Description = emojis.one + " - for Smith's tools" + System.Environment.NewLine +
                     emojis.two + " - for brewers supplies" + System.Environment.NewLine +
                     emojis.three + " - for Mason's tools";
                 msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -411,15 +411,15 @@ namespace DiscordApp.RPGSystems.DnD
                 (emojis.onetototen.Contains(x.Emoji)));
                 if (emojiResult.Result.Emoji == emojis.one)
                 {
-                    character.Traits.Add("Tool Proficiency: Smith's tools");
+                    character.Traits.Add(new DnDTrait("Tool Proficiency:"," Smith's tools"));
                 }
                 if (emojiResult.Result.Emoji == emojis.two)
                 {
-                    character.Traits.Add("Tool Proficiency: brewers supplies");
+                    character.Traits.Add(new DnDTrait("Tool Proficiency"," brewers supplies"));
                 }
                 if (emojiResult.Result.Emoji == emojis.three)
                 {
-                    character.Traits.Add("Tool Proficiency: Mason's tools");
+                    character.Traits.Add(new DnDTrait("Tool Proficiency"," Mason's tools"));
                 }
                 QuestionEmbed.Title = "Choose Your subrace"; ;
                 QuestionEmbed.Description = emojis.yes + " - for Hill Darf" + System.Environment.NewLine + emojis.no + " - for Mountain Dwarf";
@@ -429,16 +429,16 @@ namespace DiscordApp.RPGSystems.DnD
                 Thread.Sleep(100);
                 emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
                 &&
-                (emojiResult.Result.Emoji==emojis.yes || emojiResult.Result.Emoji == emojis.no));
-                if(emojiResult.Result.Emoji==emojis.yes)
+                (emojiResult.Result.Emoji == emojis.yes || emojiResult.Result.Emoji == emojis.no));
+                if (emojiResult.Result.Emoji == emojis.yes)
                 {
                     character.wisdom += 1;
-                    character.Traits.Add("Dwarven Toughness");
+                    character.Traits.Add(new DnDTrait("Dwarven Toughness", "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."));
                 }
-                if(emojiResult.Result.Emoji==emojis.no)
+                if (emojiResult.Result.Emoji == emojis.no)
                 {
                     character.strength += 2;
-                    character.Traits.Add("Dwarven Armor Training");
+                    character.Traits.Add(new DnDTrait("Dwarven Armor Training", "You have proficiency with light and medium armor."));
                 }
             }
 
