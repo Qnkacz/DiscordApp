@@ -226,18 +226,19 @@ namespace DiscordApp.RPGSystems.DnD
                 character.Traits.Add(new DnDTrait("leanguage", "halfling"));
                 QuestionEmbed.Title = "Are you a lightfoot or a stout?";
                 QuestionEmbed.Description = emojis.yes + "- for lightfoot" + System.Environment.NewLine + emojis.no + " - for stout";
-                msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-                await msg.CreateReactionAsync(emojis.yes); await msg.CreateReactionAsync(emojis.no);
-                emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
+                var stout = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                await stout.CreateReactionAsync(emojis.yes); await stout.CreateReactionAsync(emojis.no);
+                Thread.Sleep(110);
+                var stoutresult = await interactivity.WaitForReactionAsync(x => x.Message == stout
                 &&
                 (x.Emoji == emojis.yes || x.Emoji == emojis.no));
-                if (emojiResult.Result.Emoji == emojis.yes)
+                if (stoutresult.Result.Emoji == emojis.yes)
                 {
                     character.charisma += 1;
                     character.Traits.Add(new DnDTrait("Naturally Stealthy", "You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."));
                     character.race += "- L i g h t f o o t";
                 }
-                if (emojiResult.Result.Emoji == emojis.no)
+                if (stoutresult.Result.Emoji == emojis.no)
                 {
                     character.constitution += 1;
                     character.Traits.Add(new DnDTrait("Stout Resilience", "You have advantage on saving throws against poison, and you have resistance against poison damage."));
@@ -270,19 +271,19 @@ namespace DiscordApp.RPGSystems.DnD
 
                 QuestionEmbed.Title = "Are you a Forest or a Rock gnome?";
                 QuestionEmbed.Description = emojis.yes + "- for Forest" + System.Environment.NewLine + emojis.no + " - for Rtout";
-                msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-                await msg.CreateReactionAsync(emojis.yes); await msg.CreateReactionAsync(emojis.no);
-                emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
+                var gnome = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                await gnome.CreateReactionAsync(emojis.yes); await gnome.CreateReactionAsync(emojis.no);
+                var gnomeResult = await interactivity.WaitForReactionAsync(x => x.Message == gnome
                 &&
                 (x.Emoji == emojis.yes || x.Emoji == emojis.no));
-                if (emojiResult.Result.Emoji == emojis.yes)
+                if (gnomeResult.Result.Emoji == emojis.yes)
                 {
                     character.dexterity += 1;
                     character.Traits.Add(new DnDTrait("Natural ilusionist", "You know the minor illusion cantrip.Intelligence is your spellcasting ability for it."));
                     character.Traits.Add(new DnDTrait(" Speak with Small Beasts", "Through sounds and gestures, you can com m unicate simple ideas with Small or sm aller beasts.Forest gnom es love animals and often keep squirrels, badgers, rabbits, m oles, w oodpeckers, and other creatures as beloved pets."));
                     character.race += "- F o r e s t";
                 }
-                if (emojiResult.Result.Emoji == emojis.no)
+                if (gnomeResult.Result.Emoji == emojis.no)
                 {
                     character.constitution += 1;
                     character.Traits.Add(new DnDTrait("Artificer’s Lore", "W henever you make an Intelligence (History) check related to m agic items, alchemical objects, or technological devices, you can add tw ice your proficiency bonus, instead of any proficiency bonus you normally apply."));
@@ -293,7 +294,7 @@ namespace DiscordApp.RPGSystems.DnD
             if (character.race == "half elf")
             {
                 character.charisma += 2;
-                WszystkieCechyString = string.Join("`:`", statTitles);
+                WszystkieCechyString = string.Join("`:`"+Environment.NewLine, statTitles);
 
 
 
@@ -423,19 +424,19 @@ namespace DiscordApp.RPGSystems.DnD
                 }
                 QuestionEmbed.Title = "Choose Your subrace"; ;
                 QuestionEmbed.Description = emojis.yes + " - for Hill Darf" + System.Environment.NewLine + emojis.no + " - for Mountain Dwarf";
-                msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-                await msg.CreateReactionAsync(emojis.yes);
-                await msg.CreateReactionAsync(emojis.no);
+                var dwarf = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                await dwarf.CreateReactionAsync(emojis.yes);
+                await dwarf.CreateReactionAsync(emojis.no);
                 Thread.Sleep(100);
-                emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
+                var dwarfResult = await interactivity.WaitForReactionAsync(x => x.Message == dwarf
                 &&
-                (emojiResult.Result.Emoji == emojis.yes || emojiResult.Result.Emoji == emojis.no));
-                if (emojiResult.Result.Emoji == emojis.yes)
+                (x.Emoji == emojis.yes || x.Emoji == emojis.no));
+                if (dwarfResult.Result.Emoji == emojis.yes)
                 {
                     character.wisdom += 1;
                     character.Traits.Add(new DnDTrait("Dwarven Toughness", "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."));
                 }
-                if (emojiResult.Result.Emoji == emojis.no)
+                if (dwarfResult.Result.Emoji == emojis.no)
                 {
                     character.strength += 2;
                     character.Traits.Add(new DnDTrait("Dwarven Armor Training", "You have proficiency with light and medium armor."));
@@ -504,11 +505,11 @@ namespace DiscordApp.RPGSystems.DnD
             if (emojiResult.Result.Emoji == emojis.six)
             {
                 character.aligment = "Chaotic Neutral";
-            } 
+            }
             if (emojiResult.Result.Emoji == emojis.seven)
             {
                 character.aligment = "Lawful evi";
-            } 
+            }
             if (emojiResult.Result.Emoji == emojis.eight)
             {
                 character.aligment = "Neutral Evil";
@@ -518,6 +519,31 @@ namespace DiscordApp.RPGSystems.DnD
                 character.aligment = "Chaotic evil";
             }
             await userChannel.SendMessageAsync("You chose: **" + character.aligment + "**");
+            string[] avaibleClasses = new string[]
+            {
+                "barbarian" +
+                "bard" +
+                "cleric" +
+                "druid" +
+                "fighter" +
+                "monk" +
+                "paladin" +
+                "ranger" +
+                "rogue" +
+                "sorcerer" +
+                "warlock" +
+                "wizard"
+            };
+            string description = string.Join("`:`", avaibleClasses) + Environment.NewLine + "Write down the class you want to be";
+            string input = string.Empty;
+            do
+            {
+                QuestionEmbed.Title = "Choose your class";
+                QuestionEmbed.Description = description;
+                msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                response = await userChannel.GetNextMessageAsync();
+                input = response.Result.Content.Trim().ToLower();
+            } while (!avaibleClasses.Contains(input));
 
         }
 
