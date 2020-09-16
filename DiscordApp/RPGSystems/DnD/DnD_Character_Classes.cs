@@ -18,12 +18,14 @@ namespace DiscordApp.RPGSystems.DnD
         public List<string> primary_Ability;
         public List<string> SavingTHrowproficiencies;
         public List<string> armorNweaponproficiencies;
+        public int baseHitPoints;
         public CharacterClass(avaibleClasses cls)
         {
             switch (cls)
             {
                 case avaibleClasses.Barbarian:
                     level = 1;
+                    baseHitPoints = 12;
                     classname = "Barbarian";
                     description = "A fierce warrior of primitive background who can enter a battle rage";
                     hitDie = 12;
@@ -37,6 +39,7 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Bard:
                     level = 1;
+                    baseHitPoints = 8;
                     classname = "Bard";
                     description = "An inspiring magician whose power echoes the music of creation";
                     hitDie = 8;
@@ -51,6 +54,7 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Cleric:
                     level = 1;
+                    baseHitPoints = 8;
                     classname = "Cleric";
                     description = "A priestly champion who wields divine magic in service of a higher power";
                     hitDie = 8;
@@ -64,6 +68,7 @@ namespace DiscordApp.RPGSystems.DnD
                 case avaibleClasses.Druid:
                     level = 1;
                     classname = "Druid";
+                    baseHitPoints = 8;
                     description = "A priest of the Old Faith, wielding the powers of nature— moonlight and plant growth, fire and lightning— and adopting animal forms";
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Wisdom" };
@@ -85,6 +90,7 @@ namespace DiscordApp.RPGSystems.DnD
                 case avaibleClasses.Fighter:
                     level = 1;
                     classname = "Fighter";
+                    baseHitPoints = 10;
                     description = "A master of martial combat, skilled with a variety of weapons and armor";
                     hitDie = 10;
                     primary_Ability = new List<string>() { "Strenght", "Dexterity" };
@@ -96,6 +102,7 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Monk:
                     level = 1;
+                    baseHitPoints = 8;
                     classname = "Monk";
                     description = "An master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection";
                     hitDie = 8;
@@ -106,6 +113,7 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Paladin:
                     level = 1;
+                    baseHitPoints = 10;
                     classname = "Paladin";
                     description = "A holy warrior bound to a sacred oath";
                     hitDie = 10;
@@ -118,7 +126,22 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Ranger:
                     level = 1;
+                    baseHitPoints = 10;
                     classname = "Ranger";
+                    description = "A scoundrel who uses stealth and trickery to overcome obstacles and enemies";
+                    hitDie = 8;
+                    primary_Ability = new List<string>() { "Dexterity" };
+                    SavingTHrowproficiencies = new List<string>() { "Strength", "Dexterity" };
+                    armorNweaponproficiencies = new List<string>() { "Light armor" +
+                        "medium armor" +
+                        "Shields" +
+                        "Simple weapons" +
+                        "Martial Weapons"};
+                    break;
+                case avaibleClasses.Rogue:
+                    level = 1;
+                    baseHitPoints = 8;
+                    classname = "Rogue";
                     description = "A scoundrel who uses stealth and trickery to overcome obstacles and enemies";
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Dexterity" };
@@ -135,6 +158,7 @@ namespace DiscordApp.RPGSystems.DnD
                     classname = "Sorcerer";
                     description = "A spellcaster who draws on inherent magic from a gift or bloodline";
                     hitDie = 6;
+                    baseHitPoints = 6;
                     primary_Ability = new List<string>() { "Charisma" };
                     SavingTHrowproficiencies = new List<string>() { "Constitution", "Charisma" };
                     armorNweaponproficiencies = new List<string>() { "daggers" +
@@ -146,6 +170,7 @@ namespace DiscordApp.RPGSystems.DnD
                 case avaibleClasses.Warlock:
                     level = 1;
                     classname = "Warlock";
+                    baseHitPoints = 8;
                     description = "A wielder of magic that is derived from a bargain with an extraplanar entity";
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Charisma" };
@@ -156,6 +181,7 @@ namespace DiscordApp.RPGSystems.DnD
                 case avaibleClasses.Wizard:
                     level = 1;
                     classname = "Wizard";
+                    baseHitPoints = 6;
                     description = "A scholarly magic-user capable of manipulating the structures of reality";
                     hitDie = 6;
                     primary_Ability = new List<string>() { "Charisma" };
@@ -170,6 +196,7 @@ namespace DiscordApp.RPGSystems.DnD
                     level = 999;
                     classname = "Destroyer of worlds";
                     description = "Most powerfullbeing";
+                    baseHitPoints = 666;
                     hitDie = 999;
                     primary_Ability = new List<string>() { "Charisma" };
                     SavingTHrowproficiencies = new List<string>() { "Wisdom", "Charisma" };
@@ -178,5 +205,6 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
             }
         }
+
     }
 }

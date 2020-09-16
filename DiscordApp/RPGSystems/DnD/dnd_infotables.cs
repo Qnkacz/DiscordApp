@@ -38,6 +38,7 @@ namespace DiscordApp.RPGSystems.DnD
 
             var msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             var response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(110);
             character.name = response.Result.Content;
             QuestionEmbed.Title = "What is your race, react acordingly";
             QuestionEmbed.Description = emojis.human + "- for `human`" + System.Environment.NewLine +
@@ -176,12 +177,12 @@ namespace DiscordApp.RPGSystems.DnD
                 }
                 await userChannel.DeleteMessageAsync(msg);
             }
-            character.strength = liczby[0];
-            character.dexterity = liczby[1];
-            character.constitution = liczby[2];
-            character.intelligence = liczby[3];
-            character.wisdom = liczby[4];
-            character.charisma = liczby[5];
+            character.BaseStats.Add("Strength", liczby[0]);
+            character.BaseStats.Add("Dexterity", liczby[1]);
+            character.BaseStats.Add("Constitution", liczby[2]);
+            character.BaseStats.Add("Intelligence", liczby[3]);
+            character.BaseStats.Add("Wisdom", liczby[4]);
+            character.BaseStats.Add("Charisma", liczby[5]);
             if (character.race == "wood elf" || character.race == "high elf")
             {
                 character.speed = 30;
@@ -195,11 +196,12 @@ namespace DiscordApp.RPGSystems.DnD
             if (character.race == "high elf")
             {
 
-                character.intelligence += 1;
+                character.BaseStats["Intelligence"] += 1;
                 QuestionEmbed.Title = "Cantrip";
                 QuestionEmbed.Description = "Write one cantrip of your choice from wizard spell list";
                 await userChannel.SendMessageAsync(embed: QuestionEmbed);
                 var magic = await userChannel.GetNextMessageAsync();
+                Thread.Sleep(110);
                 var spellname = magic.Result.Content;
                 QuestionEmbed.Title = spellname;
                 QuestionEmbed.Description = "write the spell description";
@@ -212,13 +214,13 @@ namespace DiscordApp.RPGSystems.DnD
             }
             if (character.race == "wood elf")
             {
-                character.wisdom += 1;
+                character.BaseStats["Wisdom"] += 1;
                 character.speed = 35;
                 character.Traits.Add(new DnDTrait("Mask of the wild", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena."));
             }
             if (character.race == "halfling")
             {
-                character.dexterity += 2;
+                character.BaseStats["Dexterity"] += 2;
                 character.speed = 25;
                 character.Traits.Add(new DnDTrait("Lucky", "W hen you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."));
                 character.Traits.Add(new DnDTrait("Brave", "You have advantage on saving throws against being frightened."));
@@ -234,25 +236,25 @@ namespace DiscordApp.RPGSystems.DnD
                 (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                 if (stoutresult.Result.Emoji == emojis.yes)
                 {
-                    character.charisma += 1;
+                    character.BaseStats["Charisma"] += 1;
                     character.Traits.Add(new DnDTrait("Naturally Stealthy", "You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."));
                     character.race += "- L i g h t f o o t";
                 }
                 if (stoutresult.Result.Emoji == emojis.no)
                 {
-                    character.constitution += 1;
+                    character.BaseStats["Constitution"] += 1;
                     character.Traits.Add(new DnDTrait("Stout Resilience", "You have advantage on saving throws against poison, and you have resistance against poison damage."));
                     character.race += "- S t o u t";
                 }
             }
             if (character.race == "human")
             {
-                character.strength += 1;
-                character.dexterity += 1;
-                character.constitution += 1;
-                character.intelligence += 1;
-                character.wisdom += 1;
-                character.charisma += 1;
+                character.BaseStats["Strength"] += 1;
+                character.BaseStats["Dexterity"] += 1;
+                character.BaseStats["Constitution"] += 1;
+                character.BaseStats["Intelligence"] += 1;
+                character.BaseStats["Wisdom"] += 1;
+                character.BaseStats["Charisma"] += 1;
                 character.speed = 30;
                 character.Traits.Add(new DnDTrait("Leanguage: ", "human"));
                 QuestionEmbed.Title = "Choose nother leanguage you know";
@@ -263,7 +265,7 @@ namespace DiscordApp.RPGSystems.DnD
             }
             if (character.race == "gnome")
             {
-                character.intelligence += 2;
+                character.BaseStats["Intelligence"] += 2;
                 character.speed = 25;
                 character.Traits.Add(new DnDTrait("Darkvision", "Accustom ed to life underground, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if it w ere bright light, and in darkness as if it were dim light.You can't discern color in darkness, only shades of gray."));
                 character.Traits.Add(new DnDTrait("Gnome Cunning", "You have advantage on all Intelligence, W isdom, and Charisma saving throws against magic."));
@@ -278,14 +280,14 @@ namespace DiscordApp.RPGSystems.DnD
                 (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                 if (gnomeResult.Result.Emoji == emojis.yes)
                 {
-                    character.dexterity += 1;
+                    character.BaseStats["Dexterity"] += 1;
                     character.Traits.Add(new DnDTrait("Natural ilusionist", "You know the minor illusion cantrip.Intelligence is your spellcasting ability for it."));
                     character.Traits.Add(new DnDTrait(" Speak with Small Beasts", "Through sounds and gestures, you can com m unicate simple ideas with Small or sm aller beasts.Forest gnom es love animals and often keep squirrels, badgers, rabbits, m oles, w oodpeckers, and other creatures as beloved pets."));
                     character.race += "- F o r e s t";
                 }
                 if (gnomeResult.Result.Emoji == emojis.no)
                 {
-                    character.constitution += 1;
+                    character.BaseStats["Constitution"] += 1;
                     character.Traits.Add(new DnDTrait("Artificer’s Lore", "W henever you make an Intelligence (History) check related to m agic items, alchemical objects, or technological devices, you can add tw ice your proficiency bonus, instead of any proficiency bonus you normally apply."));
                     character.Traits.Add(new DnDTrait("Tinker", "You have proficiency with artisan’s tools (tinker’s tools).Using those tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockw ork device(AC 5, 1 hp).The device ceases to function after 24 hours(unless you spend 1 hour repairing it to keep the device functioning), or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it.You can have up to three such devices active at a time."));
                     character.race += "- R o c k";
@@ -293,8 +295,8 @@ namespace DiscordApp.RPGSystems.DnD
             }
             if (character.race == "half elf")
             {
-                character.charisma += 2;
-                WszystkieCechyString = string.Join("`:`"+Environment.NewLine, statTitles);
+                character.BaseStats["Charisma"] += 2;
+                WszystkieCechyString = string.Join("`:`" + Environment.NewLine, statTitles);
 
 
 
@@ -311,27 +313,27 @@ namespace DiscordApp.RPGSystems.DnD
                 (emojis.onetototen.Contains(x.Emoji)));
                 if (emojiResult.Result.Emoji == emojis.one)
                 {
-                    character.strength += 1;
+                    character.BaseStats["Strength"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.two)
                 {
-                    character.dexterity += 1;
+                    character.BaseStats["Dexterity"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.three)
                 {
-                    character.constitution += 1;
+                    character.BaseStats["Constitution"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.four)
                 {
-                    character.intelligence += 1;
+                    character.BaseStats["Intelligence"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.five)
                 {
-                    character.wisdom += 1;
+                    character.BaseStats["Wisdom"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.six)
                 {
-                    character.charisma += 1;
+                    character.BaseStats["Charisma"] += 1;
                 }
                 await userChannel.DeleteMessageAsync(msg);
 
@@ -348,23 +350,23 @@ namespace DiscordApp.RPGSystems.DnD
                 (emojis.onetototen.Contains(x.Emoji)));
                 if (emojiResult.Result.Emoji == emojis.one)
                 {
-                    character.strength += 1;
+                    character.BaseStats["Strength"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.two)
                 {
-                    character.dexterity += 1;
+                    character.BaseStats["Dexterity"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.three)
                 {
-                    character.constitution += 1;
+                    character.BaseStats["Constitution"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.four)
                 {
-                    character.intelligence += 1;
+                    character.BaseStats["Intelligence"] += 1;
                 }
                 if (emojiResult.Result.Emoji == emojis.five)
                 {
-                    character.wisdom += 1;
+                    character.BaseStats["Wisdom"] += 1;
                 }
                 await userChannel.DeleteMessageAsync(msg);
                 character.speed = 30;
@@ -378,8 +380,8 @@ namespace DiscordApp.RPGSystems.DnD
             }
             if (character.race == "half orc")
             {
-                character.strength = +2;
-                character.constitution += 1;
+                character.BaseStats["Sstrength"] = +2;
+                character.BaseStats["Constitution"] += 1;
                 character.speed = 30;
                 character.Traits.Add(new DnDTrait("Darkvision", "Thanks to your orc blood, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if it w ere bright light, and in darkness as if it w ere dim light. You can't discern color in darkness, only shades o f gray."));
                 character.Traits.Add(new DnDTrait("Menacing", "You gain proficiency in the Intimidation skill."));
@@ -392,7 +394,7 @@ namespace DiscordApp.RPGSystems.DnD
             }
             if (character.race == "dwarf")
             {
-                character.constitution += 2;
+                character.BaseStats["Constitution"] += 2;
                 character.speed = 25;
                 character.Traits.Add(new DnDTrait("Darkvision", "A ccustom ed to life underground, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it w ere dim light. You can’t discern color in darkness, only shades of gray."));
                 character.Traits.Add(new DnDTrait("Dwarven Resilience", "You have advantage on saving throws against poison, and you have resistance against poison damage"));
@@ -433,12 +435,12 @@ namespace DiscordApp.RPGSystems.DnD
                 (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                 if (dwarfResult.Result.Emoji == emojis.yes)
                 {
-                    character.wisdom += 1;
+                    character.BaseStats["Wisdom"] += 1;
                     character.Traits.Add(new DnDTrait("Dwarven Toughness", "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."));
                 }
                 if (dwarfResult.Result.Emoji == emojis.no)
                 {
-                    character.strength += 2;
+                    character.BaseStats["Strength"] += 2;
                     character.Traits.Add(new DnDTrait("Dwarven Armor Training", "You have proficiency with light and medium armor."));
                 }
             }
@@ -471,12 +473,12 @@ namespace DiscordApp.RPGSystems.DnD
             Thread.Sleep(230);
 
             QuestionEmbed.Title = "What is your Aligment?";
-            QuestionEmbed.Description = 
+            QuestionEmbed.Description =
              "Lawful good    |.|  Neutral Good  |.| Chaotic Good" + System.Environment.NewLine +
              "Lawful Neutral |.|  True Neutral  |.| Chaotic Neutral" + System.Environment.NewLine +
              "Lawful evil    |.|  Neutral evil  |.| Chaotic evil";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 9; i++)
             {
                 await msg.CreateReactionAsync(emojis.onetototen[i]);
             }
@@ -546,7 +548,104 @@ namespace DiscordApp.RPGSystems.DnD
                 response = await userChannel.GetNextMessageAsync();
                 input = response.Result.Content.Trim().ToLower();
             } while (!avaibleClasses.Contains(input));
+            switch (input)
+            {
+                case "barbarian":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Barbarian));
+                    break;
+                case "bard":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Bard));
+                    break;
+                case "cleric":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Cleric));
+                    break;
+                case "druid":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Druid));
+                    break;
+                case "fighter":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Fighter));
+                    break;
+                case "monk":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Monk));
+                    break;
+                case "paladin":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Paladin));
+                    break;
+                case "ranger":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Ranger));
+                    break;
+                case "rogue":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Rogue));
+                    break;
+                case "sorcerer":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Sorcerer));
+                    break;
+                case "warlock":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Warlock));
+                    break;
+                case "wizard":
+                    character.CharacterClass.Add(new CharacterClass(CharacterClass.avaibleClasses.Wizard));
+                    break;
+            }
+            await userChannel.SendMessageAsync("You chose: `" + character.CharacterClass[0].classname + "`");
+            character.abilityProficiencies = character.CharacterClass[0].primary_Ability;
+            character.SavingThrowProficiencies = character.CharacterClass[0].SavingTHrowproficiencies;
+            character.ArmorNWeaponProficiencies = character.CharacterClass[0].armorNweaponproficiencies;
+            character.maxHP = character.CharacterClass[0].baseHitPoints + character.BaseStats["Constitution"];
 
+            QuestionEmbed.Title = "What `Gender` are you";
+            QuestionEmbed.Description = emojis.kobieta + "- For Female" + Environment.NewLine + emojis.mezczyzna + "- For Male";
+            var gender = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            await gender.CreateReactionAsync(emojis.kobieta);
+            await gender.CreateReactionAsync(emojis.mezczyzna);
+            Thread.Sleep(110);
+            var genderResult = await interactivity.WaitForReactionAsync(x => x.Message == gender
+           &&
+           (x.Emoji == emojis.kobieta || x.Emoji == emojis.mezczyzna));
+            if (genderResult.Result.Emoji == emojis.kobieta)
+            {
+                character.gender = "Female";
+            }
+            if (genderResult.Result.Emoji == emojis.mezczyzna)
+            {
+                character.gender = "Male";
+            }
+            Thread.Sleep(110);
+            QuestionEmbed.Title = "What is your `Weight`";
+            QuestionEmbed.Description = "** Write only the number below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(110);
+            character.weight =Int32.Parse( response.Result.Content);
+            
+            QuestionEmbed.Title = "Describe your `Eyes`";
+            QuestionEmbed.Description = "** Write the answer below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(110);
+            character.eyes = response.Result.Content;
+            
+            QuestionEmbed.Title = "Describe your `Hair`";
+            QuestionEmbed.Description = "** Write the answer below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(110);
+            character.hair = response.Result.Content;
+            
+            QuestionEmbed.Title = "Describe your `skin`";
+            QuestionEmbed.Description = "** Write the answer below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(110);
+            character.skin = response.Result.Content;
+            
+            QuestionEmbed.Title = "Tell your `Backstory`";
+            QuestionEmbed.Description = "** Write the answer below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            character.backstory = response.Result.Content;
+
+            GC.Collect();
         }
 
         public int getDndStatRolls()

@@ -8,15 +8,11 @@ namespace DiscordApp.RPGSystems.DnD
     {
         public string name;
         public string race;
+        public string gender;
         public int exp;
         public string Faction;
         #region stats
-        public int strength;
-        public int dexterity;
-        public int constitution;
-        public int intelligence;
-        public int wisdom;
-        public int charisma;
+        public Dictionary<string, int> BaseStats = new Dictionary<string, int>();
         #endregion
         #region skills
         public int acrobatics;
