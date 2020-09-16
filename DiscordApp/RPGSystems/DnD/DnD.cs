@@ -46,11 +46,13 @@ namespace DiscordApp.RPGSystems.DnD
         public int initiative;
         public int speed;
         #endregion
-        public List<attacksNSpells> atackList;
-        public List<KeyValuePair<string, int>> equipment;
-        public List<DnDSpells> spells;
+        public List<CharacterClass> CharacterClass = new List<CharacterClass>();
+        public List<attacksNSpells> atackList = new List<attacksNSpells>();
+        public List<KeyValuePair<string, int>> equipment = new List<KeyValuePair<string, int>>();
+        public List<DnDSpells> spells= new List<DnDSpells>();
         #region personality stuff
         public List<DnDTrait> Traits = new List<DnDTrait>();
+        public string aligment = string.Empty;
         public List<string> ideals = new List<string>();
         public List<string> bonds = new List<string>();
         public List<string> flaws = new List<string>();
@@ -63,6 +65,11 @@ namespace DiscordApp.RPGSystems.DnD
         public string eyes;
         public string skin;
         public string hair;
+        #endregion
+        #region proficiencies
+        public List<string> abilityProficiencies = new List<string>();
+        public List<string> SavingThrowProficiencies = new List<string>();
+        public List<string> ArmorNWeaponProficiencies = new List<string>();
         #endregion
         #region other
         public string backstory;

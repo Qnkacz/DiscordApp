@@ -189,12 +189,12 @@ namespace DiscordApp.RPGSystems.DnD
                 character.Traits.Add(new DnDTrait("Keen Senses.", "You have proficiency in the Perception skill."));
                 character.Traits.Add(new DnDTrait("Fey Encestry", "You have advantage on saving throws against being charm ed, and m agic can’t put you to sleep."));
                 character.Traits.Add(new DnDTrait("Trance", "Elves don’t need to sleep. Instead, they meditate deeply, remaining sem iconscious, for 4 hours a day. (The Com m on w ord for such meditation is “trance.”) W hile meditating, you can dream after a fashion; such dream s are actually mental exercises that have becom e reflexive through years of practice. After resting in this way, you gain the sam e benefit that a human does from 8 hours of sleep."));
-                character.Traits.Add(new DnDTrait("Leanguage","elfish"));
+                character.Traits.Add(new DnDTrait("Leanguage", "elfish"));
                 character.Traits.Add(new DnDTrait("Elf Weapon Training.", "You have proficiency with the longsword, shortsword, shortbow, and longbow."));
             }
             if (character.race == "high elf")
             {
-                
+
                 character.intelligence += 1;
                 QuestionEmbed.Title = "Cantrip";
                 QuestionEmbed.Title = "Write one cantrip of your choice from wizard spell list";
@@ -373,7 +373,7 @@ namespace DiscordApp.RPGSystems.DnD
                 QuestionEmbed.Description = "write the leanguage below";
                 msg = msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
                 response = await userChannel.GetNextMessageAsync();
-                character.Traits.Add(new DnDTrait("Leanguage: " , response.Result.Content));
+                character.Traits.Add(new DnDTrait("Leanguage: ", response.Result.Content));
             }
             if (character.race == "half orc")
             {
@@ -384,8 +384,8 @@ namespace DiscordApp.RPGSystems.DnD
                 character.Traits.Add(new DnDTrait("Menacing", "You gain proficiency in the Intimidation skill."));
                 character.Traits.Add(new DnDTrait("Relentless Endurance", "W hen you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead.You can’t use this feature again until you finish a long rest."));
                 character.Traits.Add(new DnDTrait("Savage Attacks", "W hen you score a critical hit with a melee weapon attack, you can roll one of the w eapon’s damage dice one additional time and add it to the extra damage of the critical hit."));
-                character.Traits.Add(new DnDTrait("Leanguage","Common"));
-                character.Traits.Add(new DnDTrait("Leanguage","Orcish"));
+                character.Traits.Add(new DnDTrait("Leanguage", "Common"));
+                character.Traits.Add(new DnDTrait("Leanguage", "Orcish"));
                 character.Intimidation += 1;
 
             }
@@ -411,15 +411,15 @@ namespace DiscordApp.RPGSystems.DnD
                 (emojis.onetototen.Contains(x.Emoji)));
                 if (emojiResult.Result.Emoji == emojis.one)
                 {
-                    character.Traits.Add(new DnDTrait("Tool Proficiency:"," Smith's tools"));
+                    character.Traits.Add(new DnDTrait("Tool Proficiency:", " Smith's tools"));
                 }
                 if (emojiResult.Result.Emoji == emojis.two)
                 {
-                    character.Traits.Add(new DnDTrait("Tool Proficiency"," brewers supplies"));
+                    character.Traits.Add(new DnDTrait("Tool Proficiency", " brewers supplies"));
                 }
                 if (emojiResult.Result.Emoji == emojis.three)
                 {
-                    character.Traits.Add(new DnDTrait("Tool Proficiency"," Mason's tools"));
+                    character.Traits.Add(new DnDTrait("Tool Proficiency", " Mason's tools"));
                 }
                 QuestionEmbed.Title = "Choose Your subrace"; ;
                 QuestionEmbed.Description = emojis.yes + " - for Hill Darf" + System.Environment.NewLine + emojis.no + " - for Mountain Dwarf";
@@ -441,6 +441,83 @@ namespace DiscordApp.RPGSystems.DnD
                     character.Traits.Add(new DnDTrait("Dwarven Armor Training", "You have proficiency with light and medium armor."));
                 }
             }
+            QuestionEmbed.Title = "How tall are you";
+            QuestionEmbed.Description = "`lore friendly` propositions:" + System.Environment.NewLine +
+                "`dwarf` -> 120 - 152 cm" + System.Environment.NewLine +
+                "`elf` -> 152 - 190 cm" + System.Environment.NewLine +
+                "`halfling` -> around 90 cm" + System.Environment.NewLine +
+                "`human` -> 150 - 200 cm" + System.Environment.NewLine +
+                "`gnome` -> 90 - 120 cm" + System.Environment.NewLine +
+                "`half-elf` -> 150 - 200 cm" + System.Environment.NewLine +
+                "`half-orc` -> 160 - 200+ cm" + System.Environment.NewLine +
+                "** Write only the number below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            character.height = Int32.Parse(response.Result.Content);
+            Thread.Sleep(110);
+            QuestionEmbed.Title = "How old are you";
+            QuestionEmbed.Description = "`lore friendly` propositions:" + System.Environment.NewLine +
+                "`dwarf` -> 5 - 350 Years" + System.Environment.NewLine +
+                "`elf` -> 5 - 750 Years" + System.Environment.NewLine +
+                "`halfling` -> 5 - 65 years" + System.Environment.NewLine +
+                "`human` -> 5 - 80 Years" + System.Environment.NewLine +
+                "`gnome` -> 5 - 500 Years" + System.Environment.NewLine +
+                "`half-elf` -> 5 - 200 Years" + System.Environment.NewLine +
+                "`half-orc` -> 5 - 75 Years" + System.Environment.NewLine +
+                "** Write only the number below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(110);
+
+            QuestionEmbed.Title = "What is your Aligment?";
+            QuestionEmbed.Description = "Lawful good |.| Neutral Good |.| Chaotic Good" + System.Environment.NewLine +
+             "Lawful Neutral |.| True Neutral |.| Chaotic Neutral" + System.Environment.NewLine +
+             "Lawful evil |.|  Neutral evil |.| Chaotic evil";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            for (int i = 0; i < 6; i++)
+            {
+                await msg.CreateReactionAsync(emojis.onetototen[i]);
+            }
+            emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
+           &&
+           (emojis.onetototen.Contains(x.Emoji)));
+            if (emojiResult.Result.Emoji == emojis.one)
+            {
+                character.aligment = "Lawful good";
+            }
+            if (emojiResult.Result.Emoji == emojis.two)
+            {
+                character.aligment = "Neutral Good";
+            }
+            if (emojiResult.Result.Emoji == emojis.three)
+            {
+                character.aligment = "Chaotic Good";
+            }
+            if (emojiResult.Result.Emoji == emojis.four)
+            {
+                character.aligment = "Lawful Neutral";
+            }
+            if (emojiResult.Result.Emoji == emojis.five)
+            {
+                character.aligment = "True Neutral";
+            }
+            if (emojiResult.Result.Emoji == emojis.six)
+            {
+                character.aligment = "Chaotic Neutral";
+            } 
+            if (emojiResult.Result.Emoji == emojis.seven)
+            {
+                character.aligment = "Lawful evi";
+            } 
+            if (emojiResult.Result.Emoji == emojis.eight)
+            {
+                character.aligment = "Neutral Evil";
+            }
+            if (emojiResult.Result.Emoji == emojis.nine)
+            {
+                character.aligment = "Chaotic evil";
+            }
+            await userChannel.SendMessageAsync("You chose: **" + character.aligment + "**");
 
         }
 
