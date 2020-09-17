@@ -25,7 +25,7 @@ namespace DiscordApp.RPGSystems.DnD
         public List<int> chosenpool;
         public enum backgrounds
         {
-            acolyte,criminal,folkHero,noble,sage,soldier 
+            acolyte, criminal, folkHero, noble, sage, soldier
         }
 
         public enum Races { human, dwarf, Welf, Helf, halfling, half_elf, hhalf_orc, gnome };
