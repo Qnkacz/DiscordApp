@@ -96,6 +96,25 @@ namespace DiscordApp.RPGSystems.DnD
                 character.race = "halfling";
             }
             #endregion
+
+            QuestionEmbed.Title = "What `Gender` are you";
+            QuestionEmbed.Description = emojis.kobieta + "- For Female" + Environment.NewLine + emojis.mezczyzna + "- For Male";
+            var gender = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            await gender.CreateReactionAsync(emojis.kobieta);
+            await gender.CreateReactionAsync(emojis.mezczyzna);
+            Thread.Sleep(200);
+            var genderResult = await interactivity.WaitForReactionAsync(x => x.Message == gender
+           &&
+           (x.Emoji == emojis.kobieta || x.Emoji == emojis.mezczyzna));
+            if (genderResult.Result.Emoji == emojis.kobieta)
+            {
+                character.gender = "Female";
+            }
+            if (genderResult.Result.Emoji == emojis.mezczyzna)
+            {
+                character.gender = "Male";
+            }
+
             QuestionEmbed.Title = emojis.yes + " - You roll your stats" + emojis.no + "- use the premade one?";
             QuestionEmbed.Description = "react acordingly";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -457,6 +476,7 @@ namespace DiscordApp.RPGSystems.DnD
                 "`half-orc` -> 160 - 200+ cm" + System.Environment.NewLine +
                 "** Write only the number below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(230);
             response = await userChannel.GetNextMessageAsync();
             character.height = Int32.Parse(response.Result.Content);
             Thread.Sleep(230);
@@ -471,6 +491,7 @@ namespace DiscordApp.RPGSystems.DnD
                 "`half-orc` -> 5 - 75 Years" + System.Environment.NewLine +
                 "** Write only the number below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(230);
             response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(230);
 
@@ -596,23 +617,7 @@ namespace DiscordApp.RPGSystems.DnD
             character.maxHP = character.CharacterClass[0].baseHitPoints + character.BaseStats["Constitution"];
             character.inventory.Add(new DnDitem("gold", "currency in game"), character.CharacterClass[0].startMoney);
 
-            QuestionEmbed.Title = "What `Gender` are you";
-            QuestionEmbed.Description = emojis.kobieta + "- For Female" + Environment.NewLine + emojis.mezczyzna + "- For Male";
-            var gender = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-            await gender.CreateReactionAsync(emojis.kobieta);
-            await gender.CreateReactionAsync(emojis.mezczyzna);
-            Thread.Sleep(200);
-            var genderResult = await interactivity.WaitForReactionAsync(x => x.Message == gender
-           &&
-           (x.Emoji == emojis.kobieta || x.Emoji == emojis.mezczyzna));
-            if (genderResult.Result.Emoji == emojis.kobieta)
-            {
-                character.gender = "Female";
-            }
-            if (genderResult.Result.Emoji == emojis.mezczyzna)
-            {
-                character.gender = "Male";
-            }
+           
             Thread.Sleep(200);
             QuestionEmbed.Title = "What is your `Weight`";
             QuestionEmbed.Description = "** Write only the number below **";
