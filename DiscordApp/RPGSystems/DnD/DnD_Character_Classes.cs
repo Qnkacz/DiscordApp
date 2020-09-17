@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiscordApp.Handlers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,12 +20,18 @@ namespace DiscordApp.RPGSystems.DnD
         public List<string> SavingTHrowproficiencies;
         public List<string> armorNweaponproficiencies;
         public int baseHitPoints;
+        public int startMoney;
         public CharacterClass(avaibleClasses cls)
         {
             switch (cls)
             {
                 case avaibleClasses.Barbarian:
                     level = 1;
+                    startMoney = 0;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4)*10;
+                    }
                     baseHitPoints = 12;
                     classname = "Barbarian";
                     description = "A fierce warrior of primitive background who can enter a battle rage";
@@ -40,6 +47,11 @@ namespace DiscordApp.RPGSystems.DnD
                 case avaibleClasses.Bard:
                     level = 1;
                     baseHitPoints = 8;
+                    startMoney = 0;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     classname = "Bard";
                     description = "An inspiring magician whose power echoes the music of creation";
                     hitDie = 8;
@@ -55,6 +67,11 @@ namespace DiscordApp.RPGSystems.DnD
                 case avaibleClasses.Cleric:
                     level = 1;
                     baseHitPoints = 8;
+                    startMoney = 0;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     classname = "Cleric";
                     description = "A priestly champion who wields divine magic in service of a higher power";
                     hitDie = 8;
@@ -67,6 +84,11 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Druid:
                     level = 1;
+                    startMoney = 0;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     classname = "Druid";
                     baseHitPoints = 8;
                     description = "A priest of the Old Faith, wielding the powers of nature— moonlight and plant growth, fire and lightning— and adopting animal forms";
@@ -89,6 +111,11 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Fighter:
                     level = 1;
+                    startMoney = 0;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     classname = "Fighter";
                     baseHitPoints = 10;
                     description = "A master of martial combat, skilled with a variety of weapons and armor";
@@ -102,6 +129,11 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Monk:
                     level = 1;
+                    startMoney = 0;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4);
+                    }
                     baseHitPoints = 8;
                     classname = "Monk";
                     description = "An master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection";
@@ -113,6 +145,11 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Paladin:
                     level = 1;
+                    startMoney = 0;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     baseHitPoints = 10;
                     classname = "Paladin";
                     description = "A holy warrior bound to a sacred oath";
@@ -127,6 +164,11 @@ namespace DiscordApp.RPGSystems.DnD
                 case avaibleClasses.Ranger:
                     level = 1;
                     baseHitPoints = 10;
+                    startMoney = 0;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     classname = "Ranger";
                     description = "A scoundrel who uses stealth and trickery to overcome obstacles and enemies";
                     hitDie = 8;
@@ -141,6 +183,11 @@ namespace DiscordApp.RPGSystems.DnD
                 case avaibleClasses.Rogue:
                     level = 1;
                     baseHitPoints = 8;
+                    startMoney = 0;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     classname = "Rogue";
                     description = "A scoundrel who uses stealth and trickery to overcome obstacles and enemies";
                     hitDie = 8;
@@ -155,6 +202,11 @@ namespace DiscordApp.RPGSystems.DnD
                     break;
                 case avaibleClasses.Sorcerer:
                     level = 1;
+                    startMoney = 0;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     classname = "Sorcerer";
                     description = "A spellcaster who draws on inherent magic from a gift or bloodline";
                     hitDie = 6;
@@ -171,6 +223,11 @@ namespace DiscordApp.RPGSystems.DnD
                     level = 1;
                     classname = "Warlock";
                     baseHitPoints = 8;
+                    startMoney = 0;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     description = "A wielder of magic that is derived from a bargain with an extraplanar entity";
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Charisma" };
@@ -182,6 +239,11 @@ namespace DiscordApp.RPGSystems.DnD
                     level = 1;
                     classname = "Wizard";
                     baseHitPoints = 6;
+                    startMoney = 0;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     description = "A scholarly magic-user capable of manipulating the structures of reality";
                     hitDie = 6;
                     primary_Ability = new List<string>() { "Charisma" };
@@ -197,6 +259,11 @@ namespace DiscordApp.RPGSystems.DnD
                     classname = "Destroyer of worlds";
                     description = "Most powerfullbeing";
                     baseHitPoints = 666;
+                    startMoney = 0;
+                    for (int i = 0; i < 10; i++)
+                    {
+                        startMoney += static_objects.WHF_template.r.Next(1, 4) * 10;
+                    }
                     hitDie = 999;
                     primary_Ability = new List<string>() { "Charisma" };
                     SavingTHrowproficiencies = new List<string>() { "Wisdom", "Charisma" };

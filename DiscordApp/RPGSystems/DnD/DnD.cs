@@ -11,6 +11,7 @@ namespace DiscordApp.RPGSystems.DnD
         public string gender;
         public int exp;
         public string Faction;
+        public Dictionary<DnDitem, int> inventory = new Dictionary<DnDitem, int>();
         #region stats
         public Dictionary<string, int> BaseStats = new Dictionary<string, int>();
         #endregion
@@ -44,7 +45,6 @@ namespace DiscordApp.RPGSystems.DnD
         #endregion
         public List<CharacterClass> CharacterClass = new List<CharacterClass>();
         public List<attacksNSpells> atackList = new List<attacksNSpells>();
-        public List<KeyValuePair<string, int>> equipment = new List<KeyValuePair<string, int>>();
         public List<DnDSpells> spells= new List<DnDSpells>();
         #region personality stuff
         public List<DnDTrait> Traits = new List<DnDTrait>();
@@ -66,6 +66,7 @@ namespace DiscordApp.RPGSystems.DnD
         public List<string> abilityProficiencies = new List<string>();
         public List<string> SavingThrowProficiencies = new List<string>();
         public List<string> ArmorNWeaponProficiencies = new List<string>();
+        public List<string> SkillProficiencies = new List<string>();
         #endregion
         #region other
         public string backstory;

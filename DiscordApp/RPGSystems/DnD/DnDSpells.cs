@@ -31,4 +31,14 @@
             description = _desc;
         }
     }
+    public struct DnDitem
+    {
+        public string name;
+        public string descr;
+        public DnDitem(string _name, string _desc)
+        {
+            name = _name;
+            descr = _desc;
+        }
+    }
 }

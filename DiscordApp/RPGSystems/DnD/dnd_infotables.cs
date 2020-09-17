@@ -5,6 +5,7 @@ using DSharpPlus.Interactivity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -592,6 +593,7 @@ namespace DiscordApp.RPGSystems.DnD
             character.SavingThrowProficiencies = character.CharacterClass[0].SavingTHrowproficiencies;
             character.ArmorNWeaponProficiencies = character.CharacterClass[0].armorNweaponproficiencies;
             character.maxHP = character.CharacterClass[0].baseHitPoints + character.BaseStats["Constitution"];
+            character.inventory.Add(new DnDitem("gold", "currency in game"), character.CharacterClass[0].startMoney);
 
             QuestionEmbed.Title = "What `Gender` are you";
             QuestionEmbed.Description = emojis.kobieta + "- For Female" + Environment.NewLine + emojis.mezczyzna + "- For Male";
@@ -616,36 +618,71 @@ namespace DiscordApp.RPGSystems.DnD
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(110);
-            character.weight =Int32.Parse( response.Result.Content);
-            
+            character.weight = Int32.Parse(response.Result.Content);
+
             QuestionEmbed.Title = "Describe your `Eyes`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(110);
             character.eyes = response.Result.Content;
-            
+
             QuestionEmbed.Title = "Describe your `Hair`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(110);
             character.hair = response.Result.Content;
-            
+
             QuestionEmbed.Title = "Describe your `skin`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(110);
             character.skin = response.Result.Content;
-            
-            QuestionEmbed.Title = "Tell your `Backstory`";
+
+            QuestionEmbed.Title = "Tell your `Ideas`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
-            character.backstory = response.Result.Content;
+            character.ideals.Add(response.Result.Content);
 
+            QuestionEmbed.Title = "Tell your `Bonds`";
+            QuestionEmbed.Description = "** Write the answer below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            character.bonds.Add(response.Result.Content);
+
+            QuestionEmbed.Title = "Tell your `Flaws`";
+            QuestionEmbed.Description = "** Write the answer below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            response = await userChannel.GetNextMessageAsync();
+            character.flaws.Add(response.Result.Content);
+
+            QuestionEmbed.Title = "Your character:";
+            QuestionEmbed.Description =
+                "`Name:` **" + character.name + "**" + Environment.NewLine +
+                "`Gender:` **" + character.gender + "**" + Environment.NewLine +
+                "`Age:` **" + character.age + "**" + Environment.NewLine +
+                "`Height:` **" + character.height + "**" + Environment.NewLine +
+                "`Weight:` **" + character.weight + "**" + Environment.NewLine +
+                "`Eyes:` **" + character.eyes + "**" + Environment.NewLine +
+                "`Hair:` **" + character.hair + "**" + Environment.NewLine +
+                "`Class:` **" + character.CharacterClass[0].classname + "**" + Environment.NewLine +
+                "`EXP:` **" + character.exp + "**" + Environment.NewLine +
+                "`Strength:` **" + character.BaseStats["Strength"] + "**" + Environment.NewLine +
+                "`Dexterity:` **" + character.BaseStats["Dexterity"] + "**" + Environment.NewLine +
+                "`Constitution:` **" + character.BaseStats["Constitution"] + "**" + Environment.NewLine +
+                "`Intelligence:` **" + character.BaseStats["Intelligence"] + "**" + Environment.NewLine +
+                "`Wisdom:` **" + character.BaseStats["Wisdom"] + "**" + Environment.NewLine +
+                "`Charisma:` **" + character.BaseStats["Charisma"] + "**" + Environment.NewLine +
+                "`Max HP:` **" + character.maxHP + "**" + Environment.NewLine +
+                "`Speed` **" + character.speed + "**" + Environment.NewLine +
+                "`initiative` **" + character.initiative + "**" + Environment.NewLine;
+            await userChannel.SendMessageAsync(embed: QuestionEmbed);
             GC.Collect();
+
+            //itemki//
         }
 
         public int getDndStatRolls()
@@ -664,6 +701,37 @@ namespace DiscordApp.RPGSystems.DnD
                 output += item;
             }
             return output;
+        }
+
+        public async Task additemsFromClass(DnD character, CommandContext ctx, DiscordChannel userChannel, EmojiBase emojis)
+        {
+            switch(character.CharacterClass[0].classname)
+            {
+                case "Barbarian":
+                    break;
+                case "Bard":
+                    break;
+                case "Cleric":
+                    break;
+                case "Druid":
+                    break;
+                case "Fighter":
+                    break;
+                case "Monk":
+                    break;
+                case "Paladin":
+                    break;
+                case "Ranger":
+                    break;
+                case "Rogue":
+                    break;
+                case "Sorcerer":
+                    break;
+                case "Warlock":
+                    break;
+                case "Wizard":
+                    break;
+            }
         }
     }
 }

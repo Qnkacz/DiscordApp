@@ -19,7 +19,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 {
     public class WHF_Infotables
     {
-        Random r = new Random();
+        public Random r = new Random();
         public int walka_wrecz;
         public int strzelectwo;
         public int krzepa;
