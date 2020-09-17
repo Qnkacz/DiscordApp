@@ -60,7 +60,7 @@ namespace DiscordApp.RPGSystems.DnD
             var emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
            &&
            (emojis.DnDRaceEmojiArr.Contains(x.Emoji)));
-            Thread.Sleep(150);
+            Thread.Sleep(200);
             #region racePicker
             if (emojiResult.Result.Emoji == emojis.human)
             {
@@ -483,7 +483,7 @@ namespace DiscordApp.RPGSystems.DnD
             {
                 await msg.CreateReactionAsync(emojis.onetototen[i]);
             }
-            Thread.Sleep(110);
+            Thread.Sleep(200);
             emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
            &&
            (emojis.onetototen.Contains(x.Emoji)));
@@ -600,7 +600,7 @@ namespace DiscordApp.RPGSystems.DnD
             var gender = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             await gender.CreateReactionAsync(emojis.kobieta);
             await gender.CreateReactionAsync(emojis.mezczyzna);
-            Thread.Sleep(110);
+            Thread.Sleep(200);
             var genderResult = await interactivity.WaitForReactionAsync(x => x.Message == gender
            &&
            (x.Emoji == emojis.kobieta || x.Emoji == emojis.mezczyzna));
@@ -612,50 +612,53 @@ namespace DiscordApp.RPGSystems.DnD
             {
                 character.gender = "Male";
             }
-            Thread.Sleep(110);
+            Thread.Sleep(200);
             QuestionEmbed.Title = "What is your `Weight`";
             QuestionEmbed.Description = "** Write only the number below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(110);
+            Thread.Sleep(200);
             character.weight = Int32.Parse(response.Result.Content);
 
             QuestionEmbed.Title = "Describe your `Eyes`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(110);
+            Thread.Sleep(200);
             character.eyes = response.Result.Content;
 
             QuestionEmbed.Title = "Describe your `Hair`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(110);
+            Thread.Sleep(200);
             character.hair = response.Result.Content;
 
             QuestionEmbed.Title = "Describe your `skin`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(110);
+            Thread.Sleep(200);
             character.skin = response.Result.Content;
 
             QuestionEmbed.Title = "Tell your `Ideas`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(200);
             character.ideals.Add(response.Result.Content);
 
             QuestionEmbed.Title = "Tell your `Bonds`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(200);
             response = await userChannel.GetNextMessageAsync();
             character.bonds.Add(response.Result.Content);
 
             QuestionEmbed.Title = "Tell your `Flaws`";
             QuestionEmbed.Description = "** Write the answer below **";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(200);
             response = await userChannel.GetNextMessageAsync();
             character.flaws.Add(response.Result.Content);
 
@@ -683,6 +686,7 @@ namespace DiscordApp.RPGSystems.DnD
             GC.Collect();
 
             //itemki//
+            await additemsFromClass(character, ctx, userChannel, emojis);
         }
 
         public int getDndStatRolls()
@@ -705,9 +709,56 @@ namespace DiscordApp.RPGSystems.DnD
 
         public async Task additemsFromClass(DnD character, CommandContext ctx, DiscordChannel userChannel, EmojiBase emojis)
         {
-            switch(character.CharacterClass[0].classname)
+            var questionEmbed = new DiscordEmbedBuilder { };
+            var interactivity = ctx.Client.GetInteractivity();
+            switch (character.CharacterClass[0].classname)
             {
                 case "Barbarian":
+                    questionEmbed.Title = "Choose your weapon";
+                    questionEmbed.Description = emojis.yes + "- for greataxe" + Environment.NewLine + emojis.no + "- for any martial melee weapon";
+                    var msg = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await msg.CreateReactionAsync(emojis.yes);
+                    await msg.CreateReactionAsync(emojis.no);
+                    Thread.Sleep(110);
+                    var weaponResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
+                    &&
+                    (x.Emoji == emojis.yes || x.Emoji == emojis.no));
+                    if (weaponResult.Result.Emoji == emojis.yes)
+                    {
+                        character.inventory.Add(new DnDitem("Greataxe", "An axe that is great!"), 1);
+                    }
+                    if (weaponResult.Result.Emoji == emojis.no)
+                    {
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                    }
+                    questionEmbed.Title = "Choose your weapon";
+                    questionEmbed.Description = emojis.yes + "- for 2 handaxes" + Environment.NewLine + emojis.no + "- for any martial simple weapon";
+                    var msg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await msg1.CreateReactionAsync(emojis.yes);
+                    await msg1.CreateReactionAsync(emojis.no);
+                    var secondResult = await interactivity.WaitForReactionAsync(x => x.Message == msg1
+                    &&
+                    (x.Emoji == emojis.yes || x.Emoji == emojis.no));
+                    if (weaponResult.Result.Emoji == emojis.yes)
+                    {
+                        character.inventory.Add(new DnDitem("handaxe", "a handy axe!"), 2);
+                    }
+                    if (weaponResult.Result.Emoji == emojis.no)
+                    {
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                    }
+                    character.inventory.Add(new DnDitem("explorer back", "It's huge!"), 1);
+                    character.inventory.Add(new DnDitem("Javeline", "haha, jabeline goes brrr"), 4);
                     break;
                 case "Bard":
                     break;
