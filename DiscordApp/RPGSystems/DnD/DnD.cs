@@ -12,6 +12,7 @@ namespace DiscordApp.RPGSystems.DnD
         public int exp;
         public string Faction;
         public Dictionary<DnDitem, int> inventory = new Dictionary<DnDitem, int>();
+        //public DnDbackground background;
         #region stats
         public Dictionary<string, int> BaseStats = new Dictionary<string, int>();
         #endregion
