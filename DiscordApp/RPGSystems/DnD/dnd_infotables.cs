@@ -2,6 +2,7 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1056,16 +1057,411 @@ namespace DiscordApp.RPGSystems.DnD
                     #endregion
                     break;
                 case "Paladin":
+                    #region paladin
+                    questionEmbed.Title = "Choose your weapon";
+                    questionEmbed.Description = emojis.yes + "- for a martial weapon and a shield" + Environment.NewLine + emojis.no + "- for two martial weapons";
+                    var paladinmsg = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await paladinmsg.CreateReactionAsync(emojis.yes);
+                    await paladinmsg.CreateReactionAsync(emojis.no);
+                    Thread.Sleep(110);
+                    var paladinweaponResult = await interactivity.WaitForReactionAsync(x => x.Message == paladinmsg
+                    &&
+                    (x.Emoji == emojis.yes || x.Emoji == emojis.no));
+                    if (paladinweaponResult.Result.Emoji == emojis.yes)
+                    {
+                        character.inventory.Add(new DnDitem("Shield", "Looks sturdy"), 1);
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                    }
+                    if (paladinweaponResult.Result.Emoji == emojis.no)
+                    {
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result1 = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result1.Result.Content, ""), 1);
+                    }
+
+                    questionEmbed.Title = "Choose your weapon";
+                    questionEmbed.Description = emojis.yes + "- for five javelins" + Environment.NewLine + emojis.no + "- for a simple weapon";
+                    var paladinmsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await paladinmsg1.CreateReactionAsync(emojis.yes);
+                    await paladinmsg1.CreateReactionAsync(emojis.no);
+                    Thread.Sleep(110);
+                    var paladinweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == paladinmsg1
+                    &&
+                    (x.Emoji == emojis.yes || x.Emoji == emojis.no));
+                    if(paladinweaponResult1.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("javbeling", "nice and pointy"), 5);
+                    }
+                    if(paladinweaponResult1.Result.Emoji == emojis.one)
+                    {
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                    }
+
+                    questionEmbed.Title = "Choose ";
+                    questionEmbed.Description = emojis.yes + "- for a priest's pack" + Environment.NewLine + emojis.no + "- for an explorer pack";
+                    var paladinmsg2 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await paladinmsg2.CreateReactionAsync(emojis.yes);
+                    await paladinmsg2.CreateReactionAsync(emojis.no);
+                    Thread.Sleep(110);
+                    var paladinweaponResult2 = await interactivity.WaitForReactionAsync(x => x.Message == paladinmsg2
+                    &&
+                    (x.Emoji == emojis.yes || x.Emoji == emojis.no));
+                    if (paladinweaponResult2.Result.Emoji == emojis.yes)
+                    {
+                        character.inventory.Add(new DnDitem("Priest's pack", "Don't drink the wine!"), 1);
+                    }
+                    if (paladinweaponResult2.Result.Emoji == emojis.no)
+                    {
+                        character.inventory.Add(new DnDitem("explorer pack", "looks handy"), 1);
+                    }
+                    character.inventory.Add(new DnDitem("chain mail", "does it shine blue?"), 1);
+                    character.inventory.Add(new DnDitem("Holy symbol", "You feel good when looking at it"), 1);
+                    #endregion
                     break;
                 case "Ranger":
+                    #region ranger
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for scale mail" + Environment.NewLine + emojis.two + "- for leather armor";
+                    var rangermsg = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await rangermsg.CreateReactionAsync(emojis.one);
+                    await rangermsg.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var rangerweaponResult = await interactivity.WaitForReactionAsync(x => x.Message == rangermsg
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if(rangerweaponResult.Result.Emoji==emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("Scale mail", "Looks heavy"), 1);
+                    }
+                    if(rangerweaponResult.Result.Emoji==emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("Leather armor", "an animal died for this!"), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for two shortswords" + Environment.NewLine + emojis.two + "- for two simple melee weapons";
+                    var rangermsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await rangermsg1.CreateReactionAsync(emojis.one);
+                    await rangermsg1.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var rangerweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == rangermsg1
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if(rangerweaponResult1.Result.Emoji==emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("Shortsword", "Longsword but shorter"), 2);
+                    }
+                    if(rangerweaponResult1.Result.Emoji==emojis.two)
+                    {
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for scale mail" + Environment.NewLine + emojis.two + "- for leather armor";
+                    var rangermsg3 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await rangermsg3.CreateReactionAsync(emojis.one);
+                    await rangermsg3.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var rangerweaponResult3 = await interactivity.WaitForReactionAsync(x => x.Message == rangermsg3
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (rangerweaponResult3.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("Dungeon pack", "Looks good in low light conditions!"), 1);
+                    }
+                    if (rangerweaponResult3.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("explorer pack", "looks handfy!"), 1);
+                    }
+                    character.inventory.Add(new DnDitem("longbow", "shoots accurately"), 1);
+                    character.inventory.Add(new DnDitem("arrow", "make it rain!"), 20);
+
+                    #endregion
                     break;
                 case "Rogue":
+                    #region rogue
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a rapier " + Environment.NewLine + emojis.two + "- for a shortsword";
+                    var roguemsg = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await roguemsg.CreateReactionAsync(emojis.one);
+                    await roguemsg.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var rogueweaponResult = await interactivity.WaitForReactionAsync(x => x.Message == roguemsg
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (rogueweaponResult.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("rapier", "Pointy!"), 1);
+                    }
+                    if (rogueweaponResult.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("shortsword", "A smaller longsword!"), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a shortbow and 20 arrows " + Environment.NewLine + emojis.two + "- for a shortsword";
+                    var roguemsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await roguemsg1.CreateReactionAsync(emojis.one);
+                    await roguemsg1.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var rogueweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == roguemsg1
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (rogueweaponResult1.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("shortbow", "a smaller bow, quick on draw"), 1);
+                        character.inventory.Add(new DnDitem("Arrow", "Make it rain!"), 20);
+                    }
+                    if (rogueweaponResult1.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("shortsword", "A smaller longsword!"), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a burglar pack " + Environment.NewLine + emojis.two + "- for a dungeon pack"+Environment.NewLine+emojis.three+"- for an explorer pack";
+                    var roguemsg2 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await roguemsg2.CreateReactionAsync(emojis.one);
+                    await roguemsg2.CreateReactionAsync(emojis.two);
+                    await roguemsg2.CreateReactionAsync(emojis.three);
+                    Thread.Sleep(190);
+                    var rogueweaponResult2 = await interactivity.WaitForReactionAsync(x => x.Message == roguemsg2
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (rogueweaponResult2.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("burglar pack", "you can do so much with it"), 1);
+                    }
+                    if (rogueweaponResult2.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("dungeon pack", "good in low light conditions"), 1);
+                    }
+                    if (rogueweaponResult2.Result.Emoji == emojis.three)
+                    {
+                        character.inventory.Add(new DnDitem("explorer pack", "looks handy"), 1);
+                    }
+                    character.inventory.Add(new DnDitem("leather armor", "an animal died for this!"), 1);
+                    character.inventory.Add(new DnDitem("dagger", "a kitchen knife but for enemies"), 2);
+                    character.inventory.Add(new DnDitem("thieves tools", "now you see me now you not"), 1);
+                    #endregion
                     break;
                 case "Sorcerer":
+                    #region sorcerer
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a light crossbow and 20 bolts " + Environment.NewLine + emojis.two + "- for a simple weapon";
+                    var sorcmsg = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await sorcmsg.CreateReactionAsync(emojis.one);
+                    await sorcmsg.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var sorcweaponResult = await interactivity.WaitForReactionAsync(x => x.Message == sorcmsg
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (sorcweaponResult.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("light crossbow", "Light and quick!"), 1);
+                        character.inventory.Add(new DnDitem("bolt", "solid ammunition!"), 20);
+                    }
+                    if (sorcweaponResult.Result.Emoji == emojis.two)
+                    {
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a component pouch " + Environment.NewLine + emojis.two + "- for a arcane focus";
+                    var sorcmsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await sorcmsg1.CreateReactionAsync(emojis.one);
+                    await sorcmsg1.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var sorcweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == sorcmsg1
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (sorcweaponResult1.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("component pouch", "for much needed components"), 1);
+                    }
+                    if (sorcweaponResult1.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("arcane focus", "why is focus even an item"), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a dungeon pack" + Environment.NewLine + emojis.two + "- for an explorer pack";
+                    var sorcmsg2 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await sorcmsg2.CreateReactionAsync(emojis.one);
+                    await sorcmsg2.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var sorcweaponResult2 = await interactivity.WaitForReactionAsync(x => x.Message == sorcmsg2
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (sorcweaponResult2.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("dungeon pack", "Good in low light"), 1);
+                    }
+                    if (sorcweaponResult2.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("explorer pack", "seems handy"), 1);
+                    }
+                    character.inventory.Add(new DnDitem("dagger", "a kitchen knife for enemies"), 2);
+                    #endregion
                     break;
                 case "Warlock":
+                    #region warlock
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a light crossbow and 20 bolts " + Environment.NewLine + emojis.two + "- for a simple weapon";
+                    var sawrlockmsg = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await sawrlockmsg.CreateReactionAsync(emojis.one);
+                    await sawrlockmsg.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var sawrcweaponResult = await interactivity.WaitForReactionAsync(x => x.Message == sawrlockmsg
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (sawrcweaponResult.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("light crossbow", "Light and quick!"), 1);
+                        character.inventory.Add(new DnDitem("bolt", "solid ammunition!"), 20);
+                    }
+                    if (sawrcweaponResult.Result.Emoji == emojis.two)
+                    {
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                    }
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a component pouch " + Environment.NewLine + emojis.two + "- for a arcane focus";
+                    var sawrlockmsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await sawrlockmsg1.CreateReactionAsync(emojis.one);
+                    await sawrlockmsg1.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var sawrcweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == sawrlockmsg1
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (sawrcweaponResult1.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("component pouch", "for much needed components"), 1);
+                    }
+                    if (sawrcweaponResult1.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("arcane focus", "why is focus even an item"), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a dungeon pack" + Environment.NewLine + emojis.two + "- for a schoolar's pack";
+                    var sawrlockmsg2 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await sawrlockmsg2.CreateReactionAsync(emojis.one);
+                    await sawrlockmsg2.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var sawrcweaponResult2 = await interactivity.WaitForReactionAsync(x => x.Message == sawrlockmsg2
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (sawrcweaponResult2.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("dungeon pack", "Good in low light"), 1);
+                    }
+                    if (sawrcweaponResult2.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("schoolar's pack", "so many books"), 1);
+                    }
+                    character.inventory.Add(new DnDitem("leather armor", "Ana nimal died for this!"), 1);
+                    character.inventory.Add(new DnDitem("dagger", "a kitchen knife but for enemies"), 2);
+
+                    questionEmbed.Title = "Name your weapon";
+                    questionEmbed.Description = "write down the answer below";
+                    await userChannel.SendMessageAsync(embed: questionEmbed);
+                    Thread.Sleep(110);
+                    var warcresult = await userChannel.GetNextMessageAsync();
+                    Thread.Sleep(110);
+                    character.inventory.Add(new DnDitem(warcresult.Result.Content, ""), 1);
+                    #endregion
                     break;
                 case "Wizard":
+                    #region wizard
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a quarterstaff" + Environment.NewLine + emojis.two + "- for a dagger";
+                    var wizkmsg = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await wizkmsg.CreateReactionAsync(emojis.one);
+                    await wizkmsg.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var wizweaponResult = await interactivity.WaitForReactionAsync(x => x.Message == wizkmsg
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (wizweaponResult.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("quarterstaff", "light and hight range!"), 1);
+                    }
+                    if (wizweaponResult.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("dagger", "a kitchen knife but for enemies"), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a component pouch " + Environment.NewLine + emojis.two + "- for a arcane focus";
+                    var wizlockmsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await wizlockmsg1.CreateReactionAsync(emojis.one);
+                    await wizlockmsg1.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var wizweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == wizlockmsg1
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (wizweaponResult1.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("component pouch", "for much needed components"), 1);
+                    }
+                    if (wizweaponResult1.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("arcane focus", "why is focus even an item"), 1);
+                    }
+
+                    questionEmbed.Title = "Choose";
+                    questionEmbed.Description = emojis.one + "- for a dungeon pack" + Environment.NewLine + emojis.two + "- for a schoolar's pack";
+                    var wizkmsg2 = await userChannel.SendMessageAsync(embed: questionEmbed);
+                    await wizkmsg2.CreateReactionAsync(emojis.one);
+                    await wizkmsg2.CreateReactionAsync(emojis.two);
+                    Thread.Sleep(190);
+                    var wizweaponResult2 = await interactivity.WaitForReactionAsync(x => x.Message == wizkmsg2
+                    &&
+                    (emojis.onetototen.Contains(x.Emoji)));
+                    if (wizweaponResult2.Result.Emoji == emojis.one)
+                    {
+                        character.inventory.Add(new DnDitem("dungeon pack", "Good in low light"), 1);
+                    }
+                    if (wizweaponResult2.Result.Emoji == emojis.two)
+                    {
+                        character.inventory.Add(new DnDitem("schoolar's pack", "so many books"), 1);
+                    }
+                    character.inventory.Add(new DnDitem("spellbook", "so many spells!"), 1);
+                    #endregion
                     break;
             }
         }
