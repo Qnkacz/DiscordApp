@@ -49,11 +49,12 @@ namespace DiscordApp.RPGSystems.DnD
         public List<DnDSpells> spells= new List<DnDSpells>();
         #region personality stuff
         public List<DnDTrait> Traits = new List<DnDTrait>();
+        public string personalityTrait;
         public string aligment = string.Empty;
-        public List<string> ideals = new List<string>();
-        public List<string> bonds = new List<string>();
-        public List<string> flaws = new List<string>();
-        public List<string> features = new List<string>();
+        public string ideals;
+        public string bonds;
+        public string flaws ;
+        public string features ;
         #endregion
         #region body
         public int age;

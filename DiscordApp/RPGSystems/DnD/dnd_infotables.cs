@@ -862,7 +862,50 @@ namespace DiscordApp.RPGSystems.DnD
             character.ArmorNWeaponProficiencies = character.CharacterClass[0].armorNweaponproficiencies;
             character.maxHP = character.CharacterClass[0].baseHitPoints + character.BaseStats["Constitution"];
             character.inventory.Add(new DnDitem("gold", "currency in game"), character.CharacterClass[0].startMoney);
+            await additemsFromClass(character, ctx, userChannel, emojis);
 
+            QuestionEmbed.Title = "Choose your backstory";
+            QuestionEmbed.Description = "** Acolyte ** " + "**Criminal** " + "**Folk Hero** " + "**Noble** " + "**Sage** " + "**Soldier** ";
+            var backstorychoice = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            for (int i = 0; i < 6; i++)
+            {
+                await backstorychoice.CreateReactionAsync(emojis.onetototen[i]);
+            }
+            Thread.Sleep(200);
+            emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == backstorychoice
+           &&
+           (emojis.onetototen.Contains(x.Emoji)));
+            if (emojiResult.Result.Emoji == emojis.one)
+            {
+                character.background = new DnDbackground(backgrounds.acolyte);
+            }
+            if (emojiResult.Result.Emoji == emojis.two)
+            {
+                character.background = new DnDbackground(backgrounds.criminal);
+            }
+            if (emojiResult.Result.Emoji == emojis.three)
+            {
+                character.background = new DnDbackground(backgrounds.folkHero);
+            }
+            if (emojiResult.Result.Emoji == emojis.four)
+            {
+                character.background = new DnDbackground(backgrounds.noble);
+            }
+            if (emojiResult.Result.Emoji == emojis.five)
+            {
+                character.background = new DnDbackground(backgrounds.sage);
+            }
+            if (emojiResult.Result.Emoji == emojis.six)
+            {
+                character.background = new DnDbackground(backgrounds.soldier);
+            }
+
+            character.abilityProficiencies.AddRange(character.background.SkillProficiencies);
+            character.personalityTrait=character.background.personalityTrait;
+            character.ideals = character.background.ideal;
+            character.bonds = character.background.bond;
+            character.flaws = character.background.flaw;
+            character.background.items.ToList().ForEach(x => character.inventory.Add(x.Key, x.Value));
 
             Thread.Sleep(200);
             QuestionEmbed.Title = "What is your `Weight`";
@@ -919,7 +962,7 @@ namespace DiscordApp.RPGSystems.DnD
             GC.Collect();
 
             //itemki//
-            await additemsFromClass(character, ctx, userChannel, emojis);
+            
         }
 
         public int getDndStatRolls()
