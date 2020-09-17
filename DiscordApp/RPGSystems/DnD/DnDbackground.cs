@@ -11,7 +11,6 @@ namespace DiscordApp.RPGSystems.DnD
         public string ideal;
         public string bond;
         public string flaw;
-
     }
   
 }
