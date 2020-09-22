@@ -875,8 +875,19 @@ namespace DiscordApp.RPGSystems.DnD
             await userChannel.SendMessageAsync("You chose: `" + character.CharacterClass[0].classname + "`");
             character.abilityProficiencies = character.CharacterClass[0].primary_Ability;
             character.SavingThrowProficiencies = character.CharacterClass[0].SavingTHrowproficiencies;
+
+            character.baseStatSavingThrow["Strength"] = getSavingThrow(character.BaseStatsModificator["Strength"]);
+            character.baseStatSavingThrow["Constitution"] = getSavingThrow(character.BaseStatsModificator["Constitution"]);
+            character.baseStatSavingThrow["Intelligence"] = getSavingThrow(character.BaseStatsModificator["Intelligence"]);
+            character.baseStatSavingThrow["Wisdom"] = getSavingThrow(character.BaseStatsModificator["Wisdom"]);
+            character.baseStatSavingThrow["Charisma"] = getSavingThrow(character.BaseStatsModificator["Charisma"]);
+            foreach (var item in character.CharacterClass[0].SavingTHrowproficiencies)
+            {
+                character.BaseStats[item] += 2;
+            }
+
             character.ArmorNWeaponProficiencies = character.CharacterClass[0].armorNweaponproficiencies;
-            character.maxHP = character.CharacterClass[0].baseHitPoints + character.savingThrows["Constitution"];
+            character.maxHP = character.CharacterClass[0].baseHitPoints + character.baseStatSavingThrow["Constitution"];
             character.currHP = character.maxHP;
             character.tempHP = character.maxHP;
             character.inventory.Add("gold", "currency in game", character.CharacterClass[0].startMoney);

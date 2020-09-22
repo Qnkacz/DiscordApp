@@ -28,6 +28,15 @@ namespace DiscordApp.RPGSystems.DnD
             { "Wisdom",0},
             { "Charisma",0},
            
+        };public Dictionary<string, int> baseStatSavingThrow = new Dictionary<string, int>()
+        {
+            { "Strength",0},
+            { "Dexterity",0},
+            { "Constitution",0},
+            { "Intelligence",0},
+            { "Wisdom",0},
+            { "Charisma",0},
+           
         };
         #endregion
         #region skills
