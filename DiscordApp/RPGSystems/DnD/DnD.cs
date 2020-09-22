@@ -19,7 +19,7 @@ namespace DiscordApp.RPGSystems.DnD
         public string background;
         #region stats
         public Dictionary<string, int> BaseStats = new Dictionary<string, int>();
-        public Dictionary<string, int> savingThrows = new Dictionary<string, int>()
+        public Dictionary<string, int> BaseStatsModificator = new Dictionary<string, int>()
         {
             { "Strength",0},
             { "Dexterity",0},

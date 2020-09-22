@@ -448,11 +448,11 @@ namespace DiscordApp.RPGSystems.DnD
             character.BaseStats.Add("Intelligence", liczby[3]);
             character.BaseStats.Add("Wisdom", liczby[4]);
             character.BaseStats.Add("Charisma", liczby[5]);
-            character.savingThrows["Strength"] = getSavingThrow(character.BaseStats["Strength"]);
-            character.savingThrows["Constitution"] = getSavingThrow(character.BaseStats["Constitution"]);
-            character.savingThrows["Intelligence"] = getSavingThrow(character.BaseStats["Intelligence"]);
-            character.savingThrows["Wisdom"] = getSavingThrow(character.BaseStats["Wisdom"]);
-            character.savingThrows["Charisma"] = getSavingThrow(character.BaseStats["Charisma"]);
+            character.BaseStatsModificator["Strength"] = getSavingThrow(character.BaseStats["Strength"]);
+            character.BaseStatsModificator["Constitution"] = getSavingThrow(character.BaseStats["Constitution"]);
+            character.BaseStatsModificator["Intelligence"] = getSavingThrow(character.BaseStats["Intelligence"]);
+            character.BaseStatsModificator["Wisdom"] = getSavingThrow(character.BaseStats["Wisdom"]);
+            character.BaseStatsModificator["Charisma"] = getSavingThrow(character.BaseStats["Charisma"]);
             #endregion
             #region races
             if (character.race == "Elf")
