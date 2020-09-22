@@ -273,6 +273,7 @@ namespace DiscordApp.RPGSystems.DnD
 
         #endregion
         #endregion
+        public DnDbackground dnd_background = new DnDbackground();
         public async Task CreateCharacter(CommandContext ctx, DiscordChannel userChannel, EmojiBase emojis)
         {
             List<int> customRolls = new List<int>();
@@ -389,12 +390,12 @@ namespace DiscordApp.RPGSystems.DnD
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             string[] statTitles = new string[]
             {
-                "What will be your `Strenght`",
-                "What will be your `Desxterity`",
-                "What will be your `Constitution`",
-                "What will be your `Inteligence`",
-                "What will be your `Wisdom`",
-                "What will be your `Charizma`"
+                  "What will be your `Strenght`",
+                  "What will be your `Desxterity`",
+                  "What will be your `Constitution`",
+                  "What will be your `Inteligence`",
+                  "What will be your `Wisdom`",
+                  "What will be your `Charizma`"
             };
             int[] liczby = new int[6];
             string WszystkieCechyString = string.Empty;
@@ -656,7 +657,7 @@ namespace DiscordApp.RPGSystems.DnD
                 character.Traits.Add(new DnDTrait("Savage Attacks", "W hen you score a critical hit with a melee weapon attack, you can roll one of the w eapon’s damage dice one additional time and add it to the extra damage of the critical hit."));
                 character.Traits.Add(new DnDTrait("Leanguage", "Common"));
                 character.Traits.Add(new DnDTrait("Leanguage", "Orcish"));
-                character.Intimidation += 1;
+                character.skills["intimidation"] += 1;
 
             }
             if (character.race == "dwarf")
@@ -794,18 +795,18 @@ namespace DiscordApp.RPGSystems.DnD
             await userChannel.SendMessageAsync("You chose: **" + character.aligment + "**");
             string[] avaibleClasses = new string[]
             {
-                "barbarian",
-                "bard" ,
-                "cleric" ,
-                "druid" ,
-                "fighter" ,
-                "monk" ,
-                "paladin" ,
-                "ranger" ,
-                "rogue" ,
-                "sorcerer" ,
-                "warlock" ,
-                "wizard"
+                  "barbarian",
+                  "bard" ,
+                  "cleric" ,
+                  "druid" ,
+                  "fighter" ,
+                  "monk" ,
+                  "paladin" ,
+                  "ranger" ,
+                  "rogue" ,
+                  "sorcerer" ,
+                  "warlock" ,
+                  "wizard"
             };
             string description = string.Join(" ", avaibleClasses) + Environment.NewLine + "Write down the class you want to be";
             string input = string.Empty;
@@ -861,9 +862,10 @@ namespace DiscordApp.RPGSystems.DnD
             character.SavingThrowProficiencies = character.CharacterClass[0].SavingTHrowproficiencies;
             character.ArmorNWeaponProficiencies = character.CharacterClass[0].armorNweaponproficiencies;
             character.maxHP = character.CharacterClass[0].baseHitPoints + character.BaseStats["Constitution"];
-            character.inventory.Add(new DnDitem("gold", "currency in game"), character.CharacterClass[0].startMoney);
+            character.inventory.Add("gold", "currency in game", character.CharacterClass[0].startMoney);
             await additemsFromClass(character, ctx, userChannel, emojis);
 
+            var chosenbackstory = static_objects.dnd_template.dnd_background;
             QuestionEmbed.Title = "Choose your backstory";
             QuestionEmbed.Description = "** Acolyte ** " + "**Criminal** " + "**Folk Hero** " + "**Noble** " + "**Sage** " + "**Soldier** ";
             var backstorychoice = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -872,97 +874,47 @@ namespace DiscordApp.RPGSystems.DnD
                 await backstorychoice.CreateReactionAsync(emojis.onetototen[i]);
             }
             Thread.Sleep(200);
-            emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == backstorychoice
+            var backgroundresult = await interactivity.WaitForReactionAsync(x => x.Message == backstorychoice
            &&
            (emojis.onetototen.Contains(x.Emoji)));
-            if (emojiResult.Result.Emoji == emojis.one)
+            if (backgroundresult.Result.Emoji == emojis.one)
             {
-                character.background = new DnDbackground(backgrounds.acolyte);
+                chosenbackstory = new DnDbackground(backgrounds.acolyte);
             }
-            if (emojiResult.Result.Emoji == emojis.two)
+            if (backgroundresult.Result.Emoji == emojis.two)
             {
-                character.background = new DnDbackground(backgrounds.criminal);
+                chosenbackstory = new DnDbackground(backgrounds.criminal); 
             }
-            if (emojiResult.Result.Emoji == emojis.three)
+            if (backgroundresult.Result.Emoji == emojis.three)
             {
-                character.background = new DnDbackground(backgrounds.folkHero);
+                chosenbackstory = new DnDbackground(backgrounds.folkHero);
             }
-            if (emojiResult.Result.Emoji == emojis.four)
+            if (backgroundresult.Result.Emoji == emojis.four)
             {
-                character.background = new DnDbackground(backgrounds.noble);
+                chosenbackstory = new DnDbackground(backgrounds.noble);
             }
-            if (emojiResult.Result.Emoji == emojis.five)
+            if (backgroundresult.Result.Emoji == emojis.five)
             {
-                character.background = new DnDbackground(backgrounds.sage);
+                chosenbackstory = new DnDbackground(backgrounds.sage); 
             }
-            if (emojiResult.Result.Emoji == emojis.six)
+            if (backgroundresult.Result.Emoji == emojis.six)
             {
-                character.background = new DnDbackground(backgrounds.soldier);
+                chosenbackstory = new DnDbackground(backgrounds.soldier);
             }
 
-            character.abilityProficiencies.AddRange(character.background.SkillProficiencies);
-            character.personalityTrait=character.background.personalityTrait;
-            character.ideals = character.background.ideal;
-            character.bonds = character.background.bond;
-            character.flaws = character.background.flaw;
-            character.background.items.ToList().ForEach(x => character.inventory.Add(x.Key, x.Value));
-
-            Thread.Sleep(200);
-            QuestionEmbed.Title = "What is your `Weight`";
-            QuestionEmbed.Description = "** Write only the number below **";
-            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-            response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(200);
-            character.weight = Int32.Parse(response.Result.Content);
-
-            QuestionEmbed.Title = "Describe your `Eyes`";
-            QuestionEmbed.Description = "** Write the answer below **";
-            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-            response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(200);
-            character.eyes = response.Result.Content;
-
-            QuestionEmbed.Title = "Describe your `Hair`";
-            QuestionEmbed.Description = "** Write the answer below **";
-            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-            response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(200);
-            character.hair = response.Result.Content;
-
-            QuestionEmbed.Title = "Describe your `skin`";
-            QuestionEmbed.Description = "** Write the answer below **";
-            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-            response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(200);
-            character.skin = response.Result.Content;
-
-
-
-            QuestionEmbed.Title = "Your character:";
-            QuestionEmbed.Description =
-                "`Name:` **" + character.name + "**" + Environment.NewLine +
-                "`Gender:` **" + character.gender + "**" + Environment.NewLine +
-                "`Age:` **" + character.age + "**" + Environment.NewLine +
-                "`Height:` **" + character.height + "**" + Environment.NewLine +
-                "`Weight:` **" + character.weight + "**" + Environment.NewLine +
-                "`Eyes:` **" + character.eyes + "**" + Environment.NewLine +
-                "`Hair:` **" + character.hair + "**" + Environment.NewLine +
-                "`Class:` **" + character.CharacterClass[0].classname + "**" + Environment.NewLine +
-                "`EXP:` **" + character.exp + "**" + Environment.NewLine +
-                "`Strength:` **" + character.BaseStats["Strength"] + "**" + Environment.NewLine +
-                "`Dexterity:` **" + character.BaseStats["Dexterity"] + "**" + Environment.NewLine +
-                "`Constitution:` **" + character.BaseStats["Constitution"] + "**" + Environment.NewLine +
-                "`Intelligence:` **" + character.BaseStats["Intelligence"] + "**" + Environment.NewLine +
-                "`Wisdom:` **" + character.BaseStats["Wisdom"] + "**" + Environment.NewLine +
-                "`Charisma:` **" + character.BaseStats["Charisma"] + "**" + Environment.NewLine +
-                "`Max HP:` **" + character.maxHP + "**" + Environment.NewLine +
-                "`Speed` **" + character.speed + "**" + Environment.NewLine +
-                "`initiative` **" + character.initiative + "**" + Environment.NewLine;
+            GC.Collect();
+            foreach (var item in chosenbackstory.SkillProficiencies)
+            {
+                character.SkillProficiencies.Add(item);
+            }
+            character.personalityTrait = chosenbackstory.personalityTrait;
+            character.ideals = chosenbackstory.ideal;
+            character.bonds = chosenbackstory.bond;
+            character.flaws = chosenbackstory.flaw;
+            character.background = chosenbackstory.name;
+            await character.inventory.showInventory(userChannel, character.name);
             await userChannel.SendMessageAsync(embed: QuestionEmbed);
             GC.Collect();
-
-            //itemki//
-            
         }
 
         public int getDndStatRolls()
@@ -1002,7 +954,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                     if (weaponResult.Result.Emoji == emojis.yes)
                     {
-                        character.inventory.Add(new DnDitem("Greataxe", "An axe that is great!"), 1);
+                        character.inventory.Add("Greataxe", "An axe that is great!", 1);
                     }
                     if (weaponResult.Result.Emoji == emojis.no)
                     {
@@ -1011,7 +963,7 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
                     questionEmbed.Title = "Choose your weapon";
                     questionEmbed.Description = emojis.yes + "- for 2 handaxes" + Environment.NewLine + emojis.no + "- for any martial simple weapon";
@@ -1023,7 +975,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                     if (weaponResult.Result.Emoji == emojis.yes)
                     {
-                        character.inventory.Add(new DnDitem("handaxe", "a handy axe!"), 2);
+                        character.inventory.Add("handaxe", "a handy axe!", 2);
                     }
                     if (weaponResult.Result.Emoji == emojis.no)
                     {
@@ -1032,10 +984,10 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
-                    character.inventory.Add(new DnDitem("explorer back", "It's huge!"), 1);
-                    character.inventory.Add(new DnDitem("Javeline", "haha, jabeline goes brrr"), 4);
+                    character.inventory.Add("explorer back", "It's huge!", 1);
+                    character.inventory.Add("Javeline", "haha, jabeline goes brrr", 4);
                     #endregion
                     break;
                 case "Bard":
@@ -1051,11 +1003,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (bardweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Rapier", "A fast overgorwn toothpick"), 1);
+                        character.inventory.Add("Rapier", "A fast overgorwn toothpick", 1);
                     }
                     if (bardweaponResult.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("Longsword", "kitchen knife on steroids"), 1);
+                        character.inventory.Add("Longsword", "kitchen knife on steroids", 1);
                     }
                     if (bardweaponResult.Result.Emoji == emojis.three)
                     {
@@ -1064,10 +1016,10 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
-                    character.inventory.Add(new DnDitem("leather armor", "An animal died for this!"), 1);
-                    character.inventory.Add(new DnDitem("dagger", "a kitchen knife, but for people"), 1);
+                    character.inventory.Add("leather armor", "An animal died for this!", 1);
+                    character.inventory.Add("dagger", "a kitchen knife, but for people", 1);
                     #endregion
                     break;
                 case "Cleric":
@@ -1083,11 +1035,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (clericweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Rapier", "A fast overgorwn toothpick"), 1);
+                        character.inventory.Add("Rapier", "A fast overgorwn toothpick", 1);
                     }
                     if (clericweaponResult.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("Longsword", "kitchen knife on steroids"), 1);
+                        character.inventory.Add("Longsword", "kitchen knife on steroids", 1);
                     }
                     questionEmbed.Title = "Choose your armor";
                     questionEmbed.Description = emojis.one + "- for a mace" + Environment.NewLine + emojis.two + "- for a warhammer" + Environment.NewLine + "- for a chain mail";
@@ -1100,15 +1052,15 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (clericweaponResul1t.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Scale mail", "Seems rather heavy!"), 1);
+                        character.inventory.Add("Scale mail", "Seems rather heavy!", 1);
                     }
                     if (clericweaponResul1t.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("Leather armor", "An animal died for this!"), 1);
+                        character.inventory.Add("Leather armor", "An animal died for this!", 1);
                     }
                     if (clericweaponResul1t.Result.Emoji == emojis.three)
                     {
-                        character.inventory.Add(new DnDitem("Chainmail", "Does it shine in blue?"), 1);
+                        character.inventory.Add("Chainmail", "Does it shine in blue?", 1);
                     }
 
                     questionEmbed.Title = "Choose your another weapon!";
@@ -1122,8 +1074,8 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (clericweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("light crossbow", "a fitness crossbow"), 1);
-                        character.inventory.Add(new DnDitem("bolt", "crossbow amunition"), 20);
+                        character.inventory.Add("light crossbow", "a fitness crossbow", 1);
+                        character.inventory.Add("bolt", "crossbow amunition", 20);
                     }
                     if (clericweaponResult.Result.Emoji == emojis.two)
                     {
@@ -1132,7 +1084,7 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
                     #endregion
                     break;
@@ -1149,7 +1101,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (druidweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Wooden shield", "Seems sturdy"), 1);
+                        character.inventory.Add("Wooden shield", "Seems sturdy)", 1);
                     }
                     if (druidweaponResult.Result.Emoji == emojis.two)
                     {
@@ -1158,7 +1110,7 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1172,7 +1124,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (druidweaponResult1.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("scimitar", "Ouch! sharp!"), 1);
+                        character.inventory.Add("scimitar", "Ouch! sharp!", 1);
                     }
                     if (druidweaponResult1.Result.Emoji == emojis.two)
                     {
@@ -1181,11 +1133,11 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
-                    character.inventory.Add(new DnDitem("leather armor", "An animal died for this!"), 1);
-                    character.inventory.Add(new DnDitem("explorer's pack", "looks helpful"), 1);
-                    character.inventory.Add(new DnDitem("druididic focus", "whu is focus even an item?"), 1);
+                    character.inventory.Add("leather armor", "An animal died for this!", 1);
+                    character.inventory.Add("explorer's pack", "looks helpful)", 1);
+                    character.inventory.Add("druididic focus", "whu is focus even an item?", 1);
                     #endregion
                     break;
                 case "Fighter":
@@ -1201,13 +1153,13 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (fighterweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Chain mail", "does it shine blue?"), 1);
+                        character.inventory.Add("Chain mail", "does it shine blue?", 1);
                     }
                     if (fighterweaponResult.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("leather", "smells fresh"), 1);
-                        character.inventory.Add(new DnDitem("Longbow", "The size of a human!"), 1);
-                        character.inventory.Add(new DnDitem("Arrow", "make it rain"), 20);
+                        character.inventory.Add("leather", "smells fresh", 1);
+                        character.inventory.Add("Longbow", "The size of a human!", 1);
+                        character.inventory.Add("Arrow", "make it rain", 20);
                     }
 
 
@@ -1227,8 +1179,8 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
-                        character.inventory.Add(new DnDitem("shield", "he protecc, he atacc"), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
+                        character.inventory.Add("shield", "he protecc, he atacc", 1);
                     }
                     if (fighterweaponResult1.Result.Emoji == emojis.two)
                     {
@@ -1237,14 +1189,14 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
 
                         questionEmbed.Title = "Name your weapon";
                         questionEmbed.Description = "write down the answer below";
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result1 = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result1.Result.Content, ""), 1);
+                        character.inventory.Add(result1.Result.Content, "", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1258,12 +1210,12 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (fighterweaponResult2.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("light crossbow", "lighter, as the name suggest"), 1);
-                        character.inventory.Add(new DnDitem("bolt", "ammunition"), 20);
+                        character.inventory.Add("light crossbow", "lighter, as the name suggest", 1);
+                        character.inventory.Add("bolt", "ammunition", 20);
                     }
                     if (fighterweaponResult2.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("handaxe", "looks handy"), 2);
+                        character.inventory.Add("handaxe", "looks handy", 2);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1277,11 +1229,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (fighterweaponResult3.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("dungeoneer's pack", "readable in low light conditions!"), 1);
+                        character.inventory.Add("dungeoneer's pack", "readable in low light conditions!", 1);
                     }
                     if (fighterweaponResult3.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("explorerer's pack", "looks handy"), 2);
+                        character.inventory.Add("explorerer's pack", "looks handy", 2);
                     }
                     #endregion
                     break;
@@ -1298,7 +1250,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (monkweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Shortsword", "a shorter longsword"), 1);
+                        character.inventory.Add("Shortsword", "a shorter longsword", 1);
                     }
                     if (monkweaponResult.Result.Emoji == emojis.two)
                     {
@@ -1307,7 +1259,7 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
 
                     questionEmbed.Title = "Choose your weapon";
@@ -1321,14 +1273,14 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (monkweaponResult1.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("dungen pack", "usable in low light conditions!"), 1);
+                        character.inventory.Add("dungen pack", "usable in low light conditions!", 1);
                     }
                     if (monkweaponResult1.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("explorer pack", "looks handy!"), 1);
+                        character.inventory.Add("explorer pack", "looks handy!", 1);
                     }
 
-                    character.inventory.Add(new DnDitem("dart", "for fun and enemies"), 10);
+                    character.inventory.Add("dart", "for fun and enemies", 10);
                     #endregion
                     break;
                 case "Paladin":
@@ -1344,13 +1296,13 @@ namespace DiscordApp.RPGSystems.DnD
                     (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                     if (paladinweaponResult.Result.Emoji == emojis.yes)
                     {
-                        character.inventory.Add(new DnDitem("Shield", "Looks sturdy"), 1);
+                        character.inventory.Add("Shield", "Looks sturdy", 1);
                         questionEmbed.Title = "Name your weapon";
                         questionEmbed.Description = "write down the answer below";
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
                     if (paladinweaponResult.Result.Emoji == emojis.no)
                     {
@@ -1359,14 +1311,14 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
 
                         questionEmbed.Title = "Name your weapon";
                         questionEmbed.Description = "write down the answer below";
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result1 = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result1.Result.Content, ""), 1);
+                        character.inventory.Add(result1.Result.Content, "", 1);
                     }
 
                     questionEmbed.Title = "Choose your weapon";
@@ -1380,7 +1332,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                     if (paladinweaponResult1.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("javbeling", "nice and pointy"), 5);
+                        character.inventory.Add("javbeling", "nice and pointy", 5);
                     }
                     if (paladinweaponResult1.Result.Emoji == emojis.one)
                     {
@@ -1389,7 +1341,7 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
 
                     questionEmbed.Title = "Choose ";
@@ -1403,14 +1355,14 @@ namespace DiscordApp.RPGSystems.DnD
                     (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                     if (paladinweaponResult2.Result.Emoji == emojis.yes)
                     {
-                        character.inventory.Add(new DnDitem("Priest's pack", "Don't drink the wine!"), 1);
+                        character.inventory.Add("Priest's pack", "Don't drink the wine!", 1);
                     }
                     if (paladinweaponResult2.Result.Emoji == emojis.no)
                     {
-                        character.inventory.Add(new DnDitem("explorer pack", "looks handy"), 1);
+                        character.inventory.Add("explorer pack", "looks handy", 1);
                     }
-                    character.inventory.Add(new DnDitem("chain mail", "does it shine blue?"), 1);
-                    character.inventory.Add(new DnDitem("Holy symbol", "You feel good when looking at it"), 1);
+                    character.inventory.Add("chain mail", "does it shine blue?", 1);
+                    character.inventory.Add("Holy symbol", "You feel good when looking at it", 1);
                     #endregion
                     break;
                 case "Ranger":
@@ -1426,11 +1378,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (rangerweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Scale mail", "Looks heavy"), 1);
+                        character.inventory.Add("Scale mail", "Looks heavy", 1);
                     }
                     if (rangerweaponResult.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("Leather armor", "an animal died for this!"), 1);
+                        character.inventory.Add("Leather armor", "an animal died for this!", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1444,7 +1396,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (rangerweaponResult1.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Shortsword", "Longsword but shorter"), 2);
+                        character.inventory.Add("Shortsword", "Longsword but shorter", 2);
                     }
                     if (rangerweaponResult1.Result.Emoji == emojis.two)
                     {
@@ -1453,7 +1405,7 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1467,14 +1419,14 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (rangerweaponResult3.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("Dungeon pack", "Looks good in low light conditions!"), 1);
+                        character.inventory.Add("Dungeon pack", "Looks good in low light conditions!", 1);
                     }
                     if (rangerweaponResult3.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("explorer pack", "looks handfy!"), 1);
+                        character.inventory.Add("explorer pack", "looks handfy!", 1);
                     }
-                    character.inventory.Add(new DnDitem("longbow", "shoots accurately"), 1);
-                    character.inventory.Add(new DnDitem("arrow", "make it rain!"), 20);
+                    character.inventory.Add("longbow", "shoots accurately", 1);
+                    character.inventory.Add("arrow", "make it rain!", 20);
 
                     #endregion
                     break;
@@ -1491,11 +1443,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (rogueweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("rapier", "Pointy!"), 1);
+                        character.inventory.Add("rapier", "Pointy!", 1);
                     }
                     if (rogueweaponResult.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("shortsword", "A smaller longsword!"), 1);
+                        character.inventory.Add("shortsword", "A smaller longsword!)", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1509,12 +1461,12 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (rogueweaponResult1.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("shortbow", "a smaller bow, quick on draw"), 1);
-                        character.inventory.Add(new DnDitem("Arrow", "Make it rain!"), 20);
+                        character.inventory.Add("shortbow", "a smaller bow, quick on draw", 1);
+                        character.inventory.Add("Arrow", "Make it rain!", 20);
                     }
                     if (rogueweaponResult1.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("shortsword", "A smaller longsword!"), 1);
+                        character.inventory.Add("shortsword", "A smaller longsword!", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1529,19 +1481,19 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (rogueweaponResult2.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("burglar pack", "you can do so much with it"), 1);
+                        character.inventory.Add("burglar pack", "you can do so much with it", 1);
                     }
                     if (rogueweaponResult2.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("dungeon pack", "good in low light conditions"), 1);
+                        character.inventory.Add("dungeon pack", "good in low light conditions", 1);
                     }
                     if (rogueweaponResult2.Result.Emoji == emojis.three)
                     {
-                        character.inventory.Add(new DnDitem("explorer pack", "looks handy"), 1);
+                        character.inventory.Add("explorer pack", "looks handy", 1);
                     }
-                    character.inventory.Add(new DnDitem("leather armor", "an animal died for this!"), 1);
-                    character.inventory.Add(new DnDitem("dagger", "a kitchen knife but for enemies"), 2);
-                    character.inventory.Add(new DnDitem("thieves tools", "now you see me now you not"), 1);
+                    character.inventory.Add("leather armor", "an animal died for this!", 1);
+                    character.inventory.Add("dagger", "a kitchen knife but for enemies", 2);
+                    character.inventory.Add("thieves tools", "now you see me now you not", 1);
                     #endregion
                     break;
                 case "Sorcerer":
@@ -1557,8 +1509,8 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (sorcweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("light crossbow", "Light and quick!"), 1);
-                        character.inventory.Add(new DnDitem("bolt", "solid ammunition!"), 20);
+                        character.inventory.Add("light crossbow", "Light and quick!", 1);
+                        character.inventory.Add("bolt", "solid ammunition!", 20);
                     }
                     if (sorcweaponResult.Result.Emoji == emojis.two)
                     {
@@ -1567,7 +1519,7 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1581,11 +1533,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (sorcweaponResult1.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("component pouch", "for much needed components"), 1);
+                        character.inventory.Add("component pouch", "for much needed components", 1);
                     }
                     if (sorcweaponResult1.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("arcane focus", "why is focus even an item"), 1);
+                        character.inventory.Add("arcane focus", "why is focus even an item", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1599,13 +1551,13 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (sorcweaponResult2.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("dungeon pack", "Good in low light"), 1);
+                        character.inventory.Add("dungeon pack", "Good in low light", 1);
                     }
                     if (sorcweaponResult2.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("explorer pack", "seems handy"), 1);
+                        character.inventory.Add("explorer pack", "seems handy", 1);
                     }
-                    character.inventory.Add(new DnDitem("dagger", "a kitchen knife for enemies"), 2);
+                    character.inventory.Add("dagger", "a kitchen knife for enemies", 2);
                     #endregion
                     break;
                 case "Warlock":
@@ -1621,8 +1573,8 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (sawrcweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("light crossbow", "Light and quick!"), 1);
-                        character.inventory.Add(new DnDitem("bolt", "solid ammunition!"), 20);
+                        character.inventory.Add("light crossbow", "Light and quick!", 1);
+                        character.inventory.Add("bolt", "solid ammunition!", 20);
                     }
                     if (sawrcweaponResult.Result.Emoji == emojis.two)
                     {
@@ -1631,7 +1583,7 @@ namespace DiscordApp.RPGSystems.DnD
                         await userChannel.SendMessageAsync(embed: questionEmbed);
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
-                        character.inventory.Add(new DnDitem(result.Result.Content, ""), 1);
+                        character.inventory.Add(result.Result.Content, "", 1);
                     }
                     questionEmbed.Title = "Choose";
                     questionEmbed.Description = emojis.one + "- for a component pouch " + Environment.NewLine + emojis.two + "- for a arcane focus";
@@ -1644,11 +1596,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (sawrcweaponResult1.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("component pouch", "for much needed components"), 1);
+                        character.inventory.Add("component pouch", "for much needed components", 1);
                     }
                     if (sawrcweaponResult1.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("arcane focus", "why is focus even an item"), 1);
+                        character.inventory.Add("arcane focus", "why is focus even an item", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1662,14 +1614,14 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (sawrcweaponResult2.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("dungeon pack", "Good in low light"), 1);
+                        character.inventory.Add("dungeon pack", "Good in low light", 1);
                     }
                     if (sawrcweaponResult2.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("schoolar's pack", "so many books"), 1);
+                        character.inventory.Add("schoolar's pack", "so many books", 1);
                     }
-                    character.inventory.Add(new DnDitem("leather armor", "Ana nimal died for this!"), 1);
-                    character.inventory.Add(new DnDitem("dagger", "a kitchen knife but for enemies"), 2);
+                    character.inventory.Add("leather armor", "Ana nimal died for this!", 1);
+                    character.inventory.Add("dagger", "a kitchen knife but for enemies", 2);
 
                     questionEmbed.Title = "Name your weapon";
                     questionEmbed.Description = "write down the answer below";
@@ -1677,7 +1629,7 @@ namespace DiscordApp.RPGSystems.DnD
                     Thread.Sleep(110);
                     var warcresult = await userChannel.GetNextMessageAsync();
                     Thread.Sleep(110);
-                    character.inventory.Add(new DnDitem(warcresult.Result.Content, ""), 1);
+                    character.inventory.Add(warcresult.Result.Content, "", 1);
                     #endregion
                     break;
                 case "Wizard":
@@ -1693,11 +1645,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (wizweaponResult.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("quarterstaff", "light and hight range!"), 1);
+                        character.inventory.Add("quarterstaff", "light and hight range!", 1);
                     }
                     if (wizweaponResult.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("dagger", "a kitchen knife but for enemies"), 1);
+                        character.inventory.Add("dagger", "a kitchen knife but for enemies", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1711,11 +1663,11 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (wizweaponResult1.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("component pouch", "for much needed components"), 1);
+                        character.inventory.Add("component pouch", "for much needed components", 1);
                     }
                     if (wizweaponResult1.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("arcane focus", "why is focus even an item"), 1);
+                        character.inventory.Add("arcane focus", "why is focus even an item", 1);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1729,13 +1681,13 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (wizweaponResult2.Result.Emoji == emojis.one)
                     {
-                        character.inventory.Add(new DnDitem("dungeon pack", "Good in low light"), 1);
+                        character.inventory.Add("dungeon pack", "Good in low light", 1);
                     }
                     if (wizweaponResult2.Result.Emoji == emojis.two)
                     {
-                        character.inventory.Add(new DnDitem("schoolar's pack", "so many books"), 1);
+                        character.inventory.Add("schoolar's pack", "so many books", 1);
                     }
-                    character.inventory.Add(new DnDitem("spellbook", "so many spells!"), 1);
+                    character.inventory.Add("spellbook", "so many spells!", 1);
                     #endregion
                     break;
             }

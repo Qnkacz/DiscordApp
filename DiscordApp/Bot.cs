@@ -42,13 +42,14 @@ namespace DiscordApp
             Clinet.UseInteractivity(new InteractivityConfiguration
             {
                 Timeout = TimeSpan.FromMinutes(30)
+                
             });
             var commandsConfig = new CommandsNextConfiguration
             {
                 StringPrefixes = new string[] { configJson.Prefix, configJson.Prefix_wh,configJson.Prefix_dnd },
                 EnableDms = true,
                 EnableMentionPrefix = true,
-                DmHelp = true,
+                DmHelp = true
             };
 
             Commands = Clinet.UseCommandsNext(commandsConfig);
