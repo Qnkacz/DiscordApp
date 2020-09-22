@@ -5,6 +5,7 @@ using DSharpPlus.Interactivity;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -447,6 +448,11 @@ namespace DiscordApp.RPGSystems.DnD
             character.BaseStats.Add("Intelligence", liczby[3]);
             character.BaseStats.Add("Wisdom", liczby[4]);
             character.BaseStats.Add("Charisma", liczby[5]);
+            character.savingThrows["Strength"] = getSavingThrow(character.BaseStats["Strength"]);
+            character.savingThrows["Constitution"] = getSavingThrow(character.BaseStats["Constitution"]);
+            character.savingThrows["Intelligence"] = getSavingThrow(character.BaseStats["Intelligence"]);
+            character.savingThrows["Wisdom"] = getSavingThrow(character.BaseStats["Wisdom"]);
+            character.savingThrows["Charisma"] = getSavingThrow(character.BaseStats["Charisma"]);
             #endregion
             #region races
             if (character.race == "Elf")
@@ -573,7 +579,7 @@ namespace DiscordApp.RPGSystems.DnD
             if (character.race == "half elf")
             {
                 character.BaseStats["Charisma"] += 2;
-                WszystkieCechyString = string.Join("`:`" + Environment.NewLine, statTitles);
+                WszystkieCechyString = string.Join(" : " + Environment.NewLine, statTitles);
                 QuestionEmbed.Title = QuestionEmbed.Title = "Choose 1st of two of your stats that you want to increase by 1"; ;
                 QuestionEmbed.Description = WszystkieCechyString;
                 msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -870,7 +876,9 @@ namespace DiscordApp.RPGSystems.DnD
             character.abilityProficiencies = character.CharacterClass[0].primary_Ability;
             character.SavingThrowProficiencies = character.CharacterClass[0].SavingTHrowproficiencies;
             character.ArmorNWeaponProficiencies = character.CharacterClass[0].armorNweaponproficiencies;
-            character.maxHP = character.CharacterClass[0].baseHitPoints + character.BaseStats["Constitution"];
+            character.maxHP = character.CharacterClass[0].baseHitPoints + character.savingThrows["Constitution"];
+            character.currHP = character.maxHP;
+            character.tempHP = character.maxHP;
             character.inventory.Add("gold", "currency in game", character.CharacterClass[0].startMoney);
             await additemsFromClass(character, ctx, userChannel, emojis);
 
@@ -1708,6 +1716,17 @@ namespace DiscordApp.RPGSystems.DnD
                     #endregion
                     break;
             }
+        }
+        public int getSavingThrow(int number)
+        {
+            int modifier = -5;
+            int i = 1;
+            while (i < number)
+            {
+                modifier++;
+                i += 2;
+            }
+            return modifier;
         }
     }
 }

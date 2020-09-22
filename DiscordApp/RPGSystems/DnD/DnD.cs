@@ -19,9 +19,19 @@ namespace DiscordApp.RPGSystems.DnD
         public string background;
         #region stats
         public Dictionary<string, int> BaseStats = new Dictionary<string, int>();
+        public Dictionary<string, int> savingThrows = new Dictionary<string, int>()
+        {
+            { "Strength",0},
+            { "Dexterity",0},
+            { "Constitution",0},
+            { "Intelligence",0},
+            { "Wisdom",0},
+            { "Charisma",0},
+           
+        };
         #endregion
         #region skills
-    
+
         public Dictionary<string, int> skills = new Dictionary<string, int>()
         {
             { "acrobatics",0},
@@ -42,6 +52,7 @@ namespace DiscordApp.RPGSystems.DnD
             { "stealth",0},
             { "survival",0},
         };
+        
         #endregion
         #region fightpoints
         public int maxHP;
