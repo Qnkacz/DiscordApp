@@ -287,12 +287,11 @@ namespace DiscordApp.RPGSystems.DnD
 
             var msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             var response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(110);
+            Thread.Sleep(2300);
             character.name = response.Result.Content;
             QuestionEmbed.Title = "What is your race, react acordingly";
             QuestionEmbed.Description = emojis.human + "- for `human`" + System.Environment.NewLine +
-                emojis.elf + "- for `Woodelf`" + System.Environment.NewLine +
-                emojis.Helf + "- for `HighElf`" + System.Environment.NewLine +
+                emojis.elf + "- for `elf`" + System.Environment.NewLine +
                 emojis.half_elf + "- for `half-elf`" + System.Environment.NewLine +
                 emojis.krasnoludy + "- for `Dwarf`" + System.Environment.NewLine +
                 emojis.gnome + "- for `Gnome`" + System.Environment.NewLine +
@@ -316,11 +315,7 @@ namespace DiscordApp.RPGSystems.DnD
             }
             if (emojiResult.Result.Emoji == emojis.elf)
             {
-                character.race = "wood Elf";
-            }
-            if (emojiResult.Result.Emoji == emojis.Helf)
-            {
-                character.race = "high elf";
+                character.race = "Elf";
             }
             if (emojiResult.Result.Emoji == emojis.half_elf)
             {
@@ -343,7 +338,7 @@ namespace DiscordApp.RPGSystems.DnD
                 character.race = "halfling";
             }
             #endregion
-
+            #region sex
             QuestionEmbed.Title = "What `Gender` are you";
             QuestionEmbed.Description = emojis.kobieta + "- For Female" + Environment.NewLine + emojis.mezczyzna + "- For Male";
             var gender = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -361,7 +356,8 @@ namespace DiscordApp.RPGSystems.DnD
             {
                 character.gender = "Male";
             }
-
+            #endregion
+            #region statystyki główne
             QuestionEmbed.Title = emojis.yes + " - You roll your stats" + emojis.no + "- use the premade one?";
             QuestionEmbed.Description = "react acordingly";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -389,14 +385,14 @@ namespace DiscordApp.RPGSystems.DnD
             QuestionEmbed.Description = string.Join(" `:` ", chosenpool);
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             string[] statTitles = new string[]
-            {
+             {
                   "What will be your `Strenght`",
                   "What will be your `Desxterity`",
                   "What will be your `Constitution`",
                   "What will be your `Inteligence`",
                   "What will be your `Wisdom`",
                   "What will be your `Charizma`"
-            };
+             };
             int[] liczby = new int[6];
             string WszystkieCechyString = string.Empty;
             for (int i = 0; i <= 5; i++) //przydzielanie liczb to statystyk
@@ -451,7 +447,9 @@ namespace DiscordApp.RPGSystems.DnD
             character.BaseStats.Add("Intelligence", liczby[3]);
             character.BaseStats.Add("Wisdom", liczby[4]);
             character.BaseStats.Add("Charisma", liczby[5]);
-            if (character.race == "wood elf" || character.race == "high elf")
+            #endregion
+            #region races
+            if (character.race == "Elf")
             {
                 character.speed = 30;
                 character.Traits.Add(new DnDTrait("Darkvision", "Accustom ed to twilit forests and the night sky, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if itw ere bright light, and in darkness as if it were dim light.You can’t discern color in darkness, only shades of gray."));
@@ -460,31 +458,41 @@ namespace DiscordApp.RPGSystems.DnD
                 character.Traits.Add(new DnDTrait("Trance", "Elves don’t need to sleep. Instead, they meditate deeply, remaining sem iconscious, for 4 hours a day. (The Com m on w ord for such meditation is “trance.”) W hile meditating, you can dream after a fashion; such dream s are actually mental exercises that have becom e reflexive through years of practice. After resting in this way, you gain the sam e benefit that a human does from 8 hours of sleep."));
                 character.Traits.Add(new DnDTrait("Leanguage", "elfish"));
                 character.Traits.Add(new DnDTrait("Elf Weapon Training.", "You have proficiency with the longsword, shortsword, shortbow, and longbow."));
-            }
-            if (character.race == "high elf")
-            {
 
-                character.BaseStats["Intelligence"] += 1;
-                QuestionEmbed.Title = "Cantrip";
-                QuestionEmbed.Description = "Write one cantrip of your choice from wizard spell list";
-                await userChannel.SendMessageAsync(embed: QuestionEmbed);
-                var magic = await userChannel.GetNextMessageAsync();
+                QuestionEmbed.Title = "Are you a high elf or a wood elf";
+                QuestionEmbed.Description = emojis.one + "- for High Elf" + System.Environment.NewLine + emojis.two + " - for Wood Elf";
+                var elf = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                await elf.CreateReactionAsync(emojis.one); await elf.CreateReactionAsync(emojis.two);
                 Thread.Sleep(110);
-                var spellname = magic.Result.Content;
-                QuestionEmbed.Title = spellname;
-                QuestionEmbed.Description = "write the spell description";
-                response = await userChannel.GetNextMessageAsync();
-                var spellDescr = response.Result.Content;
-                DnDSpells spell = new DnDSpells();
-                spell.spellName = spellname;
-                spell.description = spellDescr;
-                character.spells.Add(spell);
-            }
-            if (character.race == "wood elf")
-            {
-                character.BaseStats["Wisdom"] += 1;
-                character.speed = 35;
-                character.Traits.Add(new DnDTrait("Mask of the wild", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena."));
+                var elfresult = await interactivity.WaitForReactionAsync(x => x.Message == elf
+                &&
+                (x.Emoji == emojis.one || x.Emoji == emojis.two));
+                if (elfresult.Result.Emoji == emojis.one)
+                {
+                    character.BaseStats["Intelligence"] += 1;
+
+                    character.race += ": high";
+                    QuestionEmbed.Title = "Cantrip";
+                    QuestionEmbed.Description = "Write down a cantrip spell name that you want to have";
+                    await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                    var magic = await userChannel.GetNextMessageAsync();
+                    Thread.Sleep(110);
+                    var spellname = magic.Result.Content;
+                    QuestionEmbed.Title = spellname;
+                    QuestionEmbed.Description = "write the spell description";
+                    await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                    var descrResponse = await userChannel.GetNextMessageAsync();
+                    var spellDescr = descrResponse.Result.Content;
+                    character.spells.Add(new DnDSpells(spellname, spellDescr));
+                }
+                if (elfresult.Result.Emoji == emojis.two)
+                {
+                    character.BaseStats["Wisdom"] += 1;
+                    character.race += ": wood";
+                    character.speed = 35;
+                    character.Traits.Add(new DnDTrait("Mask of the wild", "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena."));
+                }
+
             }
             if (character.race == "halfling")
             {
@@ -498,7 +506,7 @@ namespace DiscordApp.RPGSystems.DnD
                 QuestionEmbed.Description = emojis.yes + "- for lightfoot" + System.Environment.NewLine + emojis.no + " - for stout";
                 var stout = await userChannel.SendMessageAsync(embed: QuestionEmbed);
                 await stout.CreateReactionAsync(emojis.yes); await stout.CreateReactionAsync(emojis.no);
-                Thread.Sleep(110);
+                Thread.Sleep(190);
                 var stoutresult = await interactivity.WaitForReactionAsync(x => x.Message == stout
                 &&
                 (x.Emoji == emojis.yes || x.Emoji == emojis.no));
@@ -525,7 +533,7 @@ namespace DiscordApp.RPGSystems.DnD
                 character.BaseStats["Charisma"] += 1;
                 character.speed = 30;
                 character.Traits.Add(new DnDTrait("Leanguage: ", "human"));
-                QuestionEmbed.Title = "Choose nother leanguage you know";
+                QuestionEmbed.Title = "Choose another leanguage you know";
                 QuestionEmbed.Description = "write the leanguage below";
                 msg = msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
                 response = await userChannel.GetNextMessageAsync();
@@ -540,20 +548,21 @@ namespace DiscordApp.RPGSystems.DnD
                 character.Traits.Add(new DnDTrait("Leanguage: ", "Gnomish"));
 
                 QuestionEmbed.Title = "Are you a Forest or a Rock gnome?";
-                QuestionEmbed.Description = emojis.yes + "- for Forest" + System.Environment.NewLine + emojis.no + " - for Rtout";
+                QuestionEmbed.Description = emojis.one + "- for Forest" + System.Environment.NewLine + emojis.two + " - for Stout";
                 var gnome = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-                await gnome.CreateReactionAsync(emojis.yes); await gnome.CreateReactionAsync(emojis.no);
+                await gnome.CreateReactionAsync(emojis.one); await gnome.CreateReactionAsync(emojis.two);
+                Thread.Sleep(200);
                 var gnomeResult = await interactivity.WaitForReactionAsync(x => x.Message == gnome
                 &&
-                (x.Emoji == emojis.yes || x.Emoji == emojis.no));
-                if (gnomeResult.Result.Emoji == emojis.yes)
+                (x.Emoji == emojis.one || x.Emoji == emojis.two));
+                if (gnomeResult.Result.Emoji == emojis.one)
                 {
                     character.BaseStats["Dexterity"] += 1;
                     character.Traits.Add(new DnDTrait("Natural ilusionist", "You know the minor illusion cantrip.Intelligence is your spellcasting ability for it."));
                     character.Traits.Add(new DnDTrait(" Speak with Small Beasts", "Through sounds and gestures, you can com m unicate simple ideas with Small or sm aller beasts.Forest gnom es love animals and often keep squirrels, badgers, rabbits, m oles, w oodpeckers, and other creatures as beloved pets."));
                     character.race += "- F o r e s t";
                 }
-                if (gnomeResult.Result.Emoji == emojis.no)
+                if (gnomeResult.Result.Emoji == emojis.two)
                 {
                     character.BaseStats["Constitution"] += 1;
                     character.Traits.Add(new DnDTrait("Artificer’s Lore", "W henever you make an Intelligence (History) check related to m agic items, alchemical objects, or technological devices, you can add tw ice your proficiency bonus, instead of any proficiency bonus you normally apply."));
@@ -565,9 +574,6 @@ namespace DiscordApp.RPGSystems.DnD
             {
                 character.BaseStats["Charisma"] += 2;
                 WszystkieCechyString = string.Join("`:`" + Environment.NewLine, statTitles);
-
-
-
                 QuestionEmbed.Title = QuestionEmbed.Title = "Choose 1st of two of your stats that you want to increase by 1"; ;
                 QuestionEmbed.Description = WszystkieCechyString;
                 msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -643,12 +649,13 @@ namespace DiscordApp.RPGSystems.DnD
                 QuestionEmbed.Title = "Choose nother leanguage you know";
                 QuestionEmbed.Description = "write the leanguage below";
                 msg = msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                Thread.Sleep(250);
                 response = await userChannel.GetNextMessageAsync();
                 character.Traits.Add(new DnDTrait("Leanguage: ", response.Result.Content));
             }
             if (character.race == "half orc")
             {
-                character.BaseStats["Sstrength"] = +2;
+                character.BaseStats["Strength"] = +2;
                 character.BaseStats["Constitution"] += 1;
                 character.speed = 30;
                 character.Traits.Add(new DnDTrait("Darkvision", "Thanks to your orc blood, you have superior vision in dark and dim conditions.You can see in dim light within 60 feet of you as if it w ere bright light, and in darkness as if it w ere dim light. You can't discern color in darkness, only shades o f gray."));
@@ -712,6 +719,7 @@ namespace DiscordApp.RPGSystems.DnD
                     character.Traits.Add(new DnDTrait("Dwarven Armor Training", "You have proficiency with light and medium armor."));
                 }
             }
+            #endregion
             QuestionEmbed.Title = "How tall are you";
             QuestionEmbed.Description = "`lore friendly` propositions:" + System.Environment.NewLine +
                 "`dwarf` -> 120 - 152 cm" + System.Environment.NewLine +
@@ -741,7 +749,7 @@ namespace DiscordApp.RPGSystems.DnD
             Thread.Sleep(230);
             response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(230);
-
+            #region aligment
             QuestionEmbed.Title = "What is your Aligment?";
             QuestionEmbed.Description =
              "Lawful good    |.|  Neutral Good  |.| Chaotic Good" + System.Environment.NewLine +
@@ -793,6 +801,7 @@ namespace DiscordApp.RPGSystems.DnD
                 character.aligment = "Chaotic evil";
             }
             await userChannel.SendMessageAsync("You chose: **" + character.aligment + "**");
+            #endregion
             string[] avaibleClasses = new string[]
             {
                   "barbarian",
@@ -883,7 +892,7 @@ namespace DiscordApp.RPGSystems.DnD
             }
             if (backgroundresult.Result.Emoji == emojis.two)
             {
-                chosenbackstory = new DnDbackground(backgrounds.criminal); 
+                chosenbackstory = new DnDbackground(backgrounds.criminal);
             }
             if (backgroundresult.Result.Emoji == emojis.three)
             {
@@ -895,7 +904,7 @@ namespace DiscordApp.RPGSystems.DnD
             }
             if (backgroundresult.Result.Emoji == emojis.five)
             {
-                chosenbackstory = new DnDbackground(backgrounds.sage); 
+                chosenbackstory = new DnDbackground(backgrounds.sage);
             }
             if (backgroundresult.Result.Emoji == emojis.six)
             {
@@ -913,7 +922,6 @@ namespace DiscordApp.RPGSystems.DnD
             character.flaws = chosenbackstory.flaw;
             character.background = chosenbackstory.name;
             await character.inventory.showInventory(userChannel, character.name);
-            await userChannel.SendMessageAsync(embed: QuestionEmbed);
             GC.Collect();
         }
 
@@ -970,6 +978,7 @@ namespace DiscordApp.RPGSystems.DnD
                     var msg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
                     await msg1.CreateReactionAsync(emojis.yes);
                     await msg1.CreateReactionAsync(emojis.no);
+                    Thread.Sleep(200);
                     var secondResult = await interactivity.WaitForReactionAsync(x => x.Message == msg1
                     &&
                     (x.Emoji == emojis.yes || x.Emoji == emojis.no));
@@ -997,6 +1006,7 @@ namespace DiscordApp.RPGSystems.DnD
                     var bardmsg = await userChannel.SendMessageAsync(embed: questionEmbed);
                     await bardmsg.CreateReactionAsync(emojis.one);
                     await bardmsg.CreateReactionAsync(emojis.two);
+                    await bardmsg.CreateReactionAsync(emojis.three);
                     Thread.Sleep(190);
                     var bardweaponResult = await interactivity.WaitForReactionAsync(x => x.Message == bardmsg
                     &&
@@ -1042,11 +1052,12 @@ namespace DiscordApp.RPGSystems.DnD
                         character.inventory.Add("Longsword", "kitchen knife on steroids", 1);
                     }
                     questionEmbed.Title = "Choose your armor";
-                    questionEmbed.Description = emojis.one + "- for a mace" + Environment.NewLine + emojis.two + "- for a warhammer" + Environment.NewLine + "- for a chain mail";
+                    questionEmbed.Description = emojis.one + "- for a mace" + Environment.NewLine + emojis.two + "- for a warhammer" + Environment.NewLine + emojis.three + "- for a chain mail";
                     var clericmsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
                     await clericmsg1.CreateReactionAsync(emojis.one);
                     await clericmsg1.CreateReactionAsync(emojis.two);
                     await clericmsg1.CreateReactionAsync(emojis.three);
+                    Thread.Sleep(200);
                     var clericweaponResul1t = await interactivity.WaitForReactionAsync(x => x.Message == clericmsg1
                     &&
                     (emojis.onetototen.Contains(x.Emoji)));
@@ -1119,7 +1130,7 @@ namespace DiscordApp.RPGSystems.DnD
                     await druidmsg1.CreateReactionAsync(emojis.one);
                     await druidmsg1.CreateReactionAsync(emojis.two);
                     Thread.Sleep(190);
-                    var druidweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == druidmsg
+                    var druidweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == druidmsg1
                     &&
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (druidweaponResult1.Result.Emoji == emojis.one)
@@ -1286,30 +1297,30 @@ namespace DiscordApp.RPGSystems.DnD
                 case "Paladin":
                     #region paladin
                     questionEmbed.Title = "Choose your weapon";
-                    questionEmbed.Description = emojis.yes + "- for a martial weapon and a shield" + Environment.NewLine + emojis.no + "- for two martial weapons";
+                    questionEmbed.Description = emojis.one + "- for a martial weapon and a shield" + Environment.NewLine + emojis.two + "- for two martial weapons";
                     var paladinmsg = await userChannel.SendMessageAsync(embed: questionEmbed);
-                    await paladinmsg.CreateReactionAsync(emojis.yes);
-                    await paladinmsg.CreateReactionAsync(emojis.no);
+                    await paladinmsg.CreateReactionAsync(emojis.one);
+                    await paladinmsg.CreateReactionAsync(emojis.two);
                     Thread.Sleep(110);
                     var paladinweaponResult = await interactivity.WaitForReactionAsync(x => x.Message == paladinmsg
                     &&
-                    (x.Emoji == emojis.yes || x.Emoji == emojis.no));
-                    if (paladinweaponResult.Result.Emoji == emojis.yes)
+                    (x.Emoji == emojis.one || x.Emoji == emojis.two));
+                    if (paladinweaponResult.Result.Emoji == emojis.one)
                     {
                         character.inventory.Add("Shield", "Looks sturdy", 1);
                         questionEmbed.Title = "Name your weapon";
                         questionEmbed.Description = "write down the answer below";
                         await userChannel.SendMessageAsync(embed: questionEmbed);
-                        Thread.Sleep(110);
+                        Thread.Sleep(150);
                         var result = await userChannel.GetNextMessageAsync();
                         character.inventory.Add(result.Result.Content, "", 1);
                     }
-                    if (paladinweaponResult.Result.Emoji == emojis.no)
+                    if (paladinweaponResult.Result.Emoji == emojis.two)
                     {
                         questionEmbed.Title = "Name your weapon";
                         questionEmbed.Description = "write down the answer below";
                         await userChannel.SendMessageAsync(embed: questionEmbed);
-                        Thread.Sleep(110);
+                        Thread.Sleep(150);
                         var result = await userChannel.GetNextMessageAsync();
                         character.inventory.Add(result.Result.Content, "", 1);
 
@@ -1322,19 +1333,19 @@ namespace DiscordApp.RPGSystems.DnD
                     }
 
                     questionEmbed.Title = "Choose your weapon";
-                    questionEmbed.Description = emojis.yes + "- for five javelins" + Environment.NewLine + emojis.no + "- for a simple weapon";
+                    questionEmbed.Description = emojis.one + "- for five javelins" + Environment.NewLine + emojis.two + "- for a simple weapon";
                     var paladinmsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
-                    await paladinmsg1.CreateReactionAsync(emojis.yes);
-                    await paladinmsg1.CreateReactionAsync(emojis.no);
+                    await paladinmsg1.CreateReactionAsync(emojis.one);
+                    await paladinmsg1.CreateReactionAsync(emojis.two);
                     Thread.Sleep(110);
                     var paladinweaponResult1 = await interactivity.WaitForReactionAsync(x => x.Message == paladinmsg1
                     &&
-                    (x.Emoji == emojis.yes || x.Emoji == emojis.no));
+                    (x.Emoji == emojis.one || x.Emoji == emojis.two));
                     if (paladinweaponResult1.Result.Emoji == emojis.one)
                     {
                         character.inventory.Add("javbeling", "nice and pointy", 5);
                     }
-                    if (paladinweaponResult1.Result.Emoji == emojis.one)
+                    if (paladinweaponResult1.Result.Emoji == emojis.two)
                     {
                         questionEmbed.Title = "Name your weapon";
                         questionEmbed.Description = "write down the answer below";
@@ -1345,19 +1356,19 @@ namespace DiscordApp.RPGSystems.DnD
                     }
 
                     questionEmbed.Title = "Choose ";
-                    questionEmbed.Description = emojis.yes + "- for a priest's pack" + Environment.NewLine + emojis.no + "- for an explorer pack";
+                    questionEmbed.Description = emojis.one + "- for a priest's pack" + Environment.NewLine + emojis.two + "- for an explorer pack";
                     var paladinmsg2 = await userChannel.SendMessageAsync(embed: questionEmbed);
-                    await paladinmsg2.CreateReactionAsync(emojis.yes);
-                    await paladinmsg2.CreateReactionAsync(emojis.no);
+                    await paladinmsg2.CreateReactionAsync(emojis.one);
+                    await paladinmsg2.CreateReactionAsync(emojis.two);
                     Thread.Sleep(110);
                     var paladinweaponResult2 = await interactivity.WaitForReactionAsync(x => x.Message == paladinmsg2
                     &&
-                    (x.Emoji == emojis.yes || x.Emoji == emojis.no));
-                    if (paladinweaponResult2.Result.Emoji == emojis.yes)
+                    (x.Emoji == emojis.one || x.Emoji == emojis.two));
+                    if (paladinweaponResult2.Result.Emoji == emojis.one)
                     {
                         character.inventory.Add("Priest's pack", "Don't drink the wine!", 1);
                     }
-                    if (paladinweaponResult2.Result.Emoji == emojis.no)
+                    if (paladinweaponResult2.Result.Emoji == emojis.two)
                     {
                         character.inventory.Add("explorer pack", "looks handy", 1);
                     }
@@ -1406,6 +1417,12 @@ namespace DiscordApp.RPGSystems.DnD
                         Thread.Sleep(110);
                         var result = await userChannel.GetNextMessageAsync();
                         character.inventory.Add(result.Result.Content, "", 1);
+                        questionEmbed.Title = "Name your weapon";
+                        questionEmbed.Description = "write down the answer below";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(110);
+                        var result1 = await userChannel.GetNextMessageAsync();
+                        character.inventory.Add(result1.Result.Content, "", 1);
                     }
 
                     questionEmbed.Title = "Choose";
