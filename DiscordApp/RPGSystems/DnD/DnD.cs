@@ -19,7 +19,15 @@ namespace DiscordApp.RPGSystems.DnD
         public DnDInventory inventory = new DnDInventory();
         public string background;
         #region stats
-        public Dictionary<string, int> BaseStats = new Dictionary<string, int>();
+        public Dictionary<string, int> BaseStats = new Dictionary<string, int>()
+        {
+            { "Strength",0},
+            { "Dexterity",0},
+            { "Constitution",0},
+            { "Intelligence",0},
+            { "Wisdom",0},
+            { "Charisma",0},
+        };
         public Dictionary<string, int> BaseStatsModificator = new Dictionary<string, int>()
         {
             { "Strength",0},

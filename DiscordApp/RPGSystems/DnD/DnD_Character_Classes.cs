@@ -37,11 +37,11 @@ namespace DiscordApp.RPGSystems.DnD
                     description = "A fierce warrior of primitive background who can enter a battle rage";
                     hitDie = 12;
                     primary_Ability = new List<string>() { "Strength" };
-                    SavingTHrowproficiencies = new List<string>() { "Strength", " Constitution" };
-                    armorNweaponproficiencies = new List<string>() { "Light armor" +
-                        "medium armor" +
-                        "shields" +
-                        "simple weapons" +
+                    SavingTHrowproficiencies = new List<string>() { "Strength", "Constitution" };
+                    armorNweaponproficiencies = new List<string>() { "Light armor" ,
+                        "medium armor" ,
+                        "shields" ,
+                        "simple weapons" ,
                         "martial weapons"};
                     break;
                 case avaibleClasses.Bard:
@@ -56,12 +56,12 @@ namespace DiscordApp.RPGSystems.DnD
                     description = "An inspiring magician whose power echoes the music of creation";
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Charisma" };
-                    SavingTHrowproficiencies = new List<string>() { "Dexterity", " Charisma" };
-                    armorNweaponproficiencies = new List<string>() { "Light armor" +
-                        "simple weapons" +
-                        "hand crossbows" +
-                        "longswords" +
-                        "rapiers" +
+                    SavingTHrowproficiencies = new List<string>() { "Dexterity", "Charisma" };
+                    armorNweaponproficiencies = new List<string>() { "Light armor" ,
+                        "simple weapons" ,
+                        "hand crossbows" ,
+                        "longswords" ,
+                        "rapiers" ,
                         "shortswords"};
                     break;
                 case avaibleClasses.Cleric:
@@ -77,9 +77,9 @@ namespace DiscordApp.RPGSystems.DnD
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Wisdom" };
                     SavingTHrowproficiencies = new List<string>() { "Wisdom", "Charisma" };
-                    armorNweaponproficiencies = new List<string>() { "Light armor" +
-                        "medium armor" +
-                        "shields" +
+                    armorNweaponproficiencies = new List<string>() { "Light armor" ,
+                        "medium armor" ,
+                        "shields" ,
                         "simple weapons"};
                     break;
                 case avaibleClasses.Druid:
@@ -94,19 +94,19 @@ namespace DiscordApp.RPGSystems.DnD
                     description = "A priest of the Old Faith, wielding the powers of nature— moonlight and plant growth, fire and lightning— and adopting animal forms";
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Wisdom" };
-                    SavingTHrowproficiencies = new List<string>() { "Wisdom", "Inteligence" };
-                    armorNweaponproficiencies = new List<string>() { "Light armor(nonmetal)" +
-                        "Medium Armor(nonmetal" +
-                        "Shields(nonmetal)" +
-                        "clubs" +
-                        "daggers" +
-                        "darts" +
-                        "javelins" +
-                        "maces" +
-                        "quarterstaffs" +
-                        "scimitars" +
-                        "sickles" +
-                        "slings" +
+                    SavingTHrowproficiencies = new List<string>() { "Wisdom", "Intelligence" };
+                    armorNweaponproficiencies = new List<string>() { "Light armor(nonmetal)" ,
+                        "Medium Armor(nonmetal" ,
+                        "Shields(nonmetal)" ,
+                        "clubs" ,
+                        "daggers" ,
+                        "darts" ,
+                        "javelins" ,
+                        "maces" ,
+                        "quarterstaffs" ,
+                        "scimitars" ,
+                        "sickles" ,
+                        "slings" ,
                         "spears"};
                     break;
                 case avaibleClasses.Fighter:
@@ -120,11 +120,11 @@ namespace DiscordApp.RPGSystems.DnD
                     baseHitPoints = 10;
                     description = "A master of martial combat, skilled with a variety of weapons and armor";
                     hitDie = 10;
-                    primary_Ability = new List<string>() { "Strenght", "Dexterity" };
+                    primary_Ability = new List<string>() { "Strength", "Dexterity" };
                     SavingTHrowproficiencies = new List<string>() { "Strength", "Constitution" };
-                    armorNweaponproficiencies = new List<string>() { "All Armor" +
-                        "all shields" +
-                        "simple weapons" +
+                    armorNweaponproficiencies = new List<string>() { "All Armor" ,
+                        "all shields" ,
+                        "simple weapons" ,
                         "martial weapons"};
                     break;
                 case avaibleClasses.Monk:
@@ -140,7 +140,7 @@ namespace DiscordApp.RPGSystems.DnD
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Dexterity", " Wisdom" };
                     SavingTHrowproficiencies = new List<string>() { "Strength", "Dexterity" };
-                    armorNweaponproficiencies = new List<string>() { "Simple weapons" +
+                    armorNweaponproficiencies = new List<string>() { "Simple weapons" ,
                         "shortswords"};
                     break;
                 case avaibleClasses.Paladin:
@@ -156,9 +156,9 @@ namespace DiscordApp.RPGSystems.DnD
                     hitDie = 10;
                     primary_Ability = new List<string>() { "Strength", " Charisma" };
                     SavingTHrowproficiencies = new List<string>() { "Wisdom", "Charisma" };
-                    armorNweaponproficiencies = new List<string>() { "all armor" +
-                        "shields" +
-                        "simple weapons" +
+                    armorNweaponproficiencies = new List<string>() { "all armor" ,
+                        "shields" ,
+                        "simple weapons" ,
                         "martial weapons"};
                     break;
                 case avaibleClasses.Ranger:
@@ -174,10 +174,10 @@ namespace DiscordApp.RPGSystems.DnD
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Dexterity" };
                     SavingTHrowproficiencies = new List<string>() { "Strength", "Dexterity" };
-                    armorNweaponproficiencies = new List<string>() { "Light armor" +
-                        "medium armor" +
-                        "Shields" +
-                        "Simple weapons" +
+                    armorNweaponproficiencies = new List<string>() { "Light armor" ,
+                        "medium armor" ,
+                        "Shields" ,
+                        "Simple weapons" ,
                         "Martial Weapons"};
                     break;
                 case avaibleClasses.Rogue:
@@ -192,12 +192,12 @@ namespace DiscordApp.RPGSystems.DnD
                     description = "A scoundrel who uses stealth and trickery to overcome obstacles and enemies";
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Dexterity" };
-                    SavingTHrowproficiencies = new List<string>() { "Dexterity", "Inteligence" };
-                    armorNweaponproficiencies = new List<string>() { "Light armor" +
-                        "simple weapons" +
-                        "hand crossbows" +
-                        "longswords" +
-                        "rapiers" +
+                    SavingTHrowproficiencies = new List<string>() { "Dexterity", "Intelligence" };
+                    armorNweaponproficiencies = new List<string>() { "Light armor" ,
+                        "simple weapons" ,
+                        "hand crossbows" ,
+                        "longswords" ,
+                        "rapiers",
                         "shortswords"};
                     break;
                 case avaibleClasses.Sorcerer:
@@ -213,10 +213,10 @@ namespace DiscordApp.RPGSystems.DnD
                     baseHitPoints = 6;
                     primary_Ability = new List<string>() { "Charisma" };
                     SavingTHrowproficiencies = new List<string>() { "Constitution", "Charisma" };
-                    armorNweaponproficiencies = new List<string>() { "daggers" +
-                        "darts" +
-                        "slings" +
-                        "quarterstaffs" +
+                    armorNweaponproficiencies = new List<string>() { "daggers" ,
+                        "darts" ,
+                        "slings" ,
+                        "quarterstaffs" ,
                         "light crossbows"};
                     break;
                 case avaibleClasses.Warlock:
@@ -232,7 +232,7 @@ namespace DiscordApp.RPGSystems.DnD
                     hitDie = 8;
                     primary_Ability = new List<string>() { "Charisma" };
                     SavingTHrowproficiencies = new List<string>() { "Wisdom", "Charisma" };
-                    armorNweaponproficiencies = new List<string>() { "light armor" +
+                    armorNweaponproficiencies = new List<string>() { "light armor" ,
                         "simple weapons"};
                     break;
                 case avaibleClasses.Wizard:
@@ -247,11 +247,11 @@ namespace DiscordApp.RPGSystems.DnD
                     description = "A scholarly magic-user capable of manipulating the structures of reality";
                     hitDie = 6;
                     primary_Ability = new List<string>() { "Charisma" };
-                    SavingTHrowproficiencies = new List<string>() { "Wisdom", "Inteligence" };
-                    armorNweaponproficiencies = new List<string>() { "daggers" +
-                        "darts" +
-                        "slings" +
-                        "quarterstaffs" +
+                    SavingTHrowproficiencies = new List<string>() { "Wisdom", "Intelligence" };
+                    armorNweaponproficiencies = new List<string>() { "daggers" ,
+                        "darts" ,
+                        "slings" ,
+                        "quarterstaffs" ,
                         "light crossbows"};
                     break;
                 default:
@@ -267,7 +267,7 @@ namespace DiscordApp.RPGSystems.DnD
                     hitDie = 999;
                     primary_Ability = new List<string>() { "Charisma" };
                     SavingTHrowproficiencies = new List<string>() { "Wisdom", "Charisma" };
-                    armorNweaponproficiencies = new List<string>() { "light armor" +
+                    armorNweaponproficiencies = new List<string>() { "light armor" ,
                         "simple weapons"};
                     break;
             }
