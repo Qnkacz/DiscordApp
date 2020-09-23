@@ -358,7 +358,74 @@ namespace DiscordApp.RPGSystems.DnD
                 character.gender = "Male";
             }
             #endregion
-            #region statystyki główne
+            #region apperance
+            QuestionEmbed.Title = "How tall are you";
+            QuestionEmbed.Description = "`lore friendly` propositions:" + System.Environment.NewLine +
+                "`dwarf` -> 120 - 152 cm" + System.Environment.NewLine +
+                "`elf` -> 152 - 190 cm" + System.Environment.NewLine +
+                "`halfling` -> around 90 cm" + System.Environment.NewLine +
+                "`human` -> 150 - 200 cm" + System.Environment.NewLine +
+                "`gnome` -> 90 - 120 cm" + System.Environment.NewLine +
+                "`half-elf` -> 150 - 200 cm" + System.Environment.NewLine +
+                "`half-orc` -> 160 - 200+ cm" + System.Environment.NewLine +
+                "** Write only the number below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(230);
+            response = await userChannel.GetNextMessageAsync();
+            character.height = Int32.Parse(response.Result.Content);
+            await userChannel.SendMessageAsync(character.height.ToString());
+            Thread.Sleep(230);
+
+            QuestionEmbed.Title = "How old are you";
+            QuestionEmbed.Description = "`lore friendly` propositions:" + System.Environment.NewLine +
+                "`dwarf` -> 5 - 350 Years" + System.Environment.NewLine +
+                "`elf` -> 5 - 750 Years" + System.Environment.NewLine +
+                "`halfling` -> 5 - 65 years" + System.Environment.NewLine +
+                "`human` -> 5 - 80 Years" + System.Environment.NewLine +
+                "`gnome` -> 5 - 500 Years" + System.Environment.NewLine +
+                "`half-elf` -> 5 - 200 Years" + System.Environment.NewLine +
+                "`half-orc` -> 5 - 75 Years" + System.Environment.NewLine +
+                "** Write only the number below **";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(230);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(230);
+            character.age= Int32.Parse(response.Result.Content);
+            await userChannel.SendMessageAsync(character.age.ToString());
+
+            QuestionEmbed.Title = "Tell me about your eyes";
+            QuestionEmbed.Description = "*write it down below*";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(230);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(230);
+            character.eyes = response.Result.Content;
+
+            QuestionEmbed.Title = "Tell me about your hair";
+            QuestionEmbed.Description = "*write it down below*";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(230);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(230);
+            character.hair = response.Result.Content;
+
+            QuestionEmbed.Title = "Tell me how do you look like?";
+            QuestionEmbed.Description = "*write it down below*";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(230);
+            response = await userChannel.GetNextMessageAsync();
+            character.skin = response.Result.Content;
+            Thread.Sleep(230);
+
+            QuestionEmbed.Title = "How much do you weight?";
+            QuestionEmbed.Description = "*write **ONLY** the number down below*";
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+            Thread.Sleep(230);
+            response = await userChannel.GetNextMessageAsync();
+            Thread.Sleep(230);
+            character.weight= Int32.Parse(response.Result.Content);
+            #endregion
+            #region main stats
             QuestionEmbed.Title = emojis.yes + " - You roll your stats" + emojis.no + "- use the premade one?";
             QuestionEmbed.Description = "react acordingly";
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
@@ -726,35 +793,7 @@ namespace DiscordApp.RPGSystems.DnD
                 }
             }
             #endregion
-            QuestionEmbed.Title = "How tall are you";
-            QuestionEmbed.Description = "`lore friendly` propositions:" + System.Environment.NewLine +
-                "`dwarf` -> 120 - 152 cm" + System.Environment.NewLine +
-                "`elf` -> 152 - 190 cm" + System.Environment.NewLine +
-                "`halfling` -> around 90 cm" + System.Environment.NewLine +
-                "`human` -> 150 - 200 cm" + System.Environment.NewLine +
-                "`gnome` -> 90 - 120 cm" + System.Environment.NewLine +
-                "`half-elf` -> 150 - 200 cm" + System.Environment.NewLine +
-                "`half-orc` -> 160 - 200+ cm" + System.Environment.NewLine +
-                "** Write only the number below **";
-            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-            Thread.Sleep(230);
-            response = await userChannel.GetNextMessageAsync();
-            character.height = Int32.Parse(response.Result.Content);
-            Thread.Sleep(230);
-            QuestionEmbed.Title = "How old are you";
-            QuestionEmbed.Description = "`lore friendly` propositions:" + System.Environment.NewLine +
-                "`dwarf` -> 5 - 350 Years" + System.Environment.NewLine +
-                "`elf` -> 5 - 750 Years" + System.Environment.NewLine +
-                "`halfling` -> 5 - 65 years" + System.Environment.NewLine +
-                "`human` -> 5 - 80 Years" + System.Environment.NewLine +
-                "`gnome` -> 5 - 500 Years" + System.Environment.NewLine +
-                "`half-elf` -> 5 - 200 Years" + System.Environment.NewLine +
-                "`half-orc` -> 5 - 75 Years" + System.Environment.NewLine +
-                "** Write only the number below **";
-            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-            Thread.Sleep(230);
-            response = await userChannel.GetNextMessageAsync();
-            Thread.Sleep(230);
+           
             #region aligment
             QuestionEmbed.Title = "What is your Aligment?";
             QuestionEmbed.Description =
@@ -808,6 +847,7 @@ namespace DiscordApp.RPGSystems.DnD
             }
             await userChannel.SendMessageAsync("You chose: **" + character.aligment + "**");
             #endregion
+            #region classes
             string[] avaibleClasses = new string[]
             {
                   "barbarian",
@@ -892,7 +932,8 @@ namespace DiscordApp.RPGSystems.DnD
             character.tempHP = character.maxHP;
             character.inventory.Add("gold", "currency in game", character.CharacterClass[0].startMoney);
             await additemsFromClass(character, ctx, userChannel, emojis);
-
+            #endregion
+            #region backstory
             var chosenbackstory = static_objects.dnd_template.dnd_background;
             QuestionEmbed.Title = "Choose your backstory";
             QuestionEmbed.Description = "** Acolyte ** " + "**Criminal** " + "**Folk Hero** " + "**Noble** " + "**Sage** " + "**Soldier** ";
@@ -940,6 +981,7 @@ namespace DiscordApp.RPGSystems.DnD
             character.bonds = chosenbackstory.bond;
             character.flaws = chosenbackstory.flaw;
             character.background = chosenbackstory.name;
+            #endregion
 
             #region skills
             character.skills["acrobatics"] +=character.BaseStatsModificator["Dexterity"];
