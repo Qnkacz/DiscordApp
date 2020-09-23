@@ -515,11 +515,12 @@ namespace DiscordApp.RPGSystems.DnD
             character.BaseStats["Intelligence"] = liczby[3];
             character.BaseStats["Wisdom"] = liczby[4];
             character.BaseStats["Charisma"] = liczby[5];
-            character.BaseStatsModificator["Strength"] = getSavingThrow(character.BaseStats["Strength"]);
-            character.BaseStatsModificator["Constitution"] = getSavingThrow(character.BaseStats["Constitution"]);
-            character.BaseStatsModificator["Intelligence"] = getSavingThrow(character.BaseStats["Intelligence"]);
-            character.BaseStatsModificator["Wisdom"] = getSavingThrow(character.BaseStats["Wisdom"]);
-            character.BaseStatsModificator["Charisma"] = getSavingThrow(character.BaseStats["Charisma"]);
+            character.BaseStatsModificator["Strength"] = getSavingThrow(liczby[0]);
+            character.BaseStatsModificator["Dexterity"] = getSavingThrow(liczby[1]);
+            character.BaseStatsModificator["Constitution"] = getSavingThrow(liczby[2]);
+            character.BaseStatsModificator["Intelligence"] = getSavingThrow(liczby[3]);
+            character.BaseStatsModificator["Wisdom"] = getSavingThrow(liczby[4]);
+            character.BaseStatsModificator["Charisma"] = getSavingThrow(liczby[5]);
             #endregion
             #region races
             if (character.race == "Elf")
@@ -915,15 +916,15 @@ namespace DiscordApp.RPGSystems.DnD
             await userChannel.SendMessageAsync("You chose: `" + character.CharacterClass[0].classname + "`");
             character.SavingThrowProficiencies = character.CharacterClass[0].SavingTHrowproficiencies;
 
-            character.baseStatSavingThrow["Strength"] = getSavingThrow(character.BaseStatsModificator["Strength"]);
-            character.baseStatSavingThrow["Dexterity"] = getSavingThrow(character.BaseStatsModificator["Dexterity"]);
-            character.baseStatSavingThrow["Constitution"] = getSavingThrow(character.BaseStatsModificator["Constitution"]);
-            character.baseStatSavingThrow["Intelligence"] = getSavingThrow(character.BaseStatsModificator["Intelligence"]);
-            character.baseStatSavingThrow["Wisdom"] = getSavingThrow(character.BaseStatsModificator["Wisdom"]);
-            character.baseStatSavingThrow["Charisma"] = getSavingThrow(character.BaseStatsModificator["Charisma"]);
+            character.baseStatSavingThrow["Strength"] = character.BaseStatsModificator["Strength"];
+            character.baseStatSavingThrow["Dexterity"] = character.BaseStatsModificator["Dexterity"];
+            character.baseStatSavingThrow["Constitution"] = character.BaseStatsModificator["Constitution"];
+            character.baseStatSavingThrow["Intelligence"] = character.BaseStatsModificator["Intelligence"];
+            character.baseStatSavingThrow["Wisdom"] = character.BaseStatsModificator["Wisdom"];
+            character.baseStatSavingThrow["Charisma"] = character.BaseStatsModificator["Charisma"];
             foreach (var item in character.CharacterClass[0].SavingTHrowproficiencies)
             {
-                character.BaseStats[item.Trim()] += 2;
+                character.baseStatSavingThrow[item.Trim()] += 2;
             }
             character.ArmorNWeaponProficiencies = character.CharacterClass[0].armorNweaponproficiencies;
             character.maxHP = character.CharacterClass[0].baseHitPoints + character.baseStatSavingThrow["Constitution"];
@@ -980,7 +981,7 @@ namespace DiscordApp.RPGSystems.DnD
             character.bonds = chosenbackstory.bond;
             character.flaws = chosenbackstory.flaw;
             character.background = chosenbackstory.name;
-            await userChannel.SendMessageAsync("blep");
+            
             #endregion
 
             #region skills
@@ -1008,6 +1009,7 @@ namespace DiscordApp.RPGSystems.DnD
                 character.skills[item] += 2;
             }
             #endregion
+            await userChannel.SendMessageAsync("blep");
             #region summary
             QuestionEmbed.Title = "Here is your character!";
             QuestionEmbed.Description =
@@ -1040,15 +1042,6 @@ namespace DiscordApp.RPGSystems.DnD
             QuestionEmbed.Description = description;
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
 
-
-            QuestionEmbed.Title = "Here are your skills!";
-            description = string.Empty;
-            foreach (var item in character.skills)
-            {
-                description += item.Key + " : " + item.Value + Environment.NewLine;
-            }
-            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
-
             QuestionEmbed.Title = "here are your Proficiencies!";
             description = "**Ability: **" + Environment.NewLine;
             foreach (var item in character.abilityProficiencies)
@@ -1075,7 +1068,7 @@ namespace DiscordApp.RPGSystems.DnD
                 "**Ideal: " + character.ideals + Environment.NewLine +
                 "**Bonds: " + character.bonds + Environment.NewLine +
                 "**Flaws: " + character.flaws + Environment.NewLine +
-                "**Features: " + character.features + Environment.NewLine;
+                "**Features: " + character.personalityTrait + Environment.NewLine;
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
 
             QuestionEmbed.Title = "This is how you look like!";
@@ -1084,6 +1077,9 @@ namespace DiscordApp.RPGSystems.DnD
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
 
             await character.inventory.showInventory(userChannel, character.name);
+            #endregion
+            #region saving
+
             #endregion
 
             GC.Collect();
@@ -1877,7 +1873,7 @@ namespace DiscordApp.RPGSystems.DnD
         {
             int modifier = -5;
             int i = 1;
-            while (i < number)
+            while (i <= number)
             {
                 modifier++;
                 i += 2;
