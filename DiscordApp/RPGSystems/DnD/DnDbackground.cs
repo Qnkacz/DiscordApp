@@ -74,7 +74,7 @@ namespace DiscordApp.RPGSystems.DnD
                 case dnd_infotables.backgrounds.noble:
                     #region noble
                     name = "noble";
-                    SkillProficiencies = new List<string>() { "history", "persuasion" };
+                    SkillProficiencies = new List<string>() { "history", "persuation" };
                     items.Add("set of fine clothes", "Fancy!", 1);
                     items.Add("a signer ring", "rom a dead colleague posing a question you have not yet been able to answer", 1);
                     items.Add("Gold", "currency in the game!", 25);

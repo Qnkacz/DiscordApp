@@ -67,7 +67,7 @@ namespace DiscordApp.RPGSystems.DnD
             { "perception",0},
             { "performance",0},
             { "persuation",0},
-            { "relion",0},
+            { "religion",0},
             { "sleight of hand",0},
             { "stealth",0},
             { "survival",0},

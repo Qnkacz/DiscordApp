@@ -2,11 +2,13 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -290,6 +292,7 @@ namespace DiscordApp.RPGSystems.DnD
             character.level = 1;
             var msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             var response = await userChannel.GetNextMessageAsync();
+            string description = string.Empty;
             Thread.Sleep(230);
             character.name = response.Result.Content;
             QuestionEmbed.Title = "What is your race, react acordingly";
@@ -864,7 +867,7 @@ namespace DiscordApp.RPGSystems.DnD
                   "warlock" ,
                   "wizard"
             };
-            string description = string.Join(" ", avaibleClasses) + Environment.NewLine + "Write down the class you want to be";
+            description = string.Join(" ", avaibleClasses) + Environment.NewLine + "Write down the class you want to be";
             string input = string.Empty;
             do
             {
@@ -948,40 +951,50 @@ namespace DiscordApp.RPGSystems.DnD
            (emojis.onetototen.Contains(x.Emoji)));
             if (backgroundresult.Result.Emoji == emojis.one)
             {
+                await userChannel.SendMessageAsync("blep");
                 chosenbackstory = new DnDbackground(backgrounds.acolyte);
             }
             if (backgroundresult.Result.Emoji == emojis.two)
             {
+                await userChannel.SendMessageAsync("blep");
                 chosenbackstory = new DnDbackground(backgrounds.criminal);
             }
             if (backgroundresult.Result.Emoji == emojis.three)
             {
+                await userChannel.SendMessageAsync("blep");
                 chosenbackstory = new DnDbackground(backgrounds.folkHero);
             }
             if (backgroundresult.Result.Emoji == emojis.four)
             {
+                await userChannel.SendMessageAsync("blep");
                 chosenbackstory = new DnDbackground(backgrounds.noble);
             }
             if (backgroundresult.Result.Emoji == emojis.five)
             {
+                await userChannel.SendMessageAsync("blep");
                 chosenbackstory = new DnDbackground(backgrounds.sage);
             }
             if (backgroundresult.Result.Emoji == emojis.six)
             {
+                await userChannel.SendMessageAsync("blep");
                 chosenbackstory = new DnDbackground(backgrounds.soldier);
             }
-
-            GC.Collect();
+            await userChannel.SendMessageAsync("blep1");
             foreach (var item in chosenbackstory.SkillProficiencies)
             {
                 character.SkillProficiencies.Add(item);
             }
+            await userChannel.SendMessageAsync("blep2");
             character.personalityTrait = chosenbackstory.personalityTrait;
+            await userChannel.SendMessageAsync("blep3");
             character.ideals = chosenbackstory.ideal;
+            await userChannel.SendMessageAsync("blep4");
             character.bonds = chosenbackstory.bond;
+            await userChannel.SendMessageAsync("blep5");
             character.flaws = chosenbackstory.flaw;
+            await userChannel.SendMessageAsync("blep6");
             character.background = chosenbackstory.name;
-            
+            await userChannel.SendMessageAsync("blep7");
             #endregion
 
             #region skills
@@ -999,17 +1012,17 @@ namespace DiscordApp.RPGSystems.DnD
             character.skills["perception"] += character.BaseStatsModificator["Wisdom"];
             character.skills["performance"] += character.BaseStatsModificator["Charisma"];
             character.skills["persuation"] += character.BaseStatsModificator["Charisma"];
-            character.skills["relion"] += character.BaseStatsModificator["Intelligence"];
+            character.skills["religion"] += character.BaseStatsModificator["Intelligence"];
             character.skills["sleight of hand"] += character.BaseStatsModificator["Dexterity"];
             character.skills["stealth"] += character.BaseStatsModificator["Dexterity"];
             character.skills["survival"] += character.BaseStatsModificator["Wisdom"];
-
+            await userChannel.SendMessageAsync("blep9");
             foreach (var item in chosenbackstory.SkillProficiencies)
             {
                 character.skills[item] += 2;
             }
+            await userChannel.SendMessageAsync("blep10");
             #endregion
-            await userChannel.SendMessageAsync("blep");
             #region summary
             QuestionEmbed.Title = "Here is your character!";
             QuestionEmbed.Description =
@@ -1073,13 +1086,15 @@ namespace DiscordApp.RPGSystems.DnD
 
             QuestionEmbed.Title = "This is how you look like!";
             QuestionEmbed.Description =
-                "**Your Eyes**: " + Environment.NewLine + character.eyes +Environment.NewLine+ "**Your body**: " + Environment.NewLine + character.skin;
+                "**Your Eyes**: " + Environment.NewLine + character.eyes + Environment.NewLine + "**Your body**: " + Environment.NewLine + character.skin;
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
 
             await character.inventory.showInventory(userChannel, character.name);
             #endregion
             #region saving
-
+            DirectoryInfo di = Directory.CreateDirectory(ctx.Member.Id.ToString() + "/DnD/");
+            string json = JsonConvert.SerializeObject(character);
+            File.WriteAllText(ctx.Member.Id.ToString() + "/" + "DnD" + "/" + character.name + ".json", json);
             #endregion
 
             GC.Collect();
