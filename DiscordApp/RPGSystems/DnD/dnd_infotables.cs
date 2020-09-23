@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -285,7 +286,7 @@ namespace DiscordApp.RPGSystems.DnD
                 Title = "Welcome to the DnD Character creation menu",
                 Description = "What is your name?"
             };
-
+            character.level = 1;
             var msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
             var response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(2300);
@@ -390,7 +391,7 @@ namespace DiscordApp.RPGSystems.DnD
             Thread.Sleep(230);
             response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(230);
-            character.age= Int32.Parse(response.Result.Content);
+            character.age = Int32.Parse(response.Result.Content);
             await userChannel.SendMessageAsync(character.age.ToString());
 
             QuestionEmbed.Title = "Tell me about your eyes";
@@ -423,7 +424,7 @@ namespace DiscordApp.RPGSystems.DnD
             Thread.Sleep(230);
             response = await userChannel.GetNextMessageAsync();
             Thread.Sleep(230);
-            character.weight= Int32.Parse(response.Result.Content);
+            character.weight = Int32.Parse(response.Result.Content);
             #endregion
             #region main stats
             QuestionEmbed.Title = emojis.yes + " - You roll your stats" + emojis.no + "- use the premade one?";
@@ -793,7 +794,7 @@ namespace DiscordApp.RPGSystems.DnD
                 }
             }
             #endregion
-           
+
             #region aligment
             QuestionEmbed.Title = "What is your Aligment?";
             QuestionEmbed.Description =
@@ -984,16 +985,16 @@ namespace DiscordApp.RPGSystems.DnD
             #endregion
 
             #region skills
-            character.skills["acrobatics"] +=character.BaseStatsModificator["Dexterity"];
+            character.skills["acrobatics"] += character.BaseStatsModificator["Dexterity"];
             character.skills["animal handling"] += character.BaseStatsModificator["Wisdom"];
             character.skills["arcana"] += character.BaseStatsModificator["Intelligence"];
             character.skills["athletics"] += character.BaseStatsModificator["Strength"];
             character.skills["deception"] += character.BaseStatsModificator["Charisma"];
-            character.skills["history"]+= character.BaseStatsModificator["Intelligence"];
-            character.skills["insight"]+= character.BaseStatsModificator["Wisdom"];
-            character.skills["intimidation"]+= character.BaseStatsModificator["Charisma"];
-            character.skills["investigation"]+= character.BaseStatsModificator["Intelligence"];
-            character.skills["medicine"]+= character.BaseStatsModificator["Wisdom"];
+            character.skills["history"] += character.BaseStatsModificator["Intelligence"];
+            character.skills["insight"] += character.BaseStatsModificator["Wisdom"];
+            character.skills["intimidation"] += character.BaseStatsModificator["Charisma"];
+            character.skills["investigation"] += character.BaseStatsModificator["Intelligence"];
+            character.skills["medicine"] += character.BaseStatsModificator["Wisdom"];
             character.skills["nature"] += character.BaseStatsModificator["Intelligence"];
             character.skills["perception"] += character.BaseStatsModificator["Wisdom"];
             character.skills["performance"] += character.BaseStatsModificator["Charisma"];
@@ -1007,6 +1008,83 @@ namespace DiscordApp.RPGSystems.DnD
                 character.skills[item] += 2;
             }
             #endregion
+            #region summary
+            QuestionEmbed.Title = "Here is your character!";
+            QuestionEmbed.Description =
+                "**Name: ** " + character.name + Environment.NewLine +
+                "**Race: ** " + character.race + Environment.NewLine +
+                "**Gender: ** " + character.gender + Environment.NewLine +
+                "**Height: ** " + character.height + Environment.NewLine +
+                "**Weight: ** " + character.weight + Environment.NewLine +
+                "**Class: ** " + character.CharacterClass[0].classname + Environment.NewLine +
+                "**Health: ** " + character.maxHP + Environment.NewLine +
+                "**Speed: ** " + character.speed + Environment.NewLine;
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+
+            description = string.Empty;
+            foreach (var item in character.BaseStats)
+            {
+                description += item.Key + " : " + item.Value+Environment.NewLine;
+            }
+            QuestionEmbed.Title = "Here are your base stats!";
+            QuestionEmbed.Description = description;
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+
+            description = string.Empty;
+            QuestionEmbed.Title = "here are your base stat modificators!";
+            foreach (var item in character.BaseStatsModificator)
+            {
+                description += item.Key + " : " + item.Value + Environment.NewLine;
+            }
+            QuestionEmbed.Description = description;
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+
+
+            QuestionEmbed.Title = "Here are your skills!";
+            description = string.Empty;
+            foreach (var item in character.skills)
+            {
+                description += item.Key + " : " + item.Value + Environment.NewLine;
+            }
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+
+            QuestionEmbed.Title = "here are your Proficiencies!";
+            description = "**Ability: **"+Environment.NewLine;
+            foreach (var item in character.abilityProficiencies)
+            {
+                description += item + Environment.NewLine;
+            }
+            description = "**Skills: **" + Environment.NewLine;
+            foreach (var item in character.SkillProficiencies)
+            {
+                description += item + Environment.NewLine;
+            }
+            description ="**Armor and Weapons**:" + Environment.NewLine;
+            foreach (var item in character.ArmorNWeaponProficiencies)
+            {
+                description += item + Environment.NewLine;
+            }
+            QuestionEmbed.Description = description;
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+
+            QuestionEmbed.Title = "Here is your backstory and personality";
+            QuestionEmbed.Description =
+                "**Background: " + character.background + Environment.NewLine +
+                "**Aligment: " + character.aligment + Environment.NewLine +
+                "**Ideal: " + character.ideals + Environment.NewLine +
+                "**Bonds: " + character.bonds + Environment.NewLine +
+                "**Flaws: " + character.flaws + Environment.NewLine +
+                "**Features: " + character.features + Environment.NewLine;
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+
+            QuestionEmbed.Title = "This is how you look like!";
+            QuestionEmbed.Description =
+                "**Your Eyes**: " + Environment.NewLine + character.eyes + "**Your body**: " + Environment.NewLine + character.skin;
+            msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
+
+            await character.inventory.showInventory(userChannel, character.name);
+            #endregion
+
             GC.Collect();
         }
 

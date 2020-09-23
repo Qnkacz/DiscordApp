@@ -10,6 +10,7 @@ namespace DiscordApp.RPGSystems.DnD
 {
     public class DnD
     {
+        public int level;
         public string name;
         public string race;
         public string gender;
