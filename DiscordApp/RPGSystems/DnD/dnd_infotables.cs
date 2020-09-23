@@ -980,6 +980,7 @@ namespace DiscordApp.RPGSystems.DnD
             character.bonds = chosenbackstory.bond;
             character.flaws = chosenbackstory.flaw;
             character.background = chosenbackstory.name;
+            await userChannel.SendMessageAsync("blep");
             #endregion
 
             #region skills
