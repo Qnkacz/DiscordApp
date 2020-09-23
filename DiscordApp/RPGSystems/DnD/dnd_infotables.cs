@@ -940,7 +940,31 @@ namespace DiscordApp.RPGSystems.DnD
             character.bonds = chosenbackstory.bond;
             character.flaws = chosenbackstory.flaw;
             character.background = chosenbackstory.name;
-            await character.inventory.showInventory(userChannel, character.name);
+
+            #region skills
+            character.skills["acrobatics"] +=character.BaseStatsModificator["Dexterity"];
+            character.skills["animal handling"] += character.BaseStatsModificator["Wisdom"];
+            character.skills["arcana"] += character.BaseStatsModificator["Intelligence"];
+            character.skills["athletics"] += character.BaseStatsModificator["Strength"];
+            character.skills["deception"] += character.BaseStatsModificator["Charisma"];
+            character.skills["history"]+= character.BaseStatsModificator["Intelligence"];
+            character.skills["insight"]+= character.BaseStatsModificator["Wisdom"];
+            character.skills["intimidation"]+= character.BaseStatsModificator["Charisma"];
+            character.skills["investigation"]+= character.BaseStatsModificator["Intelligence"];
+            character.skills["medicine"]+= character.BaseStatsModificator["Wisdom"];
+            character.skills["nature"] += character.BaseStatsModificator["Intelligence"];
+            character.skills["perception"] += character.BaseStatsModificator["Wisdom"];
+            character.skills["performance"] += character.BaseStatsModificator["Charisma"];
+            character.skills["persuation"] += character.BaseStatsModificator["Charisma"];
+            character.skills["relion"] += character.BaseStatsModificator["Intelligence"];
+            character.skills["sleight of hand"] += character.BaseStatsModificator["Dexterity"];
+            character.skills["stealth"] += character.BaseStatsModificator["Dexterity"];
+            character.skills["survival"] += character.BaseStatsModificator["Wisdom"];
+            foreach (var item in chosenbackstory.SkillProficiencies)
+            {
+                character.skills[item] += 2;
+            }
+            #endregion
             GC.Collect();
         }
 

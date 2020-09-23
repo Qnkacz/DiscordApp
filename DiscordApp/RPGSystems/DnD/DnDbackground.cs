@@ -48,7 +48,7 @@ namespace DiscordApp.RPGSystems.DnD
                 case dnd_infotables.backgrounds.criminal:
                     #region criminal
                     name = "criminal";
-                    SkillProficiencies = new List<string>() { "Deception", "Stealth" };
+                    SkillProficiencies = new List<string>() { "deception", "stealth" };
                     items.Add("crowbar", "watch out for headcrabs!", 1);
                     items.Add("Dark clothes", "the common type!", 1);
                     items.Add("Gold", "currency in the game!", 15);

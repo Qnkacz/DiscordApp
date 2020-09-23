@@ -28,7 +28,8 @@ namespace DiscordApp.RPGSystems.DnD
             { "Wisdom",0},
             { "Charisma",0},
            
-        };public Dictionary<string, int> baseStatSavingThrow = new Dictionary<string, int>()
+        };
+        public Dictionary<string, int> baseStatSavingThrow = new Dictionary<string, int>()
         {
             { "Strength",0},
             { "Dexterity",0},
@@ -44,20 +45,21 @@ namespace DiscordApp.RPGSystems.DnD
         public Dictionary<string, int> skills = new Dictionary<string, int>()
         {
             { "acrobatics",0},
-            { "animal_handling",0},
+            { "animal handling",0},
             { "arcana",0},
             { "athletics",0},
             { "deception",0},
             { "history",0},
             { "insight",0},
             { "intimidation",0},
+            { "investigation",0},
             { "medicine",0},
             { "nature",0},
             { "perception",0},
             { "performance",0},
             { "persuation",0},
             { "relion",0},
-            { "sleight_of_hand",0},
+            { "sleight of hand",0},
             { "stealth",0},
             { "survival",0},
         };
