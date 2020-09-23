@@ -520,9 +520,6 @@ namespace DiscordApp.RPGSystems.DnD
             character.BaseStatsModificator["Intelligence"] = getSavingThrow(character.BaseStats["Intelligence"]);
             character.BaseStatsModificator["Wisdom"] = getSavingThrow(character.BaseStats["Wisdom"]);
             character.BaseStatsModificator["Charisma"] = getSavingThrow(character.BaseStats["Charisma"]);
-            QuestionEmbed.Title = "test";
-            QuestionEmbed.Description = "Str: " + character.BaseStats["Strength"];
-            await userChannel.SendMessageAsync(embed: QuestionEmbed);
             #endregion
             #region races
             if (character.race == "Elf")
@@ -1004,6 +1001,7 @@ namespace DiscordApp.RPGSystems.DnD
             character.skills["sleight of hand"] += character.BaseStatsModificator["Dexterity"];
             character.skills["stealth"] += character.BaseStatsModificator["Dexterity"];
             character.skills["survival"] += character.BaseStatsModificator["Wisdom"];
+
             foreach (var item in chosenbackstory.SkillProficiencies)
             {
                 character.skills[item] += 2;
@@ -1057,7 +1055,7 @@ namespace DiscordApp.RPGSystems.DnD
                 description += item + Environment.NewLine;
             }
             description += "**Skills: **" + Environment.NewLine;
-            foreach (var item in character.SkillProficiencies)
+            foreach (var item in character.skills)
             {
                 description += item + Environment.NewLine;
             }
@@ -1081,7 +1079,7 @@ namespace DiscordApp.RPGSystems.DnD
 
             QuestionEmbed.Title = "This is how you look like!";
             QuestionEmbed.Description =
-                "**Your Eyes**: " + Environment.NewLine + character.eyes + "**Your body**: " + Environment.NewLine + character.skin;
+                "**Your Eyes**: " + Environment.NewLine + character.eyes +Environment.NewLine+ "**Your body**: " + Environment.NewLine + character.skin;
             msg = await userChannel.SendMessageAsync(embed: QuestionEmbed);
 
             await character.inventory.showInventory(userChannel, character.name);
@@ -1216,7 +1214,7 @@ namespace DiscordApp.RPGSystems.DnD
                     {
                         character.inventory.Add("Longsword", "kitchen knife on steroids", 1);
                     }
-                    questionEmbed.Title = "Choose your armor";
+                    questionEmbed.Title = "Choose your Weapon";
                     questionEmbed.Description = emojis.one + "- for a mace" + Environment.NewLine + emojis.two + "- for a warhammer" + Environment.NewLine + emojis.three + "- for a chain mail";
                     var clericmsg1 = await userChannel.SendMessageAsync(embed: questionEmbed);
                     await clericmsg1.CreateReactionAsync(emojis.one);
