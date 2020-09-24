@@ -10,7 +10,6 @@ namespace DiscordApp.Handlers
     {
         public static WHF_Infotables WHF_template = new WHF_Infotables();
         public static dnd_infotables dnd_template = new dnd_infotables();
-        public static DnDSpellist dnd_spellist = new DnDSpellist();
 
     }
 }

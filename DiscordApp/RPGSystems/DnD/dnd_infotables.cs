@@ -21,6 +21,56 @@ namespace DiscordApp.RPGSystems.DnD
 {
     public class dnd_infotables
     {
+        public DnDSpellist spells;
+        string JsonFromFile = string.Empty;
+        public dnd_infotables()
+        {
+            using (var reader = new StreamReader("data.json"))
+            {
+                JsonFromFile = reader.ReadToEnd();
+            }
+            spells = JsonConvert.DeserializeObject<DnDSpellist>(JsonFromFile);
+            foreach (var item in spells.Arkusz1)
+            {
+                switch (item.level)
+                {
+                    case 0:
+                        spells.lvl_0.Add(item);
+                        break;
+                    case 1:
+                        spells.lvl_1.Add(item);
+                        break;
+                    case 2:
+                        spells.lvl_2.Add(item);
+                        break;
+                    case 3:
+                        spells.lvl_3.Add(item);
+                        break;
+                    case 4:
+                        spells.lvl_4.Add(item);
+                        break;
+                    case 5:
+                        spells.lvl_5.Add(item);
+                        break;
+                    case 6:
+                        spells.lvl_6.Add(item);
+                        break;
+                    case 7:
+                        spells.lvl_7.Add(item);
+                        break;
+                    case 8:
+                        spells.lvl_8.Add(item);
+                        break;
+                    case 9:
+                        spells.lvl_9.Add(item);
+                        break;
+
+                }
+            }
+        }
+
+
+
         public List<int> statRollpool = new List<int>();
         public List<int> predetermineRools = new List<int>
         {
@@ -560,7 +610,7 @@ namespace DiscordApp.RPGSystems.DnD
                     await userChannel.SendMessageAsync(embed: QuestionEmbed);
                     var descrResponse = await userChannel.GetNextMessageAsync();
                     var spellDescr = descrResponse.Result.Content;
-                    character.spells.Add(new DnDSpells(spellname, spellDescr));
+                    //character.spells.Add(new DnDSpells(spellname, spellDescr));
                 }
                 if (elfresult.Result.Emoji == emojis.two)
                 {
@@ -1894,6 +1944,139 @@ namespace DiscordApp.RPGSystems.DnD
                 i += 2;
             }
             return modifier;
+        }
+        public async Task ShowLevelSpells(CommandContext ctx)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+                string descr = string.Empty;
+                EmojiBase emojis = new EmojiBase(ctx);
+                var interactivity = ctx.Client.GetInteractivity();
+                var QuestionEmbed = new DiscordEmbedBuilder
+                {
+                    Title = "What level of spells do you want to look up?",
+                    Description = "React with the number"
+                };
+                var msg = await ctx.Channel.SendMessageAsync(embed: QuestionEmbed);
+                foreach (var item in emojis.onetototen)
+                {
+                    await msg.CreateReactionAsync(item);
+                }
+                Thread.Sleep(210);
+                var emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
+               &&
+               (emojis.onetototen.Contains(x.Emoji)));
+                Thread.Sleep(200);
+                if (emojiResult.Result.Emoji == emojis.one)
+                {
+                    foreach (var item in spells.lvl_1)
+                    {
+                        descr += item.spellName +" **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.two)
+                {
+                    foreach (var item in spells.lvl_2)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.three)
+                {
+                    foreach (var item in spells.lvl_3)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.four)
+                {
+                    foreach (var item in spells.lvl_4)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.five)
+                {
+                    foreach (var item in spells.lvl_5)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.six)
+                {
+                    foreach (var item in spells.lvl_6)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.seven)
+                {
+                    foreach (var item in spells.lvl_7)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.eight)
+                {
+                    foreach (var item in spells.lvl_8)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.nine)
+                {
+                    foreach (var item in spells.lvl_9)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*"+item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                if (emojiResult.Result.Emoji == emojis.ten)
+                {
+                    foreach (var item in spells.lvl_0)
+                    {
+                        descr += item.spellName + " **For classes**: " + "*" + item.classes + "*" + Environment.NewLine;
+                    }
+                }
+                QuestionEmbed.Title = "here are your spells from chosen level";
+                QuestionEmbed.Description = descr;
+                await ctx.Channel.DeleteMessageAsync(msg);
+                await ctx.Channel.SendMessageAsync(embed: QuestionEmbed);
+            }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+            }
+        }
+        public async Task spellinfo(CommandContext ctx,params string[] name)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+                string descr = string.Empty;
+                string spellname = string.Join(" ", name);
+                foreach (var item in spells.Arkusz1)
+                {
+                    if (item.spellName == spellname)
+                    {
+                        descr += "**Level**: " + item.level + Environment.NewLine +
+                            "**School**: " + item.school + Environment.NewLine +
+                            "**Cast Time**: " + item.castTime + Environment.NewLine +
+                            "**Range**: " + item.range + Environment.NewLine +
+                            "**Duration**: " + item.duration + Environment.NewLine +
+                            "**Avaible for Classes**: " + Environment.NewLine + item.classes + Environment.NewLine;
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(descr))
+                {
+                    descr = "Coudln't dinf the spell";
+                }
+                var QuestionEmbed = new DiscordEmbedBuilder
+                {
+                    Title = spellname,
+                    Description = descr
+                };
+                await ctx.Channel.SendMessageAsync(embed: QuestionEmbed);
+            }
         }
     }
 }

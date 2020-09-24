@@ -212,7 +212,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
                     break;
             }
-
         }
         [Command("EQ")]
         [Description("gives a list of items in inventory")]
@@ -285,6 +284,37 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     break;
                 case ">>":
                     await ctx.Channel.SendMessageAsync("use the dedicated rpg system prefix");
+                    break;
+            }
+        }
+
+        [Command("ShowSpells")]
+        [Description("Shows spells from chosen level")]
+        public async Task ShowSpels(CommandContext ctx)
+        {
+            switch (ctx.Prefix.ToLower())
+            {
+                case "dnd":
+                    await static_objects.dnd_template.ShowLevelSpells(ctx);
+
+                    break;
+                case ">>":
+                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    break;
+            }
+        }
+        [Command("spelldetails")]
+        [Description("shows details of a spell")]
+        public async Task spellDetails(CommandContext ctx,params string[] name)
+        {
+            switch (ctx.Prefix.ToLower())
+            {
+                case "dnd":
+                    await static_objects.dnd_template.spellinfo(ctx,name);
+
+                    break;
+                case ">>":
+                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
                     break;
             }
         }

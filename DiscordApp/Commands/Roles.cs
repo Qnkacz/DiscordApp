@@ -128,6 +128,5 @@ namespace DiscordApp.Commands
         {
             await ctx.Channel.SendMessageAsync(member.AvatarUrl);
         }
-
     }
 }

@@ -27,30 +27,13 @@ namespace DiscordApp.RPGSystems.DnD
     }
     public class DnDSpells
     {
-        public string spellName;
-        public string description;
-        public int range;
-        public string duration;
-        public int level;
-        public string school;
-        public List<string> classes;
-        public DnDSpells(string _name, string _desc,int _range,string _duration,int _level,string _school,List<string> _classes)
-        {
-            spellName = _name;
-            description = _desc;
-            range = _range;
-            duration = _duration;
-            level = _level;
-            school = _school;
-            classes = _classes;
-        }
-        public DnDSpells(string _name, string _desc)
-        {
-            spellName = _name;
-            description = _desc;
-            range = 666;
-            duration = "NA";
-        }
+        public string spellName { get; set; }
+        public int level { get; set; }
+        public string school { get; set; }
+        public string castTime { get; set; }
+        public string range { get; set; }
+        public string duration { get; set; }
+        public string classes { get; set; }
     }
     public struct DnDitem
     {
@@ -65,7 +48,18 @@ namespace DiscordApp.RPGSystems.DnD
    
     public class DnDSpellist
     {
-        public List<DnDSpells> spellist = new List<DnDSpells>();
+        public List<DnDSpells> Arkusz1 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_0 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_1 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_2 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_3 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_4 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_5 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_6 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_7 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_8 = new List<DnDSpells>();
+        public List<DnDSpells> lvl_9 = new List<DnDSpells>();
     }
+    
 
 }
