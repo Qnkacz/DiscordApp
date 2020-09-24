@@ -66,11 +66,14 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [Description("You're joining this session")]
         public async Task JoinGame(CommandContext ctx, [Description("Your character name")] params string[] input)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
                     WHF_Infotables template = new WHF_Infotables();
                     await template.Join(ctx, input);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.Join(ctx, input);
                     break;
                 case ">>":
                     await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");

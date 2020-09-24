@@ -83,7 +83,6 @@ namespace DiscordApp.RPGSystems.DnD
         public int speed;
         #endregion
         public List<CharacterClass> CharacterClass = new List<CharacterClass>();
-        public List<attacksNSpells> atackList = new List<attacksNSpells>();
         public List<DnDSpells> spells = new List<DnDSpells>();
         #region personality stuff
         public List<DnDTrait> Traits = new List<DnDTrait>();
@@ -109,9 +108,9 @@ namespace DiscordApp.RPGSystems.DnD
         public List<string> SkillProficiencies = new List<string>();
         #endregion
         #region other
-        public string backstory;
-        public List<string> treasure;
-        public List<string> allies;
+        //public string backstory;
+        //public List<string> treasure;
+        //public List<string> allies;
         #endregion
 
     }

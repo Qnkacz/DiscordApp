@@ -103,19 +103,19 @@ namespace DiscordApp.Commands
             string name = string.Join(" ", names);
             var blep = ctx.Guild.Channels;
             bool hasRpgCategory = false;
-            var prefix = ctx.Prefix;
             string topic = string.Empty;
-            switch (prefix)
+            await ctx.Channel.SendMessageAsync(ctx.Prefix);
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
                     topic = "warhammer";
                     break;
-                case "DnD":
+                case "dnd":
                     topic = "DnD";
                     break;
-                case "CoC":
-                    topic = "Call of Cthulhu";
-                    break;
+                case ">>":
+                    await ctx.Channel.SendMessageAsync("use the designated command prefix");
+                    return;
             }
             foreach (var item in blep)
             {

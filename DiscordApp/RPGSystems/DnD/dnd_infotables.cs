@@ -84,6 +84,8 @@ namespace DiscordApp.RPGSystems.DnD
 
         public enum Races { human, dwarf, Welf, Helf, halfling, half_elf, hhalf_orc, gnome };
         public enum Classes { barbarian, bard, cleric, druid, fighter, monk, palading, ranger, rouge, warlock, sourcerer, wizard };
+
+        
         #region traits ideals bonds and flaws
         #region acolyte
         public string[] trait_acolyte = new string[]
@@ -1966,7 +1968,7 @@ namespace DiscordApp.RPGSystems.DnD
                 var emojiResult = await interactivity.WaitForReactionAsync(x => x.Message == msg
                &&
                (emojis.onetototen.Contains(x.Emoji)));
-                Thread.Sleep(200);
+                
                 if (emojiResult.Result.Emoji == emojis.one)
                 {
                     foreach (var item in spells.lvl_1)
@@ -2049,8 +2051,9 @@ namespace DiscordApp.RPGSystems.DnD
         }
         public async Task spellinfo(CommandContext ctx,params string[] name)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic== "DnD")
             {
+                
                 string descr = string.Empty;
                 string spellname = string.Join(" ", name);
                 foreach (var item in spells.Arkusz1)
@@ -2077,6 +2080,54 @@ namespace DiscordApp.RPGSystems.DnD
                 };
                 await ctx.Channel.SendMessageAsync(embed: QuestionEmbed);
             }
+        }
+        public async Task Join(CommandContext ctx, string[] input)
+        {
+            
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic=="DnD")
+            {
+                
+                string name = string.Join(" ", input);
+                string JsonFromFile = "susiak";
+                if (File.Exists(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + name + ".json"))
+                {
+                    JsonFromFile = "cwel";
+                    await ctx.Channel.SendMessageAsync(JsonFromFile);
+                    using (var reader = new StreamReader(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + name + ".json"))
+                    {
+                        await ctx.Channel.SendMessageAsync(JsonFromFile);
+                        JsonFromFile = await reader.ReadToEndAsync();
+                    }
+                    await ctx.Channel.SendMessageAsync(JsonFromFile.Length.ToString());
+                    DnD character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnD>(JsonFromFile);
+                    
+                    var plate = CharPlate(character);
+                    plate.Title = ctx.Member.DisplayName;
+                    var variable = await ctx.Channel.SendMessageAsync(embed: plate);
+                    await variable.PinAsync();
+                }
+                else
+                {
+                    await ctx.Channel.SendMessageAsync("nie znalazłem postaci");
+                }
+            }
+        }
+        public DiscordEmbedBuilder CharPlate(DnD PlayerCharacter)
+        {
+            var siusiak = new DiscordEmbedBuilder
+            {
+                Title = "Character Plate: ",
+                Description = "**Name: ** " + PlayerCharacter.name + Environment.NewLine +
+                "**Race: ** " + PlayerCharacter.race + Environment.NewLine +
+                "**Gender: ** " + PlayerCharacter.gender + Environment.NewLine +
+                "**Height: ** " + PlayerCharacter.height + Environment.NewLine +
+                "**Weight: ** " + PlayerCharacter.weight + Environment.NewLine +
+                "**Class: ** " + PlayerCharacter.CharacterClass[0].classname + Environment.NewLine +
+                "**Health: ** " + PlayerCharacter.currHP + Environment.NewLine +
+                "**Speed: ** " + PlayerCharacter.speed + Environment.NewLine,
+            Color = DiscordColor.IndianRed
+            };
+            return siusiak;
         }
     }
 }
