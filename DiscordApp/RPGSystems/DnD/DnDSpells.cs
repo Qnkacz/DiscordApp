@@ -65,16 +65,7 @@ namespace DiscordApp.RPGSystems.DnD
    
     public class DnDSpellist
     {
-        public List<DnDSpells> level_0 = new List<DnDSpells>();
-        public List<DnDSpells> level_1= new List<DnDSpells>();
-        public List<DnDSpells> level_2= new List<DnDSpells>();
-        public List<DnDSpells> level_3= new List<DnDSpells>();
-        public List<DnDSpells> level_4= new List<DnDSpells>();
-        public List<DnDSpells> level_5= new List<DnDSpells>();
-        public List<DnDSpells> level_6= new List<DnDSpells>();
-        public List<DnDSpells> level_7= new List<DnDSpells>();
-        public List<DnDSpells> level_8= new List<DnDSpells>();
-        public List<DnDSpells> level_9= new List<DnDSpells>();
+        public List<DnDSpells> spellist = new List<DnDSpells>();
     }
 
 }

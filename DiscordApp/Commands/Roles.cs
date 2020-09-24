@@ -123,6 +123,11 @@ namespace DiscordApp.Commands
                     break;
             }
         }
+        [Command("avatar")]
+        public async Task qwdoinw(CommandContext ctx, DiscordMember member)
+        {
+            await ctx.Channel.SendMessageAsync(member.AvatarUrl);
+        }
 
     }
 }
