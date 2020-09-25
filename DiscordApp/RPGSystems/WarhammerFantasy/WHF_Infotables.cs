@@ -923,7 +923,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 string line = string.Empty;
                 string JsonFromFile = string.Empty;
                 warhammer character = new warhammer();
-                bool znaleziono = false;
                 if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
                 {
                     var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
@@ -947,7 +946,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
                         if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
                         {
-                            znaleziono = true;
                             using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
                             {
                                 line = await reader.ReadLineAsync();
@@ -958,14 +956,11 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                                 JsonFromFile = await reader.ReadToEndAsync();
                             }
                             character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
-                        }
-                        else
-                        {
-                            await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                            break;
                         }
                     }
 
-                    if (znaleziono == true)
+                    if (string.IsNullOrEmpty(JsonFromFile))
                     {
                         if (character.zywotnosc - amount <= 0)
                         {
@@ -981,6 +976,10 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                             File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
                         }
                     }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
+                    }
                 }
             }
         }
@@ -991,7 +990,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 string line = string.Empty;
                 string JsonFromFile = string.Empty;
                 warhammer character = new warhammer();
-                bool znaleziono = false;
                 if (ctx.Channel.Topic != "warhammer") //jezeli nie jestes na kanale to susuwa wiadomosc
                 {
                     var cosiek = await ctx.Channel.SendMessageAsync("You are outside of rpg territory" + ctx.Member.Mention);
@@ -1015,7 +1013,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
                         if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
                         {
-                            znaleziono = true;
                             using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
                             {
                                 line = await reader.ReadLineAsync();
@@ -1026,19 +1023,21 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                                 JsonFromFile = await reader.ReadToEndAsync();
                             }
                             character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                            break;
                         }
-                        else
-                        {
-                            await ctx.Channel.SendMessageAsync("Couldn't find that player in this session");
-                        }
+                        
                     }
 
-                    if (znaleziono == true)
+                    if (string.IsNullOrEmpty(JsonFromFile))
                     {
                         character.zywotnosc += amount;
                         await ctx.Channel.SendMessageAsync("healed " + line + " " + amount + " damage");
                         JsonFromFile = JsonConvert.SerializeObject(character);
                         File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("Couldn't find that player in this session");
                     }
                 }
             }
@@ -1116,7 +1115,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                 }
                 else
                 {
-                    await ctx.Channel.SendMessageAsync("Nie masz żadnych postaci do tego systemu");
+                    await ctx.Channel.SendMessageAsync("You have no characters in this system");
                 }
             }
         }
@@ -1173,10 +1172,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                         File.WriteAllText(ctx.Member.Id.ToString() + "/" + "warhammer" + "/" + line + ".json", JsonFromFile);
 
                         await ctx.Channel.SendMessageAsync("Added: `" + amount + " " + itemname + "` To eq of: `" + line + "`");
-                    }
-                    else
-                    {
-                        await ctx.Channel.SendMessageAsync("Coudln't find the playr in this session");
+                        break;
                     }
                 }
             }

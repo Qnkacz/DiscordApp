@@ -1970,7 +1970,7 @@ namespace DiscordApp.RPGSystems.DnD
         }
         public async Task ShowLevelSpells(CommandContext ctx)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic=="DnD")
             {
                 string descr = string.Empty;
                 EmojiBase emojis = new EmojiBase(ctx);
@@ -2068,7 +2068,10 @@ namespace DiscordApp.RPGSystems.DnD
             else
             {
                 await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
             }
+            GC.Collect();
         }
         public async Task spellinfo(CommandContext ctx, params string[] name)
         {
@@ -2101,6 +2104,13 @@ namespace DiscordApp.RPGSystems.DnD
                 };
                 await ctx.Channel.SendMessageAsync(embed: QuestionEmbed);
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task Join(CommandContext ctx, string[] input)
         {
@@ -2112,8 +2122,6 @@ namespace DiscordApp.RPGSystems.DnD
                 string JsonFromFile = "susiak";
                 if (File.Exists(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + name + "/" + name + ".json"))
                 {
-
-
                     using (var reader = new StreamReader(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + name + "/" + name + ".json"))
                     {
 
@@ -2129,9 +2137,16 @@ namespace DiscordApp.RPGSystems.DnD
                 }
                 else
                 {
-                    await ctx.Channel.SendMessageAsync("nie znalazłem postaci");
+                    await ctx.Channel.SendMessageAsync("Couldn't find the character!");
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public DiscordEmbedBuilder CharPlate(DnD PlayerCharacter)
         {
@@ -2152,7 +2167,7 @@ namespace DiscordApp.RPGSystems.DnD
         }
         public async Task CharList(CommandContext ctx)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
 
                 string Description = string.Empty;
@@ -2174,13 +2189,20 @@ namespace DiscordApp.RPGSystems.DnD
                 }
                 else
                 {
-                    await ctx.Channel.SendMessageAsync("Nie masz żadnych postaci do tego systemu");
+                    await ctx.Channel.SendMessageAsync("You have no characters in this system");
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task ShowChar(CommandContext ctx, params string[] input)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
                 string name = string.Join(" ", input);
                 if (File.Exists(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + name + "/" + name + ".json"))
@@ -2192,23 +2214,29 @@ namespace DiscordApp.RPGSystems.DnD
                     }
                     DnD character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnD>(JsonFromFile);
                     var plate = static_objects.dnd_template.CharPlate(character);
-                    plate.Title = "Moja postać";
+                    plate.Title = "My character";
                     await ctx.Channel.SendMessageAsync(embed: plate);
                 }
                 else
                 {
-                    await ctx.Channel.SendMessageAsync("nie znalazłem postaci");
+                    await ctx.Channel.SendMessageAsync("Couldn't find the Character!");
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task dmg(CommandContext ctx, DiscordMember user, int amount)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
                 string line = string.Empty;
                 string JsonFromFile = string.Empty;
                 DnD character = new DnD();
-                bool znaleziono = false;
                 if (ctx.Channel.Topic.ToLower() != "dnd") //jezeli nie jestes na kanale to susuwa wiadomosc
                 {
                     var cosiek = await ctx.Channel.SendMessageAsync("jesteś poza kanałem do grania w rpg" + ctx.Member.Mention);
@@ -2232,7 +2260,6 @@ namespace DiscordApp.RPGSystems.DnD
 
                         if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
                         {
-                            znaleziono = true;
                             using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
                             {
                                 line = await reader.ReadLineAsync();
@@ -2243,14 +2270,12 @@ namespace DiscordApp.RPGSystems.DnD
                                 JsonFromFile = await reader.ReadToEndAsync();
                             }
                             character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnD>(JsonFromFile);
+                            break;
                         }
-                        else
-                        {
-                            await ctx.Channel.SendMessageAsync("nie znalazłem gracza w tej sesji");
-                        }
+                        
                     }
 
-                    if (znaleziono == true)
+                    if (!string.IsNullOrEmpty(JsonFromFile))
                     {
                         if (character.currHP - amount <= 0)
                         {
@@ -2266,17 +2291,27 @@ namespace DiscordApp.RPGSystems.DnD
                             File.WriteAllText(ctx.Member.Id.ToString() + "/" + "DnD" + "/" + line + "/" + line + ".json", JsonFromFile);
                         }
                     }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("Couldn't find Character");
+                    }
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task heal(CommandContext ctx, DiscordMember user, int amount)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
                 string line = string.Empty;
                 string JsonFromFile = string.Empty;
                 DnD character = new DnD();
-                bool znaleziono = false;
                 if (ctx.Channel.Topic.ToLower() != "dnd") //jezeli nie jestes na kanale to susuwa wiadomosc
                 {
                     var cosiek = await ctx.Channel.SendMessageAsync("You are outside of rpg territory" + ctx.Member.Mention);
@@ -2300,7 +2335,6 @@ namespace DiscordApp.RPGSystems.DnD
 
                         if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
                         {
-                            znaleziono = true;
                             using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
                             {
                                 line = await reader.ReadLineAsync();
@@ -2311,14 +2345,11 @@ namespace DiscordApp.RPGSystems.DnD
                                 JsonFromFile = await reader.ReadToEndAsync();
                             }
                             character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnD>(JsonFromFile);
-                        }
-                        else
-                        {
-                            await ctx.Channel.SendMessageAsync("Couldn't find that player in this session");
+                            break;
                         }
                     }
 
-                    if (znaleziono == true)
+                    if (!string.IsNullOrEmpty(JsonFromFile))
                     {
                         character.currHP += amount;
                         if (character.currHP > character.tempHP)
@@ -2329,18 +2360,28 @@ namespace DiscordApp.RPGSystems.DnD
                         JsonFromFile = JsonConvert.SerializeObject(character);
                         File.WriteAllText(ctx.Member.Id.ToString() + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json", JsonFromFile);
                     }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("Couldn't find that player in this session");
+                    }
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task Additem(CommandContext ctx, DiscordMember user)
         {
 
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
                 string line = string.Empty;
                 string JsonFromFile = string.Empty;
                 DnDInventory character = new DnDInventory();
-                bool znaleziono = false;
                 if (ctx.Channel.Topic.ToLower() != "dnd") //jezeli nie jestes na kanale to susuwa wiadomosc
                 {
                     var cosiek = await ctx.Channel.SendMessageAsync("You are outside of rpg territory" + ctx.Member.Mention);
@@ -2365,7 +2406,6 @@ namespace DiscordApp.RPGSystems.DnD
 
                         if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
                         {
-                            znaleziono = true;
                             using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
                             {
                                 line = await reader.ReadLineAsync();
@@ -2380,7 +2420,7 @@ namespace DiscordApp.RPGSystems.DnD
                         }
                     }
 
-                    if (znaleziono == true)
+                    if (!string.IsNullOrEmpty(JsonFromFile))
                     {
                         var userChannel = await ctx.Member.CreateDmChannelAsync();
                         var questionEmbed = new DiscordEmbedBuilder
@@ -2410,12 +2450,23 @@ namespace DiscordApp.RPGSystems.DnD
                         File.WriteAllText(ctx.Member.Id.ToString() + "/" + ctx.Channel.Topic + "/" + line + "/" + line + "_inv.json", JsonFromFile);
                         await ctx.Channel.SendMessageAsync("`" + ctx.Member.DisplayName + "`" + " Gave " + Environment.NewLine + "`" + user.DisplayName + "`" + Environment.NewLine + " **" + i + " " + itemname + "**");
                     }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("Couldn't find that player in this session");
+                    }
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task RemoveItem(CommandContext ctx, DiscordMember user, int amount, string[] input)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
                 string line = string.Empty;
                 string JsonFromFile = string.Empty;
@@ -2454,6 +2505,7 @@ namespace DiscordApp.RPGSystems.DnD
                                 JsonFromFile = await reader.ReadToEndAsync();
                             }
                             character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnDInventory>(JsonFromFile);
+                            break;
                         }
                     }
 
@@ -2468,10 +2520,17 @@ namespace DiscordApp.RPGSystems.DnD
                     }
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task addability(CommandContext ctx, DiscordMember user, string[] input)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
                 
                 var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
@@ -2500,7 +2559,6 @@ namespace DiscordApp.RPGSystems.DnD
                         {
                             JsonFromFile = await reader.ReadToEndAsync();
                         }
-                        
                         break;
                     }
                 }
@@ -2529,10 +2587,17 @@ namespace DiscordApp.RPGSystems.DnD
                     await ctx.Channel.SendMessageAsync(ctx.Member.DisplayName+" Added: "+Environment.NewLine + line + " Ability: **" + itemname + "**");
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task removeability(CommandContext ctx, DiscordMember user, string[] input)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
 
                 var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
@@ -2561,7 +2626,6 @@ namespace DiscordApp.RPGSystems.DnD
                         {
                             JsonFromFile = await reader.ReadToEndAsync();
                         }
-
                         break;
                     }
                 }
@@ -2605,10 +2669,17 @@ namespace DiscordApp.RPGSystems.DnD
                     await ctx.Channel.SendMessageAsync(ctx.Member.DisplayName + " Removed: " + Environment.NewLine + line + " Ability: **" + descr + "**");
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
         public async Task ShowInventory(CommandContext ctx, DiscordMember user)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
 
                 var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
@@ -2651,6 +2722,13 @@ namespace DiscordApp.RPGSystems.DnD
                 }
 
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
         }
     }
 }
