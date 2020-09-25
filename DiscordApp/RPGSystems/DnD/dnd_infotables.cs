@@ -143,7 +143,7 @@ namespace DiscordApp.RPGSystems.DnD
             "I blow up at the slightest insult."
         };
 
-        
+
 
         public string[] ideal_criminal = new string[]
         {
@@ -163,6 +163,9 @@ namespace DiscordApp.RPGSystems.DnD
             "I’m guilty of a terrible crime. I hope I can redeem myself for it.",
             "Someone I loved died because of I mistake I made. That will never happen again"
         };
+
+
+
         public string[] flaw_criminal = new string[]
         {
             "When I see something valuable, I can’t think about anything but how to steal it.",
@@ -185,6 +188,9 @@ namespace DiscordApp.RPGSystems.DnD
             "I misuse long words in an attempt to sound smarter.",
             "I get bored easily. When am I going to get on with my destiny?"
         };
+
+
+
         public string[] ideal_folkHero = new string[]
         {
             "Respect. People deserve to be treated with dignity and respect. (Good)",
@@ -2320,9 +2326,206 @@ namespace DiscordApp.RPGSystems.DnD
                 }
             }
         }
-        public Task Additem(CommandContext ctx, DiscordMember user, int amount, string[] input)
+        public async Task Additem(CommandContext ctx, DiscordMember user)
         {
-            throw new NotImplementedException();
+
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+                string line = string.Empty;
+                string JsonFromFile = string.Empty;
+                DnDInventory character = new DnDInventory();
+                bool znaleziono = false;
+                if (ctx.Channel.Topic.ToLower() != "dnd") //jezeli nie jestes na kanale to susuwa wiadomosc
+                {
+                    var cosiek = await ctx.Channel.SendMessageAsync("You are outside of rpg territory" + ctx.Member.Mention);
+                    Thread.Sleep(30000);
+                    await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    await ctx.Channel.DeleteMessageAsync(cosiek);
+                }
+                else
+                {
+
+                    var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                    List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                    List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                    foreach (var item in playerChars) //zapisuje embedy do listy
+                    {
+                        embed = item.Embeds.ToList();
+                        embeds.Add(embed[0]);
+                        embed.Clear();
+                    }
+                    foreach (var item in embeds) //przechodzi prze liste embedów
+                    {
+
+                        if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                        {
+                            znaleziono = true;
+                            using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                            {
+                                line = await reader.ReadLineAsync();
+                            }
+                            line = line.Remove(0, 10).Trim();
+                            using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + "_inv" + ".json"))
+                            {
+                                JsonFromFile = await reader.ReadToEndAsync();
+                            }
+                            character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnDInventory>(JsonFromFile);
+                        }
+                        else
+                        {
+                            await ctx.Channel.SendMessageAsync("Couldn't find that player in this session");
+                        }
+                    }
+
+                    if (znaleziono == true)
+                    {
+                        var userChannel = await ctx.Member.CreateDmChannelAsync();
+                        var questionEmbed = new DiscordEmbedBuilder
+                        {
+                            Title = "Write the name of the item that you want to give",
+                            Description = "Write the name below"
+                        };
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(200);
+                        var respond = await userChannel.GetNextMessageAsync();
+                        string itemname = respond.Result.Content;
+                        questionEmbed.Title = "Write down the item description";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(200);
+                        respond = await userChannel.GetNextMessageAsync();
+                        string itemdescr = respond.Result.Content;
+
+                        questionEmbed.Title = "Write down how many items do you want to give";
+                        questionEmbed.Description = "Write down only the number";
+                        await userChannel.SendMessageAsync(embed: questionEmbed);
+                        Thread.Sleep(200);
+                        respond = await userChannel.GetNextMessageAsync();
+                        int i = Int32.Parse(respond.Result.Content);
+
+                        character.Add(itemname, itemdescr, i);
+                        JsonFromFile = JsonConvert.SerializeObject(character);
+                        File.WriteAllText(ctx.Member.Id.ToString() + "/" + ctx.Channel.Topic + "/" + line + "/" + line + "_inv.json", JsonFromFile);
+                        await ctx.Channel.SendMessageAsync("`" + ctx.Member.DisplayName + "`" + " Gave " + Environment.NewLine + "`" + user.DisplayName + "`" + Environment.NewLine + " **" + i + " " + itemname + "**");
+                    }
+                }
+            }
+        }
+        public async Task RemoveItem(CommandContext ctx, DiscordMember user, int amount, string[] input)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+                string line = string.Empty;
+                string JsonFromFile = string.Empty;
+                DnDInventory character = new DnDInventory();
+                if (ctx.Channel.Topic.ToLower() != "dnd") //jezeli nie jestes na kanale to susuwa wiadomosc
+                {
+                    var cosiek = await ctx.Channel.SendMessageAsync("You are outside of rpg territory" + ctx.Member.Mention);
+                    Thread.Sleep(30000);
+                    await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    await ctx.Channel.DeleteMessageAsync(cosiek);
+                }
+                else
+                {
+
+                    var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                    List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                    List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                    foreach (var item in playerChars) //zapisuje embedy do listy
+                    {
+                        embed = item.Embeds.ToList();
+                        embeds.Add(embed[0]);
+                        embed.Clear();
+                    }
+                    foreach (var item in embeds) //przechodzi prze liste embedów
+                    {
+
+                        if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                        {
+                            using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                            {
+                                line = await reader.ReadLineAsync();
+                            }
+                            line = line.Remove(0, 10).Trim();
+                            using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + "_inv" + ".json"))
+                            {
+                                JsonFromFile = await reader.ReadToEndAsync();
+                            }
+                            character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnDInventory>(JsonFromFile);
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(JsonFromFile))
+                    {
+                        string itemname = string.Join(" ", input);
+
+                        character.remove(itemname, amount);
+                        JsonFromFile = JsonConvert.SerializeObject(character);
+                        File.WriteAllText(ctx.Member.Id.ToString() + "/" + ctx.Channel.Topic + "/" + line + "/" + line + "_inv.json", JsonFromFile);
+                        await ctx.Channel.SendMessageAsync("`" + ctx.Member.DisplayName + "`" + " Removed " + Environment.NewLine + "`" + user.DisplayName + "`" + Environment.NewLine + " **" + amount + " " + itemname + "**");
+                    }
+                }
+            }
+        }
+        public async Task addability(CommandContext ctx, DiscordMember user, string[] input)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+                
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                string JsonFromFile = string.Empty;
+                string line = string.Empty;
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 10).ToLower().Trim();
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line  + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(JsonFromFile))
+                {
+
+                    await ctx.Channel.SendMessageAsync("couldn't find player");
+                }
+                else
+                {
+                    string itemname = string.Join(" ", input);
+                    var questionEmbed = new DiscordEmbedBuilder
+                    {
+                        Title = itemname,
+                        Description = "Write down the description of the ability"
+                    };
+                    var userChannel = await ctx.Member.CreateDmChannelAsync();
+                    await userChannel.SendMessageAsync(embed: questionEmbed);
+                    var respond = await userChannel.GetNextMessageAsync();
+                    var descr = respond.Result.Content;
+
+                    DnD character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnD>(JsonFromFile);
+                    character.Traits.Add(new DnDTrait(itemname, descr));
+                    JsonFromFile = JsonConvert.SerializeObject(character);
+                    File.WriteAllText(ctx.Member.Id.ToString() + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json", JsonFromFile);
+                    await ctx.Channel.SendMessageAsync(ctx.Member.DisplayName+" Added: "+Environment.NewLine + line + " Ability: **" + itemname + "**");
+                }
+            }
         }
     }
 }

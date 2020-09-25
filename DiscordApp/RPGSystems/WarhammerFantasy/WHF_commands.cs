@@ -162,7 +162,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     await static_objects.WHF_template.addItem(ctx, user, amount, input);
                     break;
                 case "dnd":
-                    await static_objects.dnd_template.Additem(ctx, user, amount, input);
+                    await static_objects.dnd_template.Additem(ctx, user);
                     break;
                 case ">>":
                     if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
@@ -182,14 +182,23 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [RequireRoles(RoleCheckMode.Any, "GM")]
         public async Task RemoveItem(CommandContext ctx, [Description("Mention the player")]DiscordMember user, [Description("item amount")] int amount, [Description("item name")] params string[] input)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.RemoveItem(ctx, user, amount, input);
+                    await static_objects.WHF_template.RemoveItem(ctx, user, amount, input);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.RemoveItem(ctx, user, amount, input);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
@@ -199,17 +208,23 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [Description("GM ONLY! Give player an ability")]
         public async Task AddAbi(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("ability name")]params string[] input)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
-                    if (ctx.Channel.Parent.Name.ToLower() == "rpg")
-                    {
-                        WHF_Infotables template = new WHF_Infotables();
-                        await template.addability(ctx, user, input);
-                    }
+                    await static_objects.WHF_template.addability(ctx, user, input);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.addability(ctx, user, input);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
 
