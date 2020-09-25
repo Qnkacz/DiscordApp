@@ -96,7 +96,7 @@ namespace DiscordApp.Commands
         }
 
         [Command("open")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         [Description("GM ONLY! Creates a chatroom for an rpg system")]
         public async Task CreateChannel(CommandContext ctx, [Description("channel name")] params string[] names)
         {
@@ -140,7 +140,7 @@ namespace DiscordApp.Commands
         }
 
         [Command("stop")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         [Description("GM ONLY! Deletes an rpg text channel")]
         public async Task DeleteChannel(CommandContext ctx)
         {
@@ -155,7 +155,7 @@ namespace DiscordApp.Commands
         }
 
         [Command("StopLog")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         [Description("GM ONLY! Deletes an rpg text channel and PMs a log file")]
         public async Task DeleteChannelLog(CommandContext ctx)
         {
@@ -203,7 +203,7 @@ namespace DiscordApp.Commands
 
         [Command("Kick")]
         [Description("GM ONLY! Kicks player from an rpg text channel")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task Kick(CommandContext ctx, [Description("@mention the player")] DiscordMember user)
         {
             if (ctx.Channel.Parent.Name.ToLower() == "rpg")

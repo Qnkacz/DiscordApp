@@ -19,7 +19,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
     {
         [Command("DMG")]
         [Description("Deal Damage to mentioned Player")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task Heal(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("Damage amount")] int amount)
         {
             switch (ctx.Prefix.ToLower())
@@ -46,7 +46,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
         [Command("Heal")]
         [Description("Heal the player")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task heall(CommandContext ctx, [Description("Mention the player")]DiscordMember user, [Description("heal amount")] int amount)
         {
             switch (ctx.Prefix.ToLower())
@@ -153,7 +153,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
         [Command("AddItem")]
         [Description("GM ONLY! Gives player an item")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task Additem(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("item amount")] int amount, [Description("item name")]params string[] input)
         {
             switch (ctx.Prefix.ToLower())
@@ -179,7 +179,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
         [Command("Removeitem")]
         [Description("GM ONLY! Romeves player an item")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task RemoveItem(CommandContext ctx, [Description("Mention the player")]DiscordMember user, [Description("item amount")] int amount, [Description("item name")] params string[] input)
         {
             switch (ctx.Prefix.ToLower())
@@ -204,7 +204,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         }
 
         [Command("addAbility")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         [Description("GM ONLY! Give player an ability")]
         public async Task AddAbi(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("ability name")]params string[] input)
         {
@@ -232,7 +232,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
         [Command("removeability")]
         [Description("GM ONLY! Remove ability from player")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task RemoveAbi(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("ability name")] params string[] input)
         {
             switch (ctx.Prefix.ToLower())
@@ -283,7 +283,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
         [Command("Insanity")]
         [Description(" GM ONLY! Deal insanity Damage to player")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task DmgObled(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("damage amount")] int amount)
         {
             switch (ctx.Prefix)
@@ -400,7 +400,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         }
         [Command("mutate")]
         [Description("GM ONLY! Give player a mutation")]
-        [RequireRoles(RoleCheckMode.Any, "GM")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task GiveMutation(CommandContext ctx, DiscordMember user, params string[] input)
         {
             switch (ctx.Prefix)
@@ -472,7 +472,6 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             {
                 case "dnd":
                     await static_objects.dnd_template.spellinfo(ctx, name);
-
                     break;
                 case ">>":
                     if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
