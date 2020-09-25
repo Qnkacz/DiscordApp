@@ -1055,20 +1055,10 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     {
                         JsonFromFile = reader.ReadToEnd();
                     }
-                    switch (ctx.Prefix)
-                    {
-                        case "wh":
-                            var template = new WHF_Infotables();
-                            warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
-                            var plate = template.CharPlate(character);
-                            plate.Title = "Moja postać";
-                            await ctx.Channel.SendMessageAsync(embed: plate);
-                            break;
-                        case ">>":
-                            await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
-                            break;
-                    }
-
+                    warhammer character = Newtonsoft.Json.JsonConvert.DeserializeObject<warhammer>(JsonFromFile);
+                    var plate = static_objects.WHF_template.CharPlate(character);
+                    plate.Title = "Moja postać";
+                    await ctx.Channel.SendMessageAsync(embed: plate);
                 }
                 else
                 {

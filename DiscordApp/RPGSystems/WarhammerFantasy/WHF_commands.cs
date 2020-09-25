@@ -22,14 +22,23 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [RequireRoles(RoleCheckMode.Any, "GM")]
         public async Task Heal(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("Damage amount")] int amount)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.dmg(ctx, user, amount);
+                    await static_objects.WHF_template.dmg(ctx, user, amount);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.dmg(ctx, user, amount);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
 
@@ -40,14 +49,23 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [RequireRoles(RoleCheckMode.Any, "GM")]
         public async Task heall(CommandContext ctx, [Description("Mention the player")]DiscordMember user, [Description("heal amount")] int amount)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.heal(ctx, user, amount);
+                    await static_objects.WHF_template.heal(ctx, user, amount);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.heal(ctx, user, amount);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
 
@@ -58,8 +76,26 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [Description("Displays your character")]
         public async Task ShowChar(CommandContext ctx, [Description("Your character name")] params string[] input)
         {
-            WHF_Infotables template = new WHF_Infotables();
-            await template.ShowChar(ctx, input);
+            switch (ctx.Prefix.ToLower())
+            {
+                case "wh":
+                    await static_objects.WHF_template.ShowChar(ctx, input);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.ShowChar(ctx, input);
+                    break;
+                case ">>":
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
+                    break;
+            }
+
         }
 
         [Command("Join")]
@@ -69,14 +105,20 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             switch (ctx.Prefix.ToLower())
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.Join(ctx, input);
+                    await static_objects.WHF_template.Join(ctx, input);
                     break;
                 case "dnd":
                     await static_objects.dnd_template.Join(ctx, input);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
 
@@ -87,8 +129,26 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [Description("Shows the list of characters in the channels RPG system")]
         public async Task CharList(CommandContext ctx)
         {
-            WHF_Infotables template = new WHF_Infotables();
-            await template.Charlist(ctx);
+
+            switch (ctx.Prefix.ToLower())
+            {
+                case "wh":
+                    await static_objects.WHF_template.Charlist(ctx);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.CharList(ctx);
+                    break;
+                case ">>":
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
+                    break;
+            }
         }
 
         [Command("AddItem")]
@@ -96,14 +156,23 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [RequireRoles(RoleCheckMode.Any, "GM")]
         public async Task Additem(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("item amount")] int amount, [Description("item name")]params string[] input)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.addItem(ctx, user, amount, input);
+                    await static_objects.WHF_template.addItem(ctx, user, amount, input);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.Additem(ctx, user, amount, input);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
@@ -249,9 +318,9 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         }
         [Command("journal")]
         [Description("write your own journal")]
-        public async Task WriteJournal(CommandContext ctx,[Description("read or write?")] params string[] input)
+        public async Task WriteJournal(CommandContext ctx, [Description("read or write?")] params string[] input)
         {
-            switch(ctx.Prefix)
+            switch (ctx.Prefix)
             {
                 case "wh":
                     await static_objects.WHF_template.Journal(ctx, "warhammer", input);
@@ -264,9 +333,9 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [Command("mutate")]
         [Description("GM ONLY! Give player a mutation")]
         [RequireRoles(RoleCheckMode.Any, "GM")]
-        public async Task GiveMutation(CommandContext ctx, DiscordMember user,params string[] input)
+        public async Task GiveMutation(CommandContext ctx, DiscordMember user, params string[] input)
         {
-            switch(ctx.Prefix)
+            switch (ctx.Prefix)
             {
                 case "wh":
                     await static_objects.WHF_template.Mutate(ctx, user, input);
@@ -278,7 +347,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         }
         [Command("mutations")]
         [Description("Show players mutations")]
-        public async Task showmutations (CommandContext ctx, DiscordMember user)
+        public async Task showmutations(CommandContext ctx, DiscordMember user)
         {
             switch (ctx.Prefix)
             {
@@ -308,12 +377,12 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         }
         [Command("spelldetails")]
         [Description("shows details of a spell")]
-        public async Task spellDetails(CommandContext ctx,params string[] name)
+        public async Task spellDetails(CommandContext ctx, params string[] name)
         {
             switch (ctx.Prefix.ToLower())
             {
                 case "dnd":
-                    await static_objects.dnd_template.spellinfo(ctx,name);
+                    await static_objects.dnd_template.spellinfo(ctx, name);
 
                     break;
                 case ">>":
