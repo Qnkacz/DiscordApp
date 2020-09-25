@@ -2,6 +2,7 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
+using Microsoft.Office.Interop.Excel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -200,6 +201,9 @@ namespace DiscordApp.RPGSystems.DnD
             "Sincerity. There’s no good in pretending to be something I’m not. (Neutral)",
             "Destiny. Nothing and no one can steer me away from my higher calling. (Any)"
         };
+
+        
+
         public string[] bond_folkHero = new string[]
         {
             "I have a family, but I have no idea where they are. One day, I hope to see them again.",
@@ -258,6 +262,8 @@ namespace DiscordApp.RPGSystems.DnD
             "In fact, the world does revolve around me.",
             "By my words and actions, I often bring shame to my family."
         };
+
+        
         #endregion
         #region sage
         public string[] trait_sage = new string[]
@@ -2370,10 +2376,7 @@ namespace DiscordApp.RPGSystems.DnD
                                 JsonFromFile = await reader.ReadToEndAsync();
                             }
                             character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnDInventory>(JsonFromFile);
-                        }
-                        else
-                        {
-                            await ctx.Channel.SendMessageAsync("Couldn't find that player in this session");
+                            break;
                         }
                     }
 
@@ -2525,6 +2528,128 @@ namespace DiscordApp.RPGSystems.DnD
                     File.WriteAllText(ctx.Member.Id.ToString() + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json", JsonFromFile);
                     await ctx.Channel.SendMessageAsync(ctx.Member.DisplayName+" Added: "+Environment.NewLine + line + " Ability: **" + itemname + "**");
                 }
+            }
+        }
+        public async Task removeability(CommandContext ctx, DiscordMember user, string[] input)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                string JsonFromFile = string.Empty;
+                string line = string.Empty;
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 10).ToLower().Trim();
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(JsonFromFile))
+                {
+
+                    await ctx.Channel.SendMessageAsync("couldn't find player");
+                }
+                else
+                {
+                    string itemname = string.Join(" ", input);
+                    int i = 0;
+                    string descr = string.Empty;
+                    DnD character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnD>(JsonFromFile);
+                    foreach (var item in character.Traits)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    var userchannel = await ctx.Member.CreateDmChannelAsync();
+                    var questionEmbed = new DiscordEmbedBuilder
+                    {
+                        Title = "Abilities of: " + user.DisplayName,
+                        Description = descr
+                    };
+                    await userchannel.SendMessageAsync(embed: questionEmbed);
+                    questionEmbed.Title = "What bility do you want to remove";
+                    questionEmbed.Description = "write the name below";
+                    var respond = await userchannel.GetNextMessageAsync();
+                    descr = respond.Result.Content.Trim();
+                    foreach (var item in character.Traits)
+                    {
+                        if(item.spellName.Trim()==descr)
+                        {
+                            break;
+                        }
+                        i++;
+                    }
+                    character.Traits.RemoveAt(i);
+                    JsonFromFile = JsonConvert.SerializeObject(character);
+                    File.WriteAllText(ctx.Member.Id.ToString() + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json", JsonFromFile);
+                    await ctx.Channel.SendMessageAsync(ctx.Member.DisplayName + " Removed: " + Environment.NewLine + line + " Ability: **" + descr + "**");
+                }
+            }
+        }
+        public async Task ShowInventory(CommandContext ctx, DiscordMember user)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+
+                var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                List<DiscordEmbed> embed = new List<DiscordEmbed>();
+
+                string JsonFromFile = string.Empty;
+                string line = string.Empty;
+                foreach (var item in playerChars) //zapisuje embedy do listy
+                {
+                    embed = item.Embeds.ToList();
+                    embeds.Add(embed[0]);
+                    embed.Clear();
+                }
+                foreach (var item in embeds) //przechodzi prze liste embedów
+                {
+                    if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                    {
+                        
+                        using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                        {
+                            line = await reader.ReadLineAsync();
+                        }
+                        line = line.Remove(0, 10).Trim();
+                        using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + "_inv" + ".json"))
+                        {
+                            JsonFromFile = await reader.ReadToEndAsync();
+                        }
+                        break;
+                    }
+                }
+                if(string.IsNullOrEmpty(JsonFromFile))
+                {
+                    await ctx.Channel.SendMessageAsync("couldn't find character");
+                }
+                else
+                {
+                   DnDInventory character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnDInventory>(JsonFromFile);
+                   await character.showInventory(ctx.Channel, line);
+                }
+
             }
         }
     }

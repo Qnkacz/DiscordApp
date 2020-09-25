@@ -235,14 +235,23 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [RequireRoles(RoleCheckMode.Any, "GM")]
         public async Task RemoveAbi(CommandContext ctx, [Description("Mention the player")] DiscordMember user, [Description("ability name")] params string[] input)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.removeability(ctx, user, input);
+                    await static_objects.WHF_template.removeability(ctx, user, input);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.removeability(ctx, user, input);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
 
@@ -255,12 +264,18 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             switch (ctx.Prefix)
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.showFluff(ctx, user);
+                    await static_objects.WHF_template.showFluff(ctx, user);
 
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
 
@@ -274,12 +289,18 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             switch (ctx.Prefix)
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.insanity(ctx, user, amount);
+                    await static_objects.WHF_template.insanity(ctx, user, amount);
 
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
 
@@ -292,11 +313,17 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
             switch (ctx.Prefix)
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.Choroby(ctx, user);
+                    await static_objects.WHF_template.Choroby(ctx, user);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
@@ -304,14 +331,23 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [Description("gives a list of items in inventory")]
         public async Task Listaitemkw(CommandContext ctx, [Description("mention the player")] DiscordMember user)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
-                    WHF_Infotables template = new WHF_Infotables();
-                    await template.ShowInventory(ctx, user);
+                    await static_objects.WHF_template.ShowInventory(ctx, user);
+                    break;
+                case "dnd":
+                    await static_objects.dnd_template.ShowInventory(ctx, user);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("Use the proper rpg prefix");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
 
@@ -327,7 +363,14 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     await template.ShowAbilities(ctx, user);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("Use the proper rpg prefix");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
@@ -335,13 +378,23 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
         [Description("write your own journal")]
         public async Task WriteJournal(CommandContext ctx, [Description("read or write?")] params string[] input)
         {
-            switch (ctx.Prefix)
+            switch (ctx.Prefix.ToLower())
             {
                 case "wh":
                     await static_objects.WHF_template.Journal(ctx, "warhammer", input);
                     break;
+                case "dnd":
+                    await static_objects.WHF_template.Journal(ctx, "DnD", input);
+                    break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated rpg system prefix");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
@@ -356,7 +409,14 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     await static_objects.WHF_template.Mutate(ctx, user, input);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated rpg system prefix");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
@@ -370,7 +430,14 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     await static_objects.WHF_template.Mutations(ctx, user);
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated rpg system prefix");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
@@ -386,7 +453,14 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
@@ -401,7 +475,14 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
 
                     break;
                 case ">>":
-                    await ctx.Channel.SendMessageAsync("use the dedicated system prefixes");
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
                     break;
             }
         }
