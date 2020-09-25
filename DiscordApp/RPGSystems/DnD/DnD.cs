@@ -16,7 +16,7 @@ namespace DiscordApp.RPGSystems.DnD
         public string gender;
         public int exp;
         public string Faction;
-        public DnDInventory inventory = new DnDInventory();
+
         public string background;
         #region stats
         public Dictionary<string, int> BaseStats = new Dictionary<string, int>()
@@ -36,7 +36,7 @@ namespace DiscordApp.RPGSystems.DnD
             { "Intelligence",0},
             { "Wisdom",0},
             { "Charisma",0},
-           
+
         };
         public Dictionary<string, int> baseStatSavingThrow = new Dictionary<string, int>()
         {
@@ -46,7 +46,7 @@ namespace DiscordApp.RPGSystems.DnD
             { "Intelligence",0},
             { "Wisdom",0},
             { "Charisma",0},
-           
+
         };
         #endregion
         #region skills
@@ -72,7 +72,7 @@ namespace DiscordApp.RPGSystems.DnD
             { "stealth",0},
             { "survival",0},
         };
-        
+
         #endregion
         #region fightpoints
         public int maxHP;
@@ -116,27 +116,33 @@ namespace DiscordApp.RPGSystems.DnD
     }
     public class DnDInventory
     {
-        public Dictionary<DnDitem, int> inventoryList = new Dictionary<DnDitem, int>();
+        public List<DnDitem> inventoryList = new List<DnDitem>();
 
         public void Add(string v1, string v2, int startMoney)
         {
             string itemName = string.Empty;
-            foreach (var item in inventoryList.ToArray()) //znajduje itemek
+            int i = 0;
+            foreach (var item in inventoryList) //znajduje itemek
             {
-                if (item.Key.name.Trim().ToLower() == v1.Trim().ToLower())
+                if (item.name == v1.Trim().ToLower())
                 {
-                    itemName = item.Key.name;
+                    itemName = item.name;
                     break;
                 }
+                i++;
             }
-            if (string.IsNullOrEmpty(itemName)) // nie ma takiego itemka, dodaj do disct
+            if (string.IsNullOrEmpty(itemName)) // nie ma takiego itemka, dodaj do listy
             {
-                inventoryList.Add(new DnDitem(v1, v2), startMoney);
+                var item = new DnDitem();
+                item.name = v1;
+                item.descr = v2;
+                item.amount = startMoney;
+                inventoryList.Add(item);
             }
             else//znalazł itemek, dodajemy
             {
-                var item = new DnDitem(v1, v2);
-                inventoryList[item] += startMoney;
+
+                inventoryList[i].amount += startMoney;
             }
         }
 
@@ -144,14 +150,15 @@ namespace DiscordApp.RPGSystems.DnD
         {
             string itemName = string.Empty;
             string descr = string.Empty;
-            foreach (var item in inventoryList.ToArray()) //znajduje itemek
+            int i = 0;
+            foreach (var item in inventoryList) //znajduje itemek
             {
-                if (item.Key.name.Trim().ToLower() == v1.Trim().ToLower())
+                if (item.name.Trim().ToLower() == v1.Trim().ToLower())
                 {
-                    itemName = item.Key.name;
-                    descr = item.Key.descr;
+                    itemName = item.name;
                     break;
                 }
+                i++;
             }
             if (string.IsNullOrEmpty(itemName))
             {
@@ -159,29 +166,27 @@ namespace DiscordApp.RPGSystems.DnD
             }
             else
             {
-                var item = new DnDitem(v1, descr);
-
-                if (inventoryList[item] - amount <= 0)
+                var item = new DnDitem();
+                item.name = itemName;
+                item.descr = descr;
+                inventoryList[i].amount -= amount;
+                if(inventoryList[i].amount<=0)
                 {
-                    inventoryList.Remove(item);
-                }
-                else
-                {
-                    inventoryList[item] -= amount;
+                    inventoryList.RemoveAt(i);
                 }
             }
         }
-        public async Task showInventory(DiscordChannel ctx,params string[] charname)
+        public async Task showInventory(DiscordChannel ctx, params string[] charname)
         {
             string descrr = string.Empty;
             foreach (var item in inventoryList)
             {
-                descrr += item.Key.name + ", amount: " + item.Value+Environment.NewLine;
+                descrr += item.name + ", amount: " + item.amount + Environment.NewLine;
             }
             var inventoryEmbed = new DiscordEmbedBuilder
             {
-                Title = "Inventory of: " + "**" + string.Join(" ",charname) + "**",
-                Description=descrr
+                Title = "Inventory of: " + "**" + string.Join(" ", charname) + "**",
+                Description = descrr
             };
             await ctx.SendMessageAsync(embed: inventoryEmbed);
         }
@@ -191,20 +196,20 @@ namespace DiscordApp.RPGSystems.DnD
             string descr = string.Empty;
             foreach (var item in inventoryList.ToArray()) //znajduje itemek
             {
-                if (item.Key.name.Trim().ToLower() == name.Trim().ToLower())
+                if (item.name.Trim().ToLower() == name.Trim().ToLower())
                 {
-                    name = item.Key.name;
-                    descr = item.Key.descr;
+                    name = item.name;
+                    descr = item.descr;
                     break;
                 }
             }
             var itemEmbed = new DiscordEmbedBuilder
-            { 
-                Title = "**"+name+"**",
-                Description = "*"+descr+"*"
+            {
+                Title = "**" + name + "**",
+                Description = "*" + descr + "*"
             };
             await ctx.Channel.SendMessageAsync(embed: itemEmbed);
         }
-        
+
     }
 }

@@ -35,15 +35,11 @@ namespace DiscordApp.RPGSystems.DnD
         public string duration { get; set; }
         public string classes { get; set; }
     }
-    public struct DnDitem
+    public class DnDitem
     {
-        public string name;
-        public string descr;
-        public DnDitem(string _name, string _desc)
-        {
-            name = _name;
-            descr = _desc;
-        }
+        public string name { get; set; }
+        public string descr { get; set; }
+        public int amount { get; set; }
     }
    
     public class DnDSpellist
