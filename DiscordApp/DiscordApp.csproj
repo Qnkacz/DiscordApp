@@ -18,8 +18,6 @@
 
   <ItemGroup>
     <None Include="bin\Debug\netcoreapp3.1\config.json" />
-    <None Include="bin\Debug\netcoreapp3.1\DnDSpells.xls" />
-    <None Include="bin\Debug\netcoreapp3.1\DnDSpells.xlsm" />
   </ItemGroup>
 
   <ItemGroup>

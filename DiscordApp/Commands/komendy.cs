@@ -217,12 +217,19 @@ namespace DiscordApp.Commands
         public async Task help(CommandContext ctx)
         {
             var userchannel = await ctx.Member.CreateDmChannelAsync();
-            string desc = File.ReadAllText("README.TXT");
+            
+            string desc = File.ReadAllText("README_part1.txt");
+            string desc1=File.ReadAllText("README_part2.txt");
+            string desc2=File.ReadAllText("README_part3.txt");
             var emb = new DiscordEmbedBuilder
             {
                 Title = "H E L P",
                 Description = desc
             };
+            await userchannel.SendMessageAsync(embed: emb);
+            emb.Description = desc1;
+            await userchannel.SendMessageAsync(embed: emb);
+            emb.Description = desc2;
             await userchannel.SendMessageAsync(embed: emb);
         }
     }

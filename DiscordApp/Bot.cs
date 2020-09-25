@@ -18,6 +18,7 @@ namespace DiscordApp
         public DiscordClient Clinet { get; private set; }
         public InteractivityExtension Interactivity { get; private set; }
         public CommandsNextExtension Commands { get; private set; }
+        
         public async Task RunAsync()
         {
             var json = string.Empty;
@@ -36,6 +37,7 @@ namespace DiscordApp
                 AutoReconnect = true,
                 LogLevel = LogLevel.Debug,
                 UseInternalLogHandler = true,
+                
             };
             Clinet = new DiscordClient(config);
             Clinet.Ready += OnClientReady;
@@ -44,6 +46,7 @@ namespace DiscordApp
                 Timeout = TimeSpan.FromMinutes(30)
                 
             });
+           
             var commandsConfig = new CommandsNextConfiguration
             {
                 StringPrefixes = new string[] { configJson.Prefix, configJson.Prefix_wh,configJson.Prefix_dnd },
