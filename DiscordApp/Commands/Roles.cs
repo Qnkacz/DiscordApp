@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using DiscordApp.RPGSystems.WarhammerFantasy;
 using System.Runtime.InteropServices.ComTypes;
 using DiscordApp.Handlers;
+using DSharpPlus;
 /// <TODO>
 /// 
 /// ZAPIS W JSON JEST NA SZTYWNO USTAWIONY MALE
@@ -109,6 +110,7 @@ namespace DiscordApp.Commands
         {
             if (ctx.Member == ctx.Guild.Owner)
             {
+                bool hasRpgCategory = false;
                 await ctx.Guild.CreateRoleAsync("RPG - Player", null, DiscordColor.SpringGreen);
                 var gm = await ctx.Guild.CreateRoleAsync("RPG - GM", null, DiscordColor.MidnightBlue);
                 var questionEmbed = new DiscordEmbedBuilder
@@ -123,6 +125,26 @@ namespace DiscordApp.Commands
                 };
                 await ctx.Member.CreateDmChannelAsync().Result.SendMessageAsync(embed: questionEmbed);
                 await ctx.Member.GrantRoleAsync(gm);
+                var blep = ctx.Guild.Channels;
+                foreach (var item in blep)
+                {
+                    if (item.Value.Name.Contains("RPG"))
+                    {
+                        hasRpgCategory = true;
+                        var createdChannel = await ctx.Guild.CreateTextChannelAsync("RPG Main hub!", item.Value, "Hub");
+                        await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
+                        await createdChannel.SendMessageAsync("Welcome to the main RPG Hub!");
+
+                        break;
+                    }
+                }
+                if (hasRpgCategory == false)
+                {
+                    var category = await ctx.Guild.CreateChannelCategoryAsync("RPG");
+                    var createdChannel = await ctx.Guild.CreateTextChannelAsync("RPG Main hub!", category, "Hub");
+                    await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
+                    await createdChannel.SendMessageAsync("Welcome to the main RPG Hub!");
+                }
             }
             else
             {

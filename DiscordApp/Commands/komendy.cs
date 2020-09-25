@@ -100,43 +100,49 @@ namespace DiscordApp.Commands
         [Description("GM ONLY! Creates a chatroom for an rpg system")]
         public async Task CreateChannel(CommandContext ctx, [Description("channel name")] params string[] names)
         {
-            string name = string.Join(" ", names);
-            var blep = ctx.Guild.Channels;
-            bool hasRpgCategory = false;
-            string topic = string.Empty;
-            await ctx.Channel.SendMessageAsync(ctx.Prefix);
-            switch (ctx.Prefix.ToLower())
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
             {
-                case "wh":
-                    topic = "warhammer";
-                    break;
-                case "dnd":
-                    topic = "DnD";
-                    break;
-                case ">>":
-                    await ctx.Channel.SendMessageAsync("use the designated command prefix");
-                    return;
-            }
-            foreach (var item in blep)
-            {
-                if (item.Value.Name.Contains("RPG"))
+                string name = string.Join(" ", names);
+                var blep = ctx.Guild.Channels;
+                bool hasRpgCategory = false;
+                string topic = string.Empty;
+                await ctx.Channel.SendMessageAsync(ctx.Prefix);
+                switch (ctx.Prefix.ToLower())
                 {
-                    hasRpgCategory = true;
-                    var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, item.Value, topic);
+                    case "wh":
+                        topic = "warhammer";
+                        break;
+                    case "dnd":
+                        topic = "DnD";
+                        break;
+                    case ">>":
+                        await ctx.Channel.SendMessageAsync("use the designated command prefix");
+                        return;
+                }
+                foreach (var item in blep)
+                {
+                    if (item.Value.Name.Contains("RPG"))
+                    {
+                        hasRpgCategory = true;
+                        var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, item.Value, topic);
+                        await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
+                        await createdChannel.SendMessageAsync("Tutaj możecie grac w " + topic + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy na granko");
+
+                        break;
+                    }
+                }
+                if (hasRpgCategory == false)
+                {
+                    var category = await ctx.Guild.CreateChannelCategoryAsync("RPG");
+                    var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, category, topic);
                     await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
                     await createdChannel.SendMessageAsync("Tutaj możecie grac w " + topic + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy na granko");
-
-                    break;
                 }
             }
-            if (hasRpgCategory == false)
+            else
             {
-                var category = await ctx.Guild.CreateChannelCategoryAsync("RPG");
-                var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, category, topic);
-                await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
-                await createdChannel.SendMessageAsync("Tutaj możecie grac w " + topic + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy na granko");
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
             }
-
         }
 
         [Command("stop")]
@@ -144,13 +150,17 @@ namespace DiscordApp.Commands
         [Description("GM ONLY! Deletes an rpg text channel")]
         public async Task DeleteChannel(CommandContext ctx)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic.ToLower()!="hub")
             {
                 if (ctx.Channel.Parent.Children.Count() == 0)
                 {
                     await ctx.Channel.Parent.DeleteAsync();
                 }
                 await ctx.Channel.DeleteAsync();
+            }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
             }
         }
 
@@ -159,7 +169,7 @@ namespace DiscordApp.Commands
         [Description("GM ONLY! Deletes an rpg text channel and PMs a log file")]
         public async Task DeleteChannelLog(CommandContext ctx)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic.ToLower() != "hub")
             {
                 var logs = await ctx.Channel.GetMessagesAsync(999999);
                 string txt = string.Empty;
@@ -178,6 +188,10 @@ namespace DiscordApp.Commands
                     await ctx.Channel.Parent.DeleteAsync();
                 }
                 await ctx.Channel.DeleteAsync();
+            }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
             }
 
         }
@@ -206,7 +220,7 @@ namespace DiscordApp.Commands
         [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         public async Task Kick(CommandContext ctx, [Description("@mention the player")] DiscordMember user)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic.ToLower() != "hub")
             {
                 await ctx.Channel.AddOverwriteAsync(user, Permissions.None, Permissions.All);
             }
@@ -217,10 +231,10 @@ namespace DiscordApp.Commands
         public async Task help(CommandContext ctx)
         {
             var userchannel = await ctx.Member.CreateDmChannelAsync();
-            
+
             string desc = File.ReadAllText("README_part1.txt");
-            string desc1=File.ReadAllText("README_part2.txt");
-            string desc2=File.ReadAllText("README_part3.txt");
+            string desc1 = File.ReadAllText("README_part2.txt");
+            string desc2 = File.ReadAllText("README_part3.txt");
             var emb = new DiscordEmbedBuilder
             {
                 Title = "H E L P",
