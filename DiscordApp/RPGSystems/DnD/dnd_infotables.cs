@@ -74,6 +74,13 @@ namespace DiscordApp.RPGSystems.DnD
                 JsonFromFile = reader.ReadToEnd();
             }
             DnDItemList Character = JsonConvert.DeserializeObject<DnDItemList>(JsonFromFile);
+            Character.allitems.AddRange(Character.SimpleMeleeWeapons);
+            Character.allitems.AddRange(Character.SimpleRangedWeapons);
+            Character.allitems.AddRange(Character.MartialMeleeWeapons);
+            Character.allitems.AddRange(Character.MartialRangedWeapons);
+            Character.allitems.AddRange(Character.LightArmor);
+            Character.allitems.AddRange(Character.MediumArmor);
+            Character.allitems.AddRange(Character.HeavyArmor);
         }
         
 

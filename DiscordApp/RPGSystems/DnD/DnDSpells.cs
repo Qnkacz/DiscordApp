@@ -79,7 +79,9 @@ namespace DiscordApp.RPGSystems.DnD
         public List<DnDArmor> LightArmor = new List<DnDArmor>();
         public List<DnDArmor> MediumArmor = new List<DnDArmor>();
         public List<DnDArmor> HeavyArmor = new List<DnDArmor>();
-
+        public List<DnDitem> Ammunition = new List<DnDitem>();
+        public List<DnDitem> Misc = new List<DnDitem>();
+        public List<DnDitem> allitems = new List<DnDitem>();
     }
 
 }

@@ -116,7 +116,7 @@ namespace DiscordApp.RPGSystems.DnD
     }
     public class DnDInventory
     {
-        public List<DnDitem> inventoryList = new List<DnDitem>();
+        public List<object> inventoryList = new List<object>();
 
         public void Add(string v1, string v2, int startMoney)
         {
@@ -124,9 +124,10 @@ namespace DiscordApp.RPGSystems.DnD
             int i = 0;
             foreach (var item in inventoryList) //znajduje itemek
             {
-                if (item.name == v1.Trim().ToLower())
+                DnDitem var = (DnDitem)item;
+                if (var.name == v1.Trim().ToLower())
                 {
-                    itemName = item.name;
+                    itemName = var.name;
                     break;
                 }
                 i++;
@@ -142,20 +143,22 @@ namespace DiscordApp.RPGSystems.DnD
             else//znalazł itemek, dodajemy
             {
 
-                inventoryList[i].amount += startMoney;
+               ((DnDitem)inventoryList[i]).amount += startMoney;
             }
         }
 
         public void remove(string v1, int amount)
         {
+            
             string itemName = string.Empty;
             string descr = string.Empty;
             int i = 0;
-            foreach (var item in inventoryList) //znajduje itemek
+            foreach (var item in inventoryList ) //znajduje itemek
             {
-                if (item.name.Trim().ToLower() == v1.Trim().ToLower())
+                DnDitem var = (DnDitem)item;
+                if (var.name.Trim().ToLower() == v1.Trim().ToLower())
                 {
-                    itemName = item.name;
+                    itemName = var.name;
                     break;
                 }
                 i++;
@@ -169,8 +172,8 @@ namespace DiscordApp.RPGSystems.DnD
                 var item = new DnDitem();
                 item.name = itemName;
                 item.descr = descr;
-                inventoryList[i].amount -= amount;
-                if(inventoryList[i].amount<=0)
+                ((DnDitem) inventoryList[i]).amount -= amount;
+                if(((DnDitem)inventoryList[i]).amount<=0)
                 {
                     inventoryList.RemoveAt(i);
                 }
@@ -179,9 +182,10 @@ namespace DiscordApp.RPGSystems.DnD
         public async Task showInventory(DiscordChannel ctx, params string[] charname)
         {
             string descrr = string.Empty;
-            foreach (var item in inventoryList)
+            foreach (var item in inventoryList )
             {
-                descrr += item.name + ", amount: " + item.amount + Environment.NewLine;
+                DnDitem var = (DnDitem)item;
+                descrr += var.name + ", amount: " + var.amount + Environment.NewLine;
             }
             var inventoryEmbed = new DiscordEmbedBuilder
             {
@@ -196,10 +200,11 @@ namespace DiscordApp.RPGSystems.DnD
             string descr = string.Empty;
             foreach (var item in inventoryList.ToArray()) //znajduje itemek
             {
-                if (item.name.Trim().ToLower() == name.Trim().ToLower())
+                DnDitem var = (DnDitem)item;
+                if (var.name.Trim().ToLower() == name.Trim().ToLower())
                 {
-                    name = item.name;
-                    descr = item.descr;
+                    name = var.name;
+                    descr = var.descr;
                     break;
                 }
             }
