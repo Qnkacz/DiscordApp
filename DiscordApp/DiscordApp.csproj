@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="bin\Debug\netcoreapp3.1\db_items.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="bin\Debug\netcoreapp3.1\config.json" />
   </ItemGroup>
 

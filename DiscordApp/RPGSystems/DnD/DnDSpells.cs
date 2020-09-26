@@ -39,9 +39,23 @@ namespace DiscordApp.RPGSystems.DnD
     {
         public string name { get; set; }
         public string descr { get; set; }
+        public int price { get; set; }
+        public string weight { get; set; }
         public int amount { get; set; }
     }
    
+    public class DnDWeapon : DnDitem
+    {
+        public string damage { get; set; }
+        public string properties { get; set; }
+    }
+    public class DnDArmor : DnDitem
+    {
+        public string AC { get; set; }
+        public string requirements { get; set; }
+        public string Stealth { get; set; }
+    }
+
     public class DnDSpellist
     {
         public List<DnDSpells> Arkusz1 = new List<DnDSpells>();
@@ -56,6 +70,16 @@ namespace DiscordApp.RPGSystems.DnD
         public List<DnDSpells> lvl_8 = new List<DnDSpells>();
         public List<DnDSpells> lvl_9 = new List<DnDSpells>();
     }
-    
+    public class DnDItemList
+    {
+        public List<DnDWeapon> SimpleMeleeWeapons = new List<DnDWeapon>();
+        public List<DnDWeapon> SimpleRangedWeapons = new List<DnDWeapon>();
+        public List<DnDWeapon> MartialMeleeWeapons = new List<DnDWeapon>();
+        public List<DnDWeapon> MartialRangedWeapons = new List<DnDWeapon>();
+        public List<DnDArmor> LightArmor = new List<DnDArmor>();
+        public List<DnDArmor> MediumArmor = new List<DnDArmor>();
+        public List<DnDArmor> HeavyArmor = new List<DnDArmor>();
+
+    }
 
 }

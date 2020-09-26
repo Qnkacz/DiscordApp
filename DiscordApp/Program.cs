@@ -1,6 +1,8 @@
 ﻿using DiscordApp.RPGSystems.DnD;
+using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace DiscordApp
 {
@@ -18,6 +20,12 @@ namespace DiscordApp
             //DnDInventory character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnDInventory>(JsonFromFile);
             //character.remove("gold", 111);
             //Console.WriteLine(character.inventoryList[0].name+Environment.NewLine+ character.inventoryList[0].amount);
+            //using (var reader = new StreamReader("C:\\Users\\ufus0\\source\\repos\\DiscordApp\\DiscordApp\\bin\\Debug\\netcoreapp3.1\\db_items.json"))
+            //{
+            //    jsonFromFile = reader.ReadToEnd();
+            //}
+            //DnDItemList Character = JsonConvert.DeserializeObject<DnDItemList>(jsonFromFile);
+
         }
     }
 }

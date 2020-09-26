@@ -23,6 +23,7 @@ namespace DiscordApp.RPGSystems.DnD
     public class dnd_infotables
     {
         public DnDSpellist spells;
+        public DnDItemList Dnditemlist;
         string JsonFromFile = string.Empty;
         public dnd_infotables()
         {
@@ -68,7 +69,13 @@ namespace DiscordApp.RPGSystems.DnD
 
                 }
             }
+            using (var reader = new StreamReader("db_items.json"))
+            {
+                JsonFromFile = reader.ReadToEnd();
+            }
+            DnDItemList Character = JsonConvert.DeserializeObject<DnDItemList>(JsonFromFile);
         }
+        
 
 
 
