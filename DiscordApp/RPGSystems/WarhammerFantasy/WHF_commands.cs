@@ -464,7 +464,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     break;
             }
         }
-        [Command("spelldetails")]
+        [Command("cast")]
         [Description("shows details of a spell")]
         public async Task spellDetails(CommandContext ctx, params string[] name)
         {
@@ -485,7 +485,7 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     break;
             }
         }
-        [Command("showitems")]
+        [Command("itemlist")]
         [Description("Gives you a list of generic DnD items")]
         public async Task showitems(CommandContext ctx)
         {

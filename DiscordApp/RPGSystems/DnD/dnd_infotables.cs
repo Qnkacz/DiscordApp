@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -99,7 +100,10 @@ namespace DiscordApp.RPGSystems.DnD
         {
             acolyte, criminal, folkHero, noble, sage, soldier
         }
-
+        public enum itemcategories
+        {
+            SimpleMelee, SimpleRanged, MartialMelee, MartialRanged, LightArmor, MediumArmor, heavyArmor, ammunition, misc
+        }
         public enum Races { human, dwarf, Welf, Helf, halfling, half_elf, hhalf_orc, gnome };
         public enum Classes { barbarian, bard, cleric, druid, fighter, monk, palading, ranger, rouge, warlock, sourcerer, wizard };
 
@@ -635,20 +639,29 @@ namespace DiscordApp.RPGSystems.DnD
                 if (elfresult.Result.Emoji == emojis.one)
                 {
                     character.BaseStats["Intelligence"] += 1;
-
+                    string spellname = string.Empty;
                     character.race += ": high";
-                    QuestionEmbed.Title = "Cantrip";
-                    QuestionEmbed.Description = "Write down a cantrip spell name that you want to have";
-                    await userChannel.SendMessageAsync(embed: QuestionEmbed);
-                    var magic = await userChannel.GetNextMessageAsync();
-                    Thread.Sleep(110);
-                    var spellname = magic.Result.Content;
-                    QuestionEmbed.Title = spellname;
-                    QuestionEmbed.Description = "write the spell description";
-                    await userChannel.SendMessageAsync(embed: QuestionEmbed);
-                    var descrResponse = await userChannel.GetNextMessageAsync();
-                    var spellDescr = descrResponse.Result.Content;
-                    //character.spells.Add(new DnDSpells(spellname, spellDescr));
+                    await ShowSpellsFromlevel(userChannel, 0);
+                    List<string> spellnames = new List<string>();
+                    foreach (var item in spells.lvl_0)
+                    {
+                        spellnames.Add(item.spellName);
+                    }
+                    do
+                    {
+                        QuestionEmbed.Title = "Cantrip";
+                        QuestionEmbed.Description = "Write down a cantrip spell name that you want to have";
+
+                        Thread.Sleep(210);
+                        await userChannel.SendMessageAsync(embed: QuestionEmbed);
+                        var magic = await userChannel.GetNextMessageAsync();
+                        spellname = magic.Result.Content;
+                        Thread.Sleep(110);
+
+                    } while (!spellnames.Contains(spellname));
+                    character.spells.Add(spells.GetSpellFromName(spellname));
+                    await userChannel.SendMessageAsync("Added: `" + spellname + "`");
+
                 }
                 if (elfresult.Result.Emoji == emojis.two)
                 {
@@ -2202,7 +2215,6 @@ namespace DiscordApp.RPGSystems.DnD
                 var msg = await ctx.Channel.SendMessageAsync(embed: QuestionEmbed);
                 var response = await ctx.Channel.GetNextMessageAsync();
                 var result = response.Result.Content;
-                int i = 0;
                 foreach (var item in items.allitems)
                 {
                     if (item.name.ToLower().Trim() == result.ToLower().Trim())
@@ -2262,7 +2274,6 @@ namespace DiscordApp.RPGSystems.DnD
         {
             if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
             {
-
                 string descr = string.Empty;
                 string spellname = string.Join(" ", name);
                 foreach (var item in spells.Arkusz1)
@@ -2914,6 +2925,149 @@ namespace DiscordApp.RPGSystems.DnD
                 await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
             }
             GC.Collect();
+        }
+        public async Task ShotItemsInCategory(DiscordChannel channel, itemcategories category)
+        {
+            string descr = string.Empty;
+            var questionEmbed = new DiscordEmbedBuilder
+            {
+                Title = "dumb",
+                Description = "not working"
+            };
+            switch (category)
+            {
+                case itemcategories.SimpleMelee:
+                    foreach (var item in items.SimpleMeleeWeapons)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+                case itemcategories.SimpleRanged:
+                    foreach (var item in items.SimpleRangedWeapons)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+                case itemcategories.MartialMelee:
+                    foreach (var item in items.MartialMeleeWeapons)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+                case itemcategories.MartialRanged:
+                    foreach (var item in items.MartialRangedWeapons)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+                case itemcategories.LightArmor:
+                    foreach (var item in items.LightArmor)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+                case itemcategories.MediumArmor:
+                    foreach (var item in items.MediumArmor)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+                case itemcategories.heavyArmor:
+                    foreach (var item in items.HeavyArmor)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+                case itemcategories.ammunition:
+                    foreach (var item in items.Ammunition)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+                case itemcategories.misc:
+                    foreach (var item in items.Misc)
+                    {
+                        descr += item.name + Environment.NewLine;
+                    }
+                    break;
+            }
+            questionEmbed.Description = descr;
+            await channel.SendMessageAsync(embed: questionEmbed);
+        }
+        public async Task ShowSpellsFromlevel(DiscordChannel channer, int spelllevel)
+        {
+            var QuestionEmbed = new DiscordEmbedBuilder
+            {
+                Title = "Spells from level: " + spelllevel,
+                Description = "i can't feel you there"
+            };
+            string descr = string.Empty;
+            switch (spelllevel)
+            {
+                case 1:
+                    foreach (var item in spells.lvl_1)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 2:
+                    foreach (var item in spells.lvl_2)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 3:
+                    foreach (var item in spells.lvl_3)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 4:
+                    foreach (var item in spells.lvl_4)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 5:
+                    foreach (var item in spells.lvl_5)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 6:
+                    foreach (var item in spells.lvl_6)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 7:
+                    foreach (var item in spells.lvl_7)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 8:
+                    foreach (var item in spells.lvl_8)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 9:
+                    foreach (var item in spells.lvl_9)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+                case 0:
+                    foreach (var item in spells.lvl_0)
+                    {
+                        descr += item.spellName + Environment.NewLine;
+                    }
+                    break;
+
+            }
+            QuestionEmbed.Description = descr;
+            await channer.SendMessageAsync(embed: QuestionEmbed);
         }
     }
 }

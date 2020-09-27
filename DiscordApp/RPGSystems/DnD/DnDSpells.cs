@@ -69,6 +69,18 @@ namespace DiscordApp.RPGSystems.DnD
         public List<DnDSpells> lvl_7 = new List<DnDSpells>();
         public List<DnDSpells> lvl_8 = new List<DnDSpells>();
         public List<DnDSpells> lvl_9 = new List<DnDSpells>();
+
+        public DnDSpells GetSpellFromName(string name)
+        {
+            for (int i = 0; i < Arkusz1.Count; i++)
+            {
+                if(Arkusz1[i].spellName.ToLower().Trim()==name.ToLower().Trim())
+                {
+                    return Arkusz1[i];
+                }
+            }
+            return null;
+        }
     }
     public class DnDItemList
     {
