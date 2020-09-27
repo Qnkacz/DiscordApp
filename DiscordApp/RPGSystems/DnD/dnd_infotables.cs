@@ -1244,6 +1244,7 @@ namespace DiscordApp.RPGSystems.DnD
                     }
                     if (weaponResult.Result.Emoji == emojis.no)
                     {
+                        await ShowItemsInCategory(userChannel, itemcategories.MartialMelee);
                         questionEmbed.Title = "Name your weapon";
                         questionEmbed.Description = "write down the answer below";
                         await userChannel.SendMessageAsync(embed: questionEmbed);
@@ -1417,6 +1418,7 @@ namespace DiscordApp.RPGSystems.DnD
                     }
                     if (druidweaponResult1.Result.Emoji == emojis.two)
                     {
+                        
                         questionEmbed.Title = "Name your weapon";
                         questionEmbed.Description = "write down the answer below";
                         await userChannel.SendMessageAsync(embed: questionEmbed);
@@ -2926,7 +2928,7 @@ namespace DiscordApp.RPGSystems.DnD
             }
             GC.Collect();
         }
-        public async Task ShotItemsInCategory(DiscordChannel channel, itemcategories category)
+        public async Task ShowItemsInCategory(DiscordChannel channel, itemcategories category)
         {
             string descr = string.Empty;
             var questionEmbed = new DiscordEmbedBuilder
