@@ -94,17 +94,6 @@ namespace DiscordApp.RPGSystems.DnD
         public List<DnDitem> Ammunition = new List<DnDitem>();
         public List<DnDitem> Misc = new List<DnDitem>();
         public List<DnDitem> allitems = new List<DnDitem>();
-        public DnDitem GetitemFromName(string name)
-        {
-            for (int i = 0; i < allitems.Count; i++)
-            {
-                if(allitems[i].name.ToLower().Trim()==name.Trim().ToLower())
-                {
-                    return allitems[i];
-                }
-            }
-            return null;
-        }
     }
 
 }
