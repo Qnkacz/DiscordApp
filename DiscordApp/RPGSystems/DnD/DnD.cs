@@ -1,4 +1,5 @@
-﻿using DSharpPlus.CommandsNext;
+﻿using DiscordApp.Handlers;
+using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using System;
 using System.Collections.Generic;
@@ -125,7 +126,7 @@ namespace DiscordApp.RPGSystems.DnD
             foreach (var item in inventoryList) //znajduje itemek
             {
                 DnDitem var = (DnDitem)item;
-                if (var.name == v1.Trim().ToLower())
+                if (var.name.Trim().ToLower() == v1.Trim().ToLower())
                 {
                     itemName = var.name;
                     break;
@@ -142,8 +143,32 @@ namespace DiscordApp.RPGSystems.DnD
             }
             else//znalazł itemek, dodajemy
             {
-
                ((DnDitem)inventoryList[i]).amount += startMoney;
+            }
+        }
+        public void Add(string v1, int amount)
+        {
+            string itemName = string.Empty;
+            int i = 0;
+            foreach (var item in inventoryList) //znajduje itemek
+            {
+                DnDitem var = (DnDitem)item;
+                if (var.name.Trim().ToLower() == v1.Trim().ToLower())
+                {
+                    itemName = var.name;
+                    break;
+                }
+                i++;
+            }
+            if (string.IsNullOrEmpty(itemName)) // nie ma takiego itemka, dodaj do listy
+            {
+                DnDitem var = static_objects.dnd_template.items.GetitemFromName(v1);
+                var.amount = amount;
+                inventoryList.Add(var);
+            }
+            else//znalazł itemek, dodajemy
+            {
+                ((DnDitem)inventoryList[i]).amount += amount;
             }
         }
 
@@ -151,7 +176,6 @@ namespace DiscordApp.RPGSystems.DnD
         {
             
             string itemName = string.Empty;
-            string descr = string.Empty;
             int i = 0;
             foreach (var item in inventoryList ) //znajduje itemek
             {
@@ -169,9 +193,7 @@ namespace DiscordApp.RPGSystems.DnD
             }
             else
             {
-                var item = new DnDitem();
-                item.name = itemName;
-                item.descr = descr;
+               
                 ((DnDitem) inventoryList[i]).amount -= amount;
                 if(((DnDitem)inventoryList[i]).amount<=0)
                 {
