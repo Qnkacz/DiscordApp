@@ -125,6 +125,7 @@ namespace DiscordApp.Commands
                     {
                         hasRpgCategory = true;
                         var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, item.Value, topic);
+                        await createdChannel.AddOverwriteAsync(ctx.Guild.EveryoneRole, Permissions.None, Permissions.SendMessages);
                         await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
                         await createdChannel.SendMessageAsync("Tutaj możecie grac w " + topic + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy na granko");
 
@@ -135,6 +136,7 @@ namespace DiscordApp.Commands
                 {
                     var category = await ctx.Guild.CreateChannelCategoryAsync("RPG");
                     var createdChannel = await ctx.Guild.CreateTextChannelAsync(name, category, topic);
+                    await createdChannel.AddOverwriteAsync(ctx.Guild.EveryoneRole, Permissions.None, Permissions.SendMessages);
                     await createdChannel.AddOverwriteAsync(ctx.Member, Permissions.All);
                     await createdChannel.SendMessageAsync("Tutaj możecie grac w " + topic + ", sesja załozona przez: " + ctx.Member.Mention + " zapraszamy na granko");
                 }
@@ -144,13 +146,30 @@ namespace DiscordApp.Commands
                 await ctx.Channel.DeleteMessageAsync(ctx.Message);
             }
         }
+        [Command("invite")]
+        [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
+        [Description("GM ONLY !! Invites mentioned player to join your lobby")]
+        public async Task invite(CommandContext ctx, DiscordMember user)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg")
+            {
+                await ctx.Channel.AddOverwriteAsync(user, Permissions.SendMessages, Permissions.None);
+                await ctx.Channel.SendMessageAsync("Hey" + user.Mention + ", " + ctx.Member.DisplayName + " invited you to his lobby!");
+            }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                await ctx.Member.CreateDmChannelAsync().Result.SendMessageAsync("You can't invite to a channel that is outside rpg!");
+                
+            }
+        }
 
         [Command("stop")]
         [RequireRoles(RoleCheckMode.Any, "RPG - GM")]
         [Description("GM ONLY! Deletes an rpg text channel")]
         public async Task DeleteChannel(CommandContext ctx)
         {
-            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic.ToLower()!="hub")
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic.ToLower() != "hub")
             {
                 if (ctx.Channel.Parent.Children.Count() == 0)
                 {
@@ -246,5 +265,6 @@ namespace DiscordApp.Commands
             emb.Description = desc2;
             await userchannel.SendMessageAsync(embed: emb);
         }
+
     }
 }

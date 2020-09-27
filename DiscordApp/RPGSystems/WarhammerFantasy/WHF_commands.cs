@@ -485,6 +485,48 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     break;
             }
         }
+        [Command("showitems")]
+        [Description("Gives you a list of generic DnD items")]
+        public async Task showitems(CommandContext ctx)
+        {
+            switch (ctx.Prefix.ToLower())
+            {
+                case "dnd":
+                    await static_objects.dnd_template.Showitems(ctx);
+                    break;
+                case ">>":
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
+                    break;
+            }
+        }
+        [Command("itemdetails")]
+        [Description("asks you for an itemname and then gives you info about that item")]
+        public async Task itemdetail(CommandContext ctx)
+        {
+            switch (ctx.Prefix.ToLower())
+            {
+                case "dnd":
+                    await static_objects.dnd_template.ItemDetails(ctx);
+                    break;
+                case ">>":
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
+                    break;
+            }
+        }
     }
 
 }

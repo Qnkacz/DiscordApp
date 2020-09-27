@@ -2,6 +2,7 @@
 using DiscordApp.RPGSystems.WarhammerFantasy;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using Newtonsoft.Json;
@@ -37,7 +38,6 @@ namespace DiscordApp
                 AutoReconnect = true,
                 LogLevel = LogLevel.Debug,
                 UseInternalLogHandler = true,
-                
             };
             Clinet = new DiscordClient(config);
             Clinet.Ready += OnClientReady;
