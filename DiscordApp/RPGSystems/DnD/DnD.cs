@@ -121,42 +121,7 @@ namespace DiscordApp.RPGSystems.DnD
     {
         public List<object> inventoryList = new List<object>();
 
-        public void Add(string v1, string v2, int startMoney)
-        {
-            string itemName = string.Empty;
-            int i = 0;
-            foreach (var item in inventoryList) //znajduje itemek
-            {
-                DnDitem var = (DnDitem)item;
-                if (var.name.Trim().ToLower() == v1.Trim().ToLower())
-                {
-                    itemName = var.name;
-                    break;
-                }
-                i++;
-            }
-            if (string.IsNullOrEmpty(itemName)) // nie ma takiego itemka, dodaj do listy
-            {
-                DnDitem var = static_objects.dnd_template.items.GetitemFromName(v1);
-                if(var==null)
-                {
-                    var item = new DnDitem();
-                    item.name = v1;
-                    item.descr = v2;
-                    item.amount = startMoney;
-                    inventoryList.Add(item);
-                }
-                else
-                {
-                    inventoryList.Add(var);
-                }
-               
-            }
-            else//znalazł itemek, dodajemy
-            {
-                ((DnDitem)inventoryList[i]).amount += startMoney;
-            }
-        }
+
         public void Add(string v1, int amount)
         {
             string itemName = string.Empty;
@@ -276,7 +241,9 @@ namespace DiscordApp.RPGSystems.DnD
                 DnDitem var = static_objects.dnd_template.items.GetitemFromName(v1);
                 if (var != null)
                 {
+                    await userchannel.SendMessageAsync("znalazłem: " + v1);
                     var.amount = amount;
+                    
                     inventoryList.Add(var);
                 }
                 else
@@ -301,6 +268,7 @@ namespace DiscordApp.RPGSystems.DnD
                     response = await userchannel.GetNextMessageAsync();
                     armor.weight = response.Result.Content;
                     armor.amount = amount;
+                    
                     inventoryList.Add(armor);
                 }
             }
@@ -331,7 +299,6 @@ namespace DiscordApp.RPGSystems.DnD
             }
             else
             {
-
                 ((DnDitem)inventoryList[i]).amount -= amount;
                 if (((DnDitem)inventoryList[i]).amount <= 0)
                 {
@@ -353,45 +320,6 @@ namespace DiscordApp.RPGSystems.DnD
                 Description = descrr
             };
             await ctx.SendMessageAsync(embed: inventoryEmbed);
-        }
-        public async Task showItem(CommandContext ctx, params string[] itemnanme)
-        {
-            string name = string.Join(" ", itemnanme).Trim().ToLower();
-            string descr = string.Empty;
-            DnDitem var = new DnDitem();
-            foreach (var item in inventoryList.ToArray()) //znajduje itemek
-            {
-                var = (DnDitem)item;
-                if (var.name.Trim().ToLower() == name.Trim().ToLower())
-                {
-                    name = var.name;
-                    descr = var.descr;
-                    break;
-                }
-            }
-            if (!string.IsNullOrEmpty(descr))
-            {
-                var itemEmbed = new DiscordEmbedBuilder
-                {
-                    Title = "**" + name + "**",
-                    Description = "*" + descr + "*" + Environment.NewLine + "**Weight**: " + var.weight + Environment.NewLine + "**Price**: " + var.price
-                };
-                if(var is DnDWeapon)
-                {
-                    DnDWeapon item = (DnDWeapon)var;
-                    itemEmbed.Description += "**Damage**: " + item.damage + Environment.NewLine + "**Properties**: " + item.properties;
-                }
-                else if(var is DnDArmor)
-                {
-                    DnDArmor item = (DnDArmor)var;
-                    itemEmbed.Description += "**Ac**: " + item.AC + Environment.NewLine + "**Requirements**: " + item.requirements+Environment.NewLine+"**Stealth**: "+item.Stealth;
-                }
-                await ctx.Channel.SendMessageAsync(embed: itemEmbed);
-            }
-            else
-            {
-                await ctx.Channel.SendMessageAsync("couldn't find this item");
-            }
         }
 
     }

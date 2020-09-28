@@ -33,10 +33,10 @@ namespace DiscordApp.RPGSystems.DnD
                     #region acolyte
                     name = "acolyte";
                     SkillProficiencies = new List<string>() { "insight", "religion" };
-                    items.Add("Holy symbol", "a gift to you when you entered the priesthood)", 1);
-                    items.Add("Prayer book", "holds the prayers of your god", 1);
-                    items.Add("Incense", "smells nice", 5);
-                    items.Add("gold", "Currency in the game", 15);
+                    items.Add("Holy symbol", 1);
+                    items.Add("Prayer book", 1);
+                    items.Add("Incense", 5);
+                    items.Add("gold", 15);
                     
                     ideal = static_objects.dnd_template.ideal_acolyte[trait_random];
                     bond = static_objects.dnd_template.bond_acolyte[bond_random];
@@ -49,9 +49,9 @@ namespace DiscordApp.RPGSystems.DnD
                     #region criminal
                     name = "criminal";
                     SkillProficiencies = new List<string>() { "deception", "stealth" };
-                    items.Add("crowbar", "watch out for headcrabs!", 1);
-                    items.Add("Dark clothes", "the common type!", 1);
-                    items.Add("Gold", "currency in the game!", 15);
+                    items.Add("crowbar", 1);
+                    items.Add("Dark clothes", 1);
+                    items.Add("Gold", 15);
                     ideal = static_objects.dnd_template.ideal_criminal[trait_random];
                     bond = static_objects.dnd_template.bond_criminal[bond_random];
                     flaw = static_objects.dnd_template.flaw_criminal[flaw_random];
@@ -62,9 +62,9 @@ namespace DiscordApp.RPGSystems.DnD
                     #region folkHero
                     name = "folk hero";
                     SkillProficiencies = new List<string>() { "animal handling", "survival" };
-                    items.Add("shovel", "TO dig holes", 1);
-                    items.Add("Iron pot", "You can cook in it", 1);
-                    items.Add("Gold", "currency in the game!", 10);
+                    items.Add("shovel", 1);
+                    items.Add("Iron pot", 1);
+                    items.Add("Gold", 10);
                     ideal = static_objects.dnd_template.ideal_folkHero[trait_random];
                     bond = static_objects.dnd_template.bond_folkHero[bond_random];
                     flaw = static_objects.dnd_template.flaw_folkhero[flaw_random];
@@ -75,9 +75,9 @@ namespace DiscordApp.RPGSystems.DnD
                     #region noble
                     name = "noble";
                     SkillProficiencies = new List<string>() { "history", "persuation" };
-                    items.Add("set of fine clothes", "Fancy!", 1);
-                    items.Add("a signer ring", "rom a dead colleague posing a question you have not yet been able to answer", 1);
-                    items.Add("Gold", "currency in the game!", 25);
+                    items.Add("set of fine clothes", 1);
+                    items.Add("a signer ring", 1);
+                    items.Add("Gold", 25);
                     ideal = static_objects.dnd_template.ideal_noble[trait_random];
                     bond = static_objects.dnd_template.bond_noble[bond_random];
                     flaw = static_objects.dnd_template.flaw_noble[flaw_random];
@@ -88,9 +88,9 @@ namespace DiscordApp.RPGSystems.DnD
                     #region sage
                     name = "sage";
                     SkillProficiencies = new List<string>() { "arcana", "history" };
-                    items.Add("bottle of blank inc", "for writing a message)", 1);
-                    items.Add("a letter", "rom a dead colleague posing a question you have not yet been able to answer", 1);
-                    items.Add("Gold", "currency in the game!", 10);
+                    items.Add("bottle of blank inc", 1);
+                    items.Add("a letter", 1);
+                    items.Add("Gold", 10);
                     ideal = static_objects.dnd_template.ideal_sage[trait_random];
                     bond = static_objects.dnd_template.bond_sage[bond_random];
                     flaw = static_objects.dnd_template.flaw_sage[flaw_random];
@@ -101,10 +101,10 @@ namespace DiscordApp.RPGSystems.DnD
                     #region soldier
                     name = "soldier";
                     SkillProficiencies = new List<string>() { "athletics", "intimidation" };
-                    items.Add("insignia of rank", "An antique!", 1);
-                    items.Add("Trophy", "from an old enemy", 1);
-                    items.Add("A set of cards", "For making money and enemies", 1);
-                    items.Add("Gold", "currency in the game!", 10);
+                    items.Add("insignia of rank", 1);
+                    items.Add("Trophy", 1);
+                    items.Add("A set of cards", 1);
+                    items.Add("Gold", 10);
                     ideal = static_objects.dnd_template.ideal_soldier[trait_random];
                     bond = static_objects.dnd_template.bond_soldier[bond_random];
                     flaw = static_objects.dnd_template.flaw_soldier[flaw_random];
