@@ -98,13 +98,12 @@ namespace DiscordApp.RPGSystems.DnD
 
         public DnDitem GetitemFromName(string name)
         {
+            string itemname = name.Trim().ToLower();
             for (int i = 0; i < allitems.Count; i++)
             {
-                if(allitems[i].name.Trim().ToLower()==name.Trim().ToLower())
+                if(allitems[i].name.Trim().ToLower()==itemname)
                 {
-                    DnDitem var = allitems[0];
-                    var.amount = 0;
-                    return var;
+                    return allitems[i];
                 }
             }
             return null;

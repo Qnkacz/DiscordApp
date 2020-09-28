@@ -1235,7 +1235,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                     if (weaponResult.Result.Emoji == emojis.yes)
                     {
-                        inventory.Add("Greataxe", 1);
+                        await inventory.AddWeapon("Greataxe", 1,userChannel);
                     }
                     if (weaponResult.Result.Emoji == emojis.no)
                     {
@@ -1256,7 +1256,7 @@ namespace DiscordApp.RPGSystems.DnD
                         }
                         while (!itemNameList.Contains(itemname));
                         
-                        inventory.Add(itemname,1);
+                        await inventory.AddWeapon(itemname,1,userChannel);
                     }
                     questionEmbed.Title = "Choose your weapon";
                     questionEmbed.Description = emojis.yes + "- for 2 handaxes" + Environment.NewLine + emojis.no + "- for any martial simple weapon";
@@ -1270,7 +1270,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (x.Emoji == emojis.yes || x.Emoji == emojis.no));
                     if (weaponResult.Result.Emoji == emojis.yes)
                     {
-                        inventory.Add("handaxe", 2);
+                        await inventory.AddWeapon("Handaxe", 2,userChannel);
                     }
                     if (weaponResult.Result.Emoji == emojis.no)
                     {
@@ -1290,10 +1290,9 @@ namespace DiscordApp.RPGSystems.DnD
                         }
                         while (!itemNameList.Contains(itemname));
                         await userChannel.SendMessageAsync(itemname);
-                        inventory.Add(itemname, 1);
+                        await inventory.AddWeapon(itemname, 1,userChannel);
                     }
-                    inventory.Add("explorer back", 1);
-                    inventory.AddWeapon("Javeline", 4,userChannel);
+                   await inventory.AddWeapon("Javelin", 4,userChannel);
                     #endregion
                     break;
                 case "Bard":

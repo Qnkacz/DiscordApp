@@ -131,6 +131,7 @@ namespace DiscordApp.RPGSystems.DnD
                 DnDitem var = (DnDitem)item;
                 if (var.name.Trim().ToLower() == v1.Trim().ToLower())
                 {
+                    
                     itemName = var.name;
                     break;
                 }
@@ -158,7 +159,7 @@ namespace DiscordApp.RPGSystems.DnD
                 ((DnDitem)inventoryList[i]).amount += amount;
             }
         }
-        public async void AddArmor(string v1, int amount,DiscordChannel userchannel)
+        public async Task AddArmor(string v1, int amount,DiscordChannel userchannel)
         {
             string itemName = string.Empty;
             int i = 0;
@@ -222,7 +223,7 @@ namespace DiscordApp.RPGSystems.DnD
                 ((DnDitem)inventoryList[i]).amount += amount;
             }
         }
-        public async void AddWeapon(string v1, int amount, DiscordChannel userchannel)
+        public async Task AddWeapon(string v1, int amount, DiscordChannel userchannel)
         {
             string itemName = string.Empty;
             int i = 0;
@@ -241,9 +242,7 @@ namespace DiscordApp.RPGSystems.DnD
                 DnDitem var = static_objects.dnd_template.items.GetitemFromName(v1);
                 if (var != null)
                 {
-                    await userchannel.SendMessageAsync("znalazłem: " + v1);
                     var.amount = amount;
-                    
                     inventoryList.Add(var);
                 }
                 else
