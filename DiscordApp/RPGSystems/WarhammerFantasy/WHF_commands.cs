@@ -527,6 +527,27 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     break;
             }
         }
+        [Command("GiveAC")]
+        [Description("gives your character The AC Rating")]
+        public async Task giveAC(CommandContext ctx, [Description("Armor name")] params string[] name)
+        {
+            switch (ctx.Prefix.ToLower())
+            {
+                case "dnd":
+                    await static_objects.dnd_template.AddAc(ctx,name);
+                    break;
+                case ">>":
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
+                    break;
+            }
+        }
     }
 
 }

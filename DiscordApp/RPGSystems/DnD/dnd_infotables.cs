@@ -1469,7 +1469,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (druidweaponResult1.Result.Emoji == emojis.one)
                     {
-                       await inventory.AddWeapon("scimitar", 1, userChannel);
+                        await inventory.AddWeapon("scimitar", 1, userChannel);
                     }
                     if (druidweaponResult1.Result.Emoji == emojis.two)
                     {
@@ -1768,7 +1768,7 @@ namespace DiscordApp.RPGSystems.DnD
                         }
                         while (!itemNameList.Contains(itemname));
 
-                       await inventory.AddWeapon(itemname, 1, userChannel);
+                        await inventory.AddWeapon(itemname, 1, userChannel);
                     }
 
                     questionEmbed.Title = "Choose ";
@@ -1805,7 +1805,7 @@ namespace DiscordApp.RPGSystems.DnD
                     (emojis.onetototen.Contains(x.Emoji)));
                     if (rangerweaponResult.Result.Emoji == emojis.one)
                     {
-                       await inventory.AddArmor("Scail Mail", 1, userChannel);
+                        await inventory.AddArmor("Scail Mail", 1, userChannel);
                     }
                     if (rangerweaponResult.Result.Emoji == emojis.two)
                     {
@@ -1895,7 +1895,7 @@ namespace DiscordApp.RPGSystems.DnD
                     }
                     if (rogueweaponResult.Result.Emoji == emojis.two)
                     {
-                       await inventory.AddWeapon("shortsword", 1, userChannel);
+                        await inventory.AddWeapon("shortsword", 1, userChannel);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -1914,7 +1914,7 @@ namespace DiscordApp.RPGSystems.DnD
                     }
                     if (rogueweaponResult1.Result.Emoji == emojis.two)
                     {
-                       await inventory.AddWeapon("shortsword", 1, userChannel);
+                        await inventory.AddWeapon("shortsword", 1, userChannel);
                     }
 
                     questionEmbed.Title = "Choose";
@@ -2016,7 +2016,7 @@ namespace DiscordApp.RPGSystems.DnD
                     {
                         inventory.Add("explorer pack", 1);
                     }
-                    await inventory.AddWeapon("dagger", 2,userChannel);
+                    await inventory.AddWeapon("dagger", 2, userChannel);
                     #endregion
                     break;
                 case "Warlock":
@@ -3154,18 +3154,18 @@ namespace DiscordApp.RPGSystems.DnD
                 {
                     if (item.Title == user.DisplayName) //jezeli znalazlo postac gracza to dodaje
                     {
-                        
+
                         using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
                         {
                             line = await reader.ReadLineAsync();
                         }
                         line = line.Remove(0, 10).Trim();
-                        
+
                         using (var reader = new StreamReader(user.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + "_inv" + ".json"))
                         {
                             JsonFromFile = await reader.ReadToEndAsync();
                         }
-                        
+
                         break;
                     }
                 }
@@ -3244,6 +3244,84 @@ namespace DiscordApp.RPGSystems.DnD
                     }
                 }
             }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
+        }
+        public async Task AddAc(CommandContext ctx, params string[] armorname)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
+            {
+                string itemname = string.Join(" ", armorname).Trim().ToLower();
+                string line = string.Empty;
+                string JsonFromFile = string.Empty;
+                DnD character = new DnD();
+                if (ctx.Channel.Topic.ToLower() != "dnd") //jezeli nie jestes na kanale to susuwa wiadomosc
+                {
+                    var cosiek = await ctx.Channel.SendMessageAsync("You are outside of rpg territory" + ctx.Member.Mention);
+                    Thread.Sleep(30000);
+                    await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    await ctx.Channel.DeleteMessageAsync(cosiek);
+                }
+                else
+                {
+                    var playerChars = await ctx.Channel.GetPinnedMessagesAsync(); // dostaje wszystkie pinowane wiadomosci (inaczej postacie)
+                    List<DiscordEmbed> embeds = new List<DiscordEmbed>();
+                    List<DiscordEmbed> embed = new List<DiscordEmbed>();
+                    foreach (var item in playerChars) //zapisuje embedy do listy
+                    {
+                        embed = item.Embeds.ToList();
+                        embeds.Add(embed[0]);
+                        embed.Clear();
+                    }
+                    foreach (var item in embeds) //przechodzi prze liste embedów
+                    {
+
+                        if (item.Title == ctx.Member.DisplayName) //jezeli znalazlo postac gracza to dodaje
+                        {
+                            using (System.IO.StringReader reader = new System.IO.StringReader(item.Description))
+                            {
+                                line = await reader.ReadLineAsync();
+                            }
+                            line = line.Remove(0, 10).Trim();
+                            using (var reader = new StreamReader(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json"))
+                            {
+                                JsonFromFile = await reader.ReadToEndAsync();
+                            }
+                            character = Newtonsoft.Json.JsonConvert.DeserializeObject<DnD>(JsonFromFile);
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(JsonFromFile))
+                    {
+                        DnDitem var = items.GetitemFromName(itemname);
+                        if (var is DnDArmor)
+                        {
+                            DnDArmor qwe = (DnDArmor)var;
+                            character.armor = Int32.Parse(qwe.AC) + character.BaseStatsModificator["Dexterity"];
+                            await ctx.Channel.SendMessageAsync("Your AC rating is: " + character.armor);
+                            JsonFromFile = JsonConvert.SerializeObject(character);
+                            File.WriteAllText(ctx.Member.Id.ToString() + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json", JsonFromFile);
+                        }
+                        else
+                        {
+                            await ctx.Channel.SendMessageAsync("Given item is not an armor");
+                            GC.Collect();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        await ctx.Channel.SendMessageAsync("Couldn't find your character");
+                    }
+                }
+            }
+
             else
             {
                 await ctx.Channel.DeleteMessageAsync(ctx.Message);

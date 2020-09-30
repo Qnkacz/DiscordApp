@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -371,6 +372,32 @@ namespace DiscordApp.RPGSystems.DnD
                 Description = descrr
             };
             await ctx.SendMessageAsync(embed: inventoryEmbed);
+        }
+        public async Task equipArmor(DiscordChannel channel, DnD character,params string[] input)
+        {
+            string itemName = string.Join(" ", input).Trim().ToLower();
+            foreach (var item in inventoryList) //znajduje itemek
+            {
+                DnDitem var = new DnDitem();
+                if (item is JObject)
+                {
+                    var = ((JObject)item).ToObject<DnDitem>();
+                }
+                else
+                {
+                    var = ((DnDitem)item);
+                }
+                if (var is DnDArmor)
+                {
+                    await channel.SendMessageAsync("chuj");
+                    DnDArmor chuj = (DnDArmor)var;
+                    character.armor = Int32.Parse(chuj.AC) + character.BaseStats["Dexterity"];
+                    await channel.SendMessageAsync("Your AC rating is now: " + character.armor);
+                    break;
+                }
+            }
+            await channel.SendMessageAsync("Couldn't find the armor piece");
+            
         }
 
     }
