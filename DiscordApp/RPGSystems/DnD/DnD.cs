@@ -2,6 +2,7 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,7 +129,15 @@ namespace DiscordApp.RPGSystems.DnD
             int i = 0;
             foreach (var item in inventoryList) //znajduje itemek
             {
-                DnDitem var = (DnDitem)item;
+                DnDitem var=new DnDitem();
+                if (item is JObject)
+                {
+                    var = ((JObject)item).ToObject<DnDitem>();
+                }
+                else
+                {
+                    var = ((DnDitem)item);
+                }
                 if (var.name.Trim().ToLower() == v1.Trim().ToLower())
                 {
                     
@@ -156,7 +165,17 @@ namespace DiscordApp.RPGSystems.DnD
             }
             else//znalazł itemek, dodajemy
             {
-                ((DnDitem)inventoryList[i]).amount += amount;
+                DnDitem var = new DnDitem();
+                if (inventoryList[i] is JObject)
+                {
+                    var=((JObject)inventoryList[i]).ToObject<DnDitem>();
+                }
+                else
+                {
+                    var=((DnDitem)inventoryList[i]);
+                }
+                var.amount += amount;
+                inventoryList[i] = var;
             }
         }
         public async Task AddArmor(string v1, int amount,DiscordChannel userchannel)
@@ -165,7 +184,15 @@ namespace DiscordApp.RPGSystems.DnD
             int i = 0;
             foreach (var item in inventoryList) //znajduje itemek
             {
-                DnDitem var = (DnDitem)item;
+                DnDitem var = new DnDitem();
+                if (item is JObject)
+                {
+                    var = ((JObject)item).ToObject<DnDitem>();
+                }
+                else
+                {
+                    var = ((DnDitem)item);
+                }
                 if (var.name.Trim().ToLower() == v1.Trim().ToLower())
                 {
                     itemName = var.name;
@@ -229,7 +256,15 @@ namespace DiscordApp.RPGSystems.DnD
             int i = 0;
             foreach (var item in inventoryList) //znajduje itemek
             {
-                DnDitem var = (DnDitem)item;
+                DnDitem var = new DnDitem();
+                if (item is JObject)
+                {
+                    var = ((JObject)item).ToObject<DnDitem>();
+                }
+                else
+                {
+                    var = ((DnDitem)item);
+                }
                 if (var.name.Trim().ToLower() == v1.Trim().ToLower())
                 {
                     itemName = var.name;
@@ -284,7 +319,15 @@ namespace DiscordApp.RPGSystems.DnD
             int i = 0;
             foreach (var item in inventoryList) //znajduje itemek
             {
-                DnDitem var = (DnDitem)item;
+                DnDitem var = new DnDitem();
+                if (item is JObject)
+                {
+                    var = ((JObject)item).ToObject<DnDitem>();
+                }
+                else
+                {
+                    var = ((DnDitem)item);
+                }
                 if (var.name.Trim().ToLower() == v1.Trim().ToLower())
                 {
                     itemName = var.name;
@@ -298,21 +341,30 @@ namespace DiscordApp.RPGSystems.DnD
             }
             else
             {
-                ((DnDitem)inventoryList[i]).amount -= amount;
-                if (((DnDitem)inventoryList[i]).amount <= 0)
+                DnDitem var = new DnDitem();
+                if (inventoryList[i] is JObject)
                 {
-                    inventoryList.RemoveAt(i);
+                    var = ((JObject)inventoryList[i]).ToObject<DnDitem>();
                 }
+                else
+                {
+                    var = ((DnDitem)inventoryList[i]);
+                }
+                var.amount -= amount;
+                inventoryList[i] = var;
             }
         }
         public async Task showInventory(DiscordChannel ctx, params string[] charname)
         {
+            
             string descrr = string.Empty;
             foreach (var item in inventoryList)
             {
-                DnDitem var = (DnDitem)item;
+                DnDitem var = ((JObject)item).ToObject<DnDitem>();
                 descrr += var.name + ", amount: " + var.amount + Environment.NewLine;
             }
+
+            //await ctx.SendMessageAsync("things in inventory " + inventoryList.Count());
             var inventoryEmbed = new DiscordEmbedBuilder
             {
                 Title = "Inventory of: " + "**" + string.Join(" ", charname) + "**",
