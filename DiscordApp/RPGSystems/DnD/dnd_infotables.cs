@@ -1196,6 +1196,8 @@ namespace DiscordApp.RPGSystems.DnD
             GC.Collect();
         }
 
+
+
         public int getDndStatRolls()
         {
             Random r = new Random();
@@ -3331,6 +3333,32 @@ namespace DiscordApp.RPGSystems.DnD
             GC.Collect();
         }
         #endregion
+        public async Task kill(CommandContext ctx, string[] name)
+        {
+            if (ctx.Channel.Parent.Name.ToLower() == "rpg" && ctx.Channel.Topic == "DnD")
+            {
+                string line = string.Empty;
+                line = string.Join(" ", name).Trim().ToLower();
+                if(File.Exists(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json"))
+                {
+                    File.Delete(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + ".json");
+                    File.Delete(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + line + "/" + line + "_inv.json");
+                    Directory.Delete(ctx.Member.Id + "/" + ctx.Channel.Topic + "/" + line, true);
+                    await ctx.Channel.SendMessageAsync("**" + line + "** is no more");
+                }
+                else
+                {
+                    await ctx.Channel.SendMessageAsync("could find this character");
+                }
+            }
+            else
+            {
+                await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                var userchannel = await ctx.Member.CreateDmChannelAsync();
+                await userchannel.SendMessageAsync("Don't write rpg messeges outside of rpg channels please!");
+            }
+            GC.Collect();
+        }
 
     }
 }

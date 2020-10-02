@@ -548,6 +548,29 @@ namespace DiscordApp.RPGSystems.WarhammerFantasy
                     break;
             }
         }
+        [Command("kill")]
+        [Description("Kills your character")]
+        public async Task Kill(CommandContext ctx, [Description("character name")] params string[] name)
+        {
+            switch (ctx.Prefix.ToLower())
+            {
+                case "dnd":
+                    await static_objects.dnd_template.kill(ctx, name);
+                    break;
+                case ">>":
+                    if (ctx.Channel.Topic == "warhammer" || ctx.Channel.Topic == "DnD")
+                    {
+                        await ctx.Channel.SendMessageAsync("use the dedicated rpg command");
+                    }
+                    else
+                    {
+                        await ctx.Channel.DeleteMessageAsync(ctx.Message);
+                    }
+                    break;
+            }
+        }
+        
+
     }
 
 }
